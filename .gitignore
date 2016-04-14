@@ -1,0 +1,5 @@
+venv
+*.sqlite
+migrations/
+*.pyc
+staticfiles
