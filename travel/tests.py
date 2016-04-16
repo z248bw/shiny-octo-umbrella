@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.test import TestCase
 import random, string
 
@@ -58,6 +59,22 @@ class CarTest(TestCase):
     def test_create_car_passenger_if_car_has_free_seats(self):
         user = self.create_passenger_user(self.car1)
         self.assertEqual(user.passenger.car, self.car1)
+
+    def test_add_same_passenger_to_car_multiple_times(self):
+        user = User(username=self.randomword(5),
+                    password='')
+        user.save()
+        Passenger.take_a_seat(user=user, car=self.car1)
+        with self.assertRaises(expected_exception=IntegrityError):
+            Passenger.take_a_seat(user=user, car=self.car1)
+
+    def test_add_same_passenger_to_multiple_cars(self):
+        user = User(username=self.randomword(5),
+                    password='')
+        user.save()
+        Passenger.take_a_seat(user=user, car=self.car1)
+        with self.assertRaises(expected_exception=IntegrityError):
+            Passenger.take_a_seat(user=user, car=self.car2)
 
     def assert_passengers(self, expected, actual):
         for i, e in enumerate(expected):
