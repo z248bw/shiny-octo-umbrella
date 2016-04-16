@@ -25,8 +25,13 @@ class Passenger(models.Model):
     class NoMoreSpaceException(Exception):
         pass
 
+    class DriverCannotBePassengerException(Exception):
+        pass
+
     @staticmethod
     def take_a_seat(user, car):
+        if len(Car.objects.filter(driver=user)) > 0:
+            raise Passenger.DriverCannotBePassengerException
         passenger = Passenger(user=user, car=car)
         if car.get_num_of_free_seats() == 0:
             raise Passenger.NoMoreSpaceException

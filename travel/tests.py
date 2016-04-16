@@ -69,6 +69,31 @@ class CarTest(TestCase):
         with self.assertRaises(expected_exception=IntegrityError):
             Passenger.take_a_seat(user=user, car=self.car1)
 
+    def test_add_driver_as_passenger(self):
+        car = self.create_car_with_driver()
+        with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
+                               expected_message=''):
+            Passenger.take_a_seat(user=car.driver, car=car)
+
+    def test_add_driver_as_passenger_in_another_car(self):
+        car = self.create_car_with_driver()
+        with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
+                               expected_message=''):
+            Passenger.take_a_seat(user=car.driver, car=self.car1)
+
+    def create_car_with_driver(self):
+        driver = User(username=self.randomword(5),
+                      password='')
+        driver.save()
+        car = Car(driver=driver,
+                  car_name='ford',
+                  price=0,
+                  num_of_seats=4,
+                  start_time=datetime(2015, 1, 1, 12, 0, 0),
+                  start_location='asd street')
+        car.save()
+        return car
+
     def test_add_same_passenger_to_multiple_cars(self):
         user = User(username=self.randomword(5),
                     password='')
