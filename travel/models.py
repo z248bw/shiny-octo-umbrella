@@ -11,9 +11,6 @@ class Car(models.Model):
     start_location = models.CharField(max_length=100, verbose_name='Indulasi hely')
     description = models.CharField(max_length=100, verbose_name='Egyeb', null=True, blank=True)
 
-    class NoMoreSpaceException(Exception):
-        pass
-
     def get_passengers(self):
         return Passenger.objects.filter(car=self.pk)
 
@@ -25,10 +22,13 @@ class Passenger(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, related_name='car', verbose_name='Auto')
 
+    class NoMoreSpaceException(Exception):
+        pass
+
     @staticmethod
     def take_a_seat(user, car):
         passenger = Passenger(user=user, car=car)
         if car.get_num_of_free_seats() == 0:
-            raise Car.NoMoreSpaceException
+            raise Passenger.NoMoreSpaceException
         passenger.save()
         return user

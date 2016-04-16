@@ -53,7 +53,8 @@ class CarTest(TestCase):
                                 start_time=datetime(2015, 1, 1, 12, 0, 0),
                                 start_location='asd street')
         car_with_no_space.save()
-        with self.assertRaisesMessage(expected_exception=Car.NoMoreSpaceException, expected_message=''):
+        with self.assertRaisesMessage(expected_exception=Passenger.NoMoreSpaceException,
+                                      expected_message=''):
             self.create_passenger_user(car_with_no_space)
 
     def test_create_car_passenger_if_car_has_free_seats(self):
