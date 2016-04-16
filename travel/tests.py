@@ -106,7 +106,7 @@ class CarTest(TestCase):
         for i, e in enumerate(expected):
             self.assertEqual(e.pk, actual[i].pk)
 
-    def test_get_passengers_of_car_with_passengers_no_passengers(self):
+    def test_get_passengers_of_car_with_no_passengers(self):
         self.assert_passengers(expected=[], actual=self.car1.get_passengers())
 
     def test_get_passengers_of_car_with_one_passenger(self):
