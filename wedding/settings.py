@@ -21,7 +21,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "yzc7pr+k-ny7!_rlc=k_#v*p(e8t^+tz2%m7b%d+r*zxzlac8x"
+SECRET_KEY = "fca3c01743db9231abbab10973e0fdea13115a6bfa9aeb6a3ff1873127d2dc4f"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -29,6 +29,7 @@ DEBUG = True
 # Application definition
 
 INSTALLED_APPS = (
+    'travel',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
