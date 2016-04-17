@@ -5,6 +5,8 @@ from django.db import IntegrityError
 from django.test import TestCase
 import random, string
 
+from django.utils.crypto import get_random_string
+
 from travel.models import Car, Passenger
 
 
@@ -17,13 +19,8 @@ class SimpleTest(TestCase):
 
 
 class CarTest(TestCase):
-    # http: // stackoverflow.com / questions / 2030053 / random - strings - in -python
-    def get_random_string(self, length):
-        s = random.choice(string.ascii_lowercase)
-        return s.join(random.choice(string.ascii_lowercase) for i in range(length))
-
     def create_passenger_user(self, car):
-        user = User(username=self.get_random_string(5),
+        user = User(username=get_random_string(length=5),
                     password='')
         user.save()
         return Passenger.take_a_seat(user=user, car=car)
@@ -63,7 +60,7 @@ class CarTest(TestCase):
         self.assertEqual(user.passenger.car, self.car1)
 
     def test_add_same_passenger_to_car_multiple_times(self):
-        user = User(username=self.get_random_string(5),
+        user = User(username=get_random_string(length=5),
                     password='')
         user.save()
         Passenger.take_a_seat(user=user, car=self.car1)
@@ -83,7 +80,7 @@ class CarTest(TestCase):
             Passenger.take_a_seat(user=car.driver, car=self.car1)
 
     def create_car_with_driver(self):
-        driver = User(username=self.get_random_string(5),
+        driver = User(username=get_random_string(length=5),
                       password='')
         driver.save()
         car = Car(driver=driver,
@@ -96,7 +93,7 @@ class CarTest(TestCase):
         return car
 
     def test_add_same_passenger_to_multiple_cars(self):
-        user = User(username=self.get_random_string(5),
+        user = User(username=get_random_string(length=5),
                     password='')
         user.save()
         Passenger.take_a_seat(user=user, car=self.car1)
