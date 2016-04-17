@@ -3,11 +3,22 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.test import TestCase
-import random, string
 
 from django.utils.crypto import get_random_string
 
 from travel.models import Car, Passenger
+
+
+def create_user():
+    user = User(username=get_random_string(length=5),
+                first_name=get_random_string(length=5),
+                last_name=get_random_string(length=5),
+                email=get_random_string(length=5) +
+                      '@' +
+                      get_random_string(length=5) +
+                      'com')
+    user.save()
+    return user
 
 
 class SimpleTest(TestCase):
@@ -18,15 +29,14 @@ class SimpleTest(TestCase):
         self.assertEqual(1 + 1, 2)
 
 
-class CarTest(TestCase):
+class ModelTestBase:
     def create_passenger_user(self, car):
-        user = User(username=get_random_string(length=5),
-                    password='')
-        user.save()
-        return Passenger.take_a_seat(user=user, car=car)
+        return Passenger.take_a_seat(user=create_user(), car=car)
 
+
+class CarTest(TestCase, ModelTestBase):
     def setUp(self):
-        self.driver = User(username='user', password='')
+        self.driver = create_user()
         self.driver.save()
         self.car1 = Car(driver=self.driver,
                         car_name='ford',
@@ -42,6 +52,18 @@ class CarTest(TestCase):
                         start_time=datetime(2015, 1, 1, 12, 0, 0),
                         start_location='asd street')
         self.car2.save()
+
+    def test_save_car_without_driver_email(self):
+        with self.assertRaisesMessage(expected_exception=Car.NoDriverContactProvidedException,
+                                      expected_message=''):
+            noname_user = User(username='noname', password='')
+            noname_user.save()
+            Car(driver=noname_user,
+                car_name='ford',
+                price=0,
+                num_of_seats=0,
+                start_time=datetime(2015, 1, 1, 12, 0, 0),
+                start_location='asd street').save()
 
     def test_create_car_passenger_if_car_has_no_free_seat(self):
         car_with_no_space = Car(driver=self.driver,
@@ -80,8 +102,7 @@ class CarTest(TestCase):
             Passenger.take_a_seat(user=car.driver, car=self.car1)
 
     def create_car_with_driver(self):
-        driver = User(username=get_random_string(length=5),
-                      password='')
+        driver = create_user()
         driver.save()
         car = Car(driver=driver,
                   car_name='ford',

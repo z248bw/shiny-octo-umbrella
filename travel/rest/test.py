@@ -1,8 +1,9 @@
 import json
 
 from django.contrib.auth.models import User
-from django.utils.crypto import get_random_string
 from rest_framework.test import APITestCase
+
+from travel.tests import create_user
 
 
 class MainRestTest(APITestCase):
@@ -19,19 +20,8 @@ class MainRestTest(APITestCase):
         actual = json.loads(response.content.decode('utf-8'))
         self.assertEqual(actual, expected)
 
-    def create_user(self):
-        user = User(username=get_random_string(length=5),
-                    first_name=get_random_string(length=5),
-                    last_name=get_random_string(length=5),
-                    email=get_random_string(length=5) +
-                          '@' +
-                          get_random_string(length=5) +
-                          'com')
-        user.save()
-        return user
-
     def test_get_users(self):
-        user2 = self.create_user()
+        user2 = create_user()
         expected = [{'pk': self.user.pk,
                      'username': self.user.username,
                      'first_name': self.user.first_name,
@@ -46,7 +36,7 @@ class MainRestTest(APITestCase):
         self.assert_get(url='/rest/users/', expected=expected)
 
     def test_get_user(self):
-        self.create_user()
+        create_user()
         expected = {'pk': self.user.pk,
                     'username': self.user.username,
                     'first_name': self.user.first_name,

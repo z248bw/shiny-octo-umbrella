@@ -11,11 +11,24 @@ class Car(models.Model):
     start_location = models.CharField(max_length=100, verbose_name='Indulasi hely')
     description = models.CharField(max_length=100, verbose_name='Egyeb', null=True, blank=True)
 
+    class NoDriverContactProvidedException(Exception):
+        pass
+
     def get_passengers(self):
         return Passenger.objects.filter(car=self.pk)
 
     def get_num_of_free_seats(self):
         return self.num_of_seats - len(self.get_passengers())
+
+    def save(self, *args, **kwargs):
+        self.check_driver()
+        super(Car, self).save(*args, **kwargs)
+
+    def check_driver(self):
+        if self.driver.last_name == '' \
+                or self.driver.first_name == '' \
+                or self.driver.email == '':
+            raise Car.NoDriverContactProvidedException
 
 
 class Passenger(models.Model):
