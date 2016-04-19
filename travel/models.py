@@ -3,7 +3,7 @@ from django.db import models
 
 
 class AbstractPerson(models.Model):
-    phone = models.CharField(max_length=15, verbose_name='Telefon', null=True, blank=True)
+    phone = models.CharField(max_length=15)
 
     class Meta:
         abstract = True
@@ -49,10 +49,10 @@ class Passenger(AbstractPerson):
         pass
 
     @staticmethod
-    def take_a_seat(user, ride):
+    def take_a_seat(user, ride, phone):
         if len(Ride.objects.filter(driver=user)) > 0:
             raise Passenger.DriverCannotBePassengerException
-        passenger = Passenger(user=user, ride=ride)
+        passenger = Passenger(user=user, ride=ride, phone=phone)
         if ride.get_num_of_free_seats() == 0:
             raise Passenger.NoMoreSpaceException
         passenger.save()
