@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from travel.models import Passenger, Car
+from travel.models import Passenger, Ride
 
 
 class PassengerInline(admin.TabularInline):
     model = Passenger
-    fk_name = 'car'
+    fk_name = 'ride'
     extra = 5
 
 
@@ -15,4 +15,5 @@ class CarAdmin(admin.ModelAdmin):
     search_fields = ['driver']
     inlines = [PassengerInline]
 
-admin.site.register(Car, CarAdmin)
+
+admin.site.register(Ride, CarAdmin)

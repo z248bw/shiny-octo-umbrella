@@ -9,12 +9,8 @@ class AbstractPerson(models.Model):
         abstract = True
 
 
-class Driver(AbstractPerson):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-
-class Car(models.Model):
-    driver = models.OneToOneField(Driver, on_delete=models.CASCADE)
+class Ride(AbstractPerson):
+    driver = models.OneToOneField(User, on_delete=models.CASCADE)
     price = models.IntegerField(verbose_name='Ar')
     num_of_seats = models.IntegerField(verbose_name='Ferohelyek szama(soforules nelkul)')
     start_time = models.DateTimeField(verbose_name='Indulasi ido')
@@ -26,25 +22,25 @@ class Car(models.Model):
         pass
 
     def get_passengers(self):
-        return Passenger.objects.filter(car=self.pk)
+        return Passenger.objects.filter(ride=self.pk)
 
     def get_num_of_free_seats(self):
         return self.num_of_seats - len(self.get_passengers())
 
     def save(self, *args, **kwargs):
         self.check_driver_contact_info()
-        super(Car, self).save(*args, **kwargs)
+        super(Ride, self).save(*args, **kwargs)
 
     def check_driver_contact_info(self):
-        if self.driver.user.last_name == '' \
-                or self.driver.user.first_name == '' \
-                or self.driver.user.email == '':
-            raise Car.NoDriverContactProvidedException
+        if self.driver.last_name == '' \
+                or self.driver.first_name == '' \
+                or self.driver.email == '':
+            raise Ride.NoDriverContactProvidedException
 
 
 class Passenger(AbstractPerson):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    car = models.ForeignKey(Car, related_name='car', verbose_name='Auto')
+    ride = models.ForeignKey(Ride, related_name='ride', verbose_name='Fuvar')
 
     class NoMoreSpaceException(Exception):
         pass
@@ -53,11 +49,11 @@ class Passenger(AbstractPerson):
         pass
 
     @staticmethod
-    def take_a_seat(user, car):
-        if len(Car.objects.filter(driver__user=user)) > 0:
+    def take_a_seat(user, ride):
+        if len(Ride.objects.filter(driver=user)) > 0:
             raise Passenger.DriverCannotBePassengerException
-        passenger = Passenger(user=user, car=car)
-        if car.get_num_of_free_seats() == 0:
+        passenger = Passenger(user=user, ride=ride)
+        if ride.get_num_of_free_seats() == 0:
             raise Passenger.NoMoreSpaceException
         passenger.save()
         return user
