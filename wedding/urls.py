@@ -2,11 +2,12 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework import routers
 from travel.rest import rest as travel_rest
+from wedding import settings
 
 router = routers.DefaultRouter()
 travel_rest.register(router)
 
-prefix = 'rest/'
+prefix = settings.REST_BASE_PATH + settings.REST_VERSION
 urlpatterns = [
     url(r'^' + prefix, include(router.urls)),
     url(r'^' + prefix + 'login/', include('rest_framework.urls', namespace='rest_framework')),

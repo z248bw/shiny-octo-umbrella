@@ -138,3 +138,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ]
 }
+
+REST_BASE_PATH = 'rest/'
+REST_VERSION = '1/'

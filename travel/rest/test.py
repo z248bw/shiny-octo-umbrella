@@ -28,10 +28,10 @@ class MainRestTest(APITestCase):
         self.assertEqual(self.get(url=url, user=user).status_code, 403)
 
     def get_url_for_users(self):
-        return '/rest/users/'
+        return '/rest/1/users/'
 
     def get_url_for_user(self, user):
-        return '/rest/users/' + str(user.pk) + '/'
+        return self.get_url_for_users() + str(user.pk) + '/'
 
     def test_get_users_with_admin(self):
         user2 = create_user()
