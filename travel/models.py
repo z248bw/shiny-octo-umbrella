@@ -48,12 +48,9 @@ class Passenger(AbstractPerson):
     class DriverCannotBePassengerException(Exception):
         pass
 
-    @staticmethod
-    def take_a_seat(user, ride, phone):
-        if len(Ride.objects.filter(driver=user)) > 0:
+    def save(self, *args, **kwargs):
+        if len(Ride.objects.filter(driver=self.user)) > 0:
             raise Passenger.DriverCannotBePassengerException
-        passenger = Passenger(user=user, ride=ride, phone=phone)
-        if ride.get_num_of_free_seats() == 0:
+        if self.ride.get_num_of_free_seats() == 0:
             raise Passenger.NoMoreSpaceException
-        passenger.save()
-        return user
+        super(Passenger, self).save(*args, **kwargs)

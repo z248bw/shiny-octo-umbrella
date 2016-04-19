@@ -31,7 +31,9 @@ class SimpleTest(TestCase):
 
 class ModelTestBase:
     def create_passenger_user(self, ride):
-        return Passenger.take_a_seat(user=create_user(), ride=ride, phone=get_random_string(length=5))
+        user = create_user()
+        Passenger(user=user, ride=ride, phone=get_random_string(length=5)).save()
+        return user
 
 
 class CarTest(TestCase, ModelTestBase):
@@ -77,22 +79,22 @@ class CarTest(TestCase, ModelTestBase):
                     password='')
         user.save()
         ride = self.create_ride()
-        Passenger.take_a_seat(user=user, ride=ride, phone=get_random_string(5))
+        Passenger(user=user, ride=ride, phone=get_random_string(5)).save()
         with self.assertRaises(expected_exception=IntegrityError):
-            Passenger.take_a_seat(user=user, ride=ride, phone=get_random_string(5))
+            Passenger(user=user, ride=ride, phone=get_random_string(5)).save()
 
     def test_add_driver_as_passenger(self):
         ride = self.create_ride()
         with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
                                expected_message=''):
-            Passenger.take_a_seat(user=ride.driver, ride=ride, phone=get_random_string(5))
+            Passenger(user=ride.driver, ride=ride, phone=get_random_string(5)).save()
 
     def test_add_driver_as_passenger_in_another_ride(self):
         ride = self.create_ride()
         other_ride = self.create_ride()
         with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
                                expected_message=''):
-            Passenger.take_a_seat(user=ride.driver, ride=other_ride, phone=get_random_string(5))
+            Passenger(user=ride.driver, ride=other_ride, phone=get_random_string(5)).save()
 
     def test_driver_drives_multiple_rides(self):
         user = create_user()
@@ -117,9 +119,9 @@ class CarTest(TestCase, ModelTestBase):
         user.save()
         ride = self.create_ride()
         other_ride = self.create_ride()
-        Passenger.take_a_seat(user=user, ride=ride, phone=get_random_string(5))
+        Passenger(user=user, ride=ride, phone=get_random_string(5)).save()
         with self.assertRaises(expected_exception=IntegrityError):
-            Passenger.take_a_seat(user=user, ride=other_ride, phone=get_random_string(5))
+            Passenger(user=user, ride=other_ride, phone=get_random_string(5)).save()
 
     def assert_passengers(self, expected, actual):
         for i, e in enumerate(expected):
