@@ -2,15 +2,13 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-class AbstractPerson(models.Model):
+class TravelUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
 
-    class Meta:
-        abstract = True
 
-
-class Ride(AbstractPerson):
-    driver = models.OneToOneField(User, on_delete=models.CASCADE)
+class Ride(models.Model):
+    driver = models.OneToOneField(TravelUser, on_delete=models.CASCADE)
     price = models.IntegerField(verbose_name='Ar')
     num_of_seats = models.IntegerField(verbose_name='Ferohelyek szama(soforules nelkul)')
     start_time = models.DateTimeField(verbose_name='Indulasi ido')
@@ -32,14 +30,14 @@ class Ride(AbstractPerson):
         super(Ride, self).save(*args, **kwargs)
 
     def check_driver_contact_info(self):
-        if self.driver.last_name == '' \
-                or self.driver.first_name == '' \
-                or self.driver.email == '':
+        if self.driver.user.last_name == '' \
+                or self.driver.user.first_name == '' \
+                or self.driver.user.email == '':
             raise Ride.NoDriverContactProvidedException
 
 
-class Passenger(AbstractPerson):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class Passenger(models.Model):
+    user = models.OneToOneField(TravelUser, on_delete=models.CASCADE)
     ride = models.ForeignKey(Ride, related_name='ride', verbose_name='Fuvar')
 
     class NoMoreSpaceException(Exception):

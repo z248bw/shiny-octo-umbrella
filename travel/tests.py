@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from django.utils.crypto import get_random_string
 
-from travel.models import Ride, Passenger
+from travel.models import Ride, Passenger, TravelUser
 
 
 def create_user():
@@ -21,6 +21,23 @@ def create_user():
     return user
 
 
+def create_travel_user():
+    user = create_user()
+    travel_user = TravelUser(user=user, phone=get_random_string(length=5))
+    travel_user.save()
+    return travel_user
+
+
+def create_ride():
+    ride = Ride(driver=create_travel_user(),
+                price=0,
+                num_of_seats=4,
+                start_time=datetime(2015, 1, 1, 12, 0, 0),
+                start_location='asd street')
+    ride.save()
+    return ride
+
+
 class SimpleTest(TestCase):
     def test_basic_addition(self):
         """
@@ -31,35 +48,27 @@ class SimpleTest(TestCase):
 
 class ModelTestBase:
     def create_passenger_user(self, ride):
-        user = create_user()
-        Passenger(user=user, ride=ride, phone=get_random_string(length=5)).save()
+        user = create_travel_user()
+        Passenger(user=user, ride=ride).save()
         return user
 
 
 class CarTest(TestCase, ModelTestBase):
-    def create_ride(self):
-        ride = Ride(driver=create_user(),
-                    phone=get_random_string(length=5),
-                    price=0,
-                    num_of_seats=4,
-                    start_time=datetime(2015, 1, 1, 12, 0, 0),
-                    start_location='asd street')
-        ride.save()
-        return ride
-
     def test_save_ride_without_driver_email(self):
         with self.assertRaisesMessage(expected_exception=Ride.NoDriverContactProvidedException,
                                       expected_message=''):
             noname_user = User(username='noname', password='')
             noname_user.save()
-            Ride(driver=noname_user,
+            driver = TravelUser(user=noname_user, phone=get_random_string(5))
+            driver.save()
+            Ride(driver=driver,
                  price=0,
                  num_of_seats=0,
                  start_time=datetime(2015, 1, 1, 12, 0, 0),
                  start_location='asd street').save()
 
     def test_create_ride_passenger_if_ride_has_no_free_seat(self):
-        ride_with_no_space = Ride(driver=create_user(),
+        ride_with_no_space = Ride(driver=create_travel_user(),
                                   price=0,
                                   num_of_seats=0,
                                   start_time=datetime(2015, 1, 1, 12, 0, 0),
@@ -70,34 +79,32 @@ class CarTest(TestCase, ModelTestBase):
             self.create_passenger_user(ride_with_no_space)
 
     def test_create_ride_passenger_if_ride_has_free_seats(self):
-        ride = self.create_ride()
+        ride = create_ride()
         user = self.create_passenger_user(ride)
         self.assertEqual(user.passenger.ride, ride)
 
     def test_add_same_passenger_to_ride_multiple_times(self):
-        user = User(username=get_random_string(length=5),
-                    password='')
-        user.save()
-        ride = self.create_ride()
-        Passenger(user=user, ride=ride, phone=get_random_string(5)).save()
+        user = create_travel_user()
+        ride = create_ride()
+        Passenger(user=user, ride=ride).save()
         with self.assertRaises(expected_exception=IntegrityError):
-            Passenger(user=user, ride=ride, phone=get_random_string(5)).save()
+            Passenger(user=user, ride=ride,).save()
 
     def test_add_driver_as_passenger(self):
-        ride = self.create_ride()
+        ride = create_ride()
         with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
                                expected_message=''):
-            Passenger(user=ride.driver, ride=ride, phone=get_random_string(5)).save()
+            Passenger(user=ride.driver, ride=ride).save()
 
     def test_add_driver_as_passenger_in_another_ride(self):
-        ride = self.create_ride()
-        other_ride = self.create_ride()
+        ride = create_ride()
+        other_ride = create_ride()
         with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
                                expected_message=''):
-            Passenger(user=ride.driver, ride=other_ride, phone=get_random_string(5)).save()
+            Passenger(user=ride.driver, ride=other_ride).save()
 
     def test_driver_drives_multiple_rides(self):
-        user = create_user()
+        user = create_travel_user()
         ride = Ride(driver=user,
                     price=0,
                     num_of_seats=0,
@@ -114,49 +121,47 @@ class CarTest(TestCase, ModelTestBase):
             ride.save()
 
     def test_add_same_passenger_to_multiple_rides(self):
-        user = User(username=get_random_string(length=5),
-                    password='')
-        user.save()
-        ride = self.create_ride()
-        other_ride = self.create_ride()
-        Passenger(user=user, ride=ride, phone=get_random_string(5)).save()
+        user = create_travel_user()
+        ride = create_ride()
+        other_ride = create_ride()
+        Passenger(user=user, ride=ride).save()
         with self.assertRaises(expected_exception=IntegrityError):
-            Passenger(user=user, ride=other_ride, phone=get_random_string(5)).save()
+            Passenger(user=user, ride=other_ride).save()
 
     def assert_passengers(self, expected, actual):
         for i, e in enumerate(expected):
             self.assertEqual(e.pk, actual[i].pk)
 
     def test_get_passengers_of_ride_with_no_passengers(self):
-        ride = self.create_ride()
+        ride = create_ride()
         self.assert_passengers(expected=[], actual=ride.get_passengers())
 
     def test_get_passengers_of_ride_with_one_passenger(self):
-        ride = self.create_ride()
+        ride = create_ride()
         expected = [self.create_passenger_user(ride).passenger]
         self.assert_passengers(expected=expected, actual=ride.get_passengers())
 
     def test_get_passengers_of_ride_with_two_passengers(self):
-        ride = self.create_ride()
+        ride = create_ride()
         expected = [self.create_passenger_user(ride).passenger,
                     self.create_passenger_user(ride).passenger]
         self.assert_passengers(expected=expected, actual=ride.get_passengers())
 
     def test_get_passengers_of_ride_with_passengers_in_the_other_ride(self):
-        ride = self.create_ride()
-        other_ride = self.create_ride()
+        ride = create_ride()
+        other_ride = create_ride()
         self.create_passenger_user(other_ride)
         self.assert_passengers(expected=[], actual=ride.get_passengers())
 
     def test_get_passengers_of_ride_if_passengers_are_deleted(self):
-        ride = self.create_ride()
+        ride = create_ride()
         user = self.create_passenger_user(ride)
         self.assert_passengers(expected=[user.passenger], actual=ride.get_passengers())
         user.delete()
         self.assert_passengers(expected=[], actual=ride.get_passengers())
 
     def test_get_num_of_free_seats(self):
-        ride = self.create_ride()
+        ride = create_ride()
         self.create_passenger_user(ride)
         self.create_passenger_user(ride)
         self.assertEqual(2, ride.num_of_seats - 2)
