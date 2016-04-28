@@ -86,15 +86,15 @@ class PassengerPermissions(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method == 'DELETE' and request.user == obj.ride.driver.user:
             return True
-        return request.user == obj.user.user or request.user.is_superuser
+        return request.user == obj.travel_user.user or request.user.is_superuser
 
 
 class PassengerSerializer(serializers.ModelSerializer):
-    user = TravelUserSerializer(read_only=True)
+    travel_user = TravelUserSerializer(read_only=True)
 
     class Meta:
         model = Passenger
-        fields = ['pk', 'user', 'ride']
+        fields = ['pk', 'travel_user', 'ride']
 
 
 class PassengerViewSet(viewsets.ModelViewSet):

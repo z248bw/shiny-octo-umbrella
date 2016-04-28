@@ -222,10 +222,10 @@ class MainRestTest(APITestCase):
         passenger.ride = create_ride()
         self.put(url=self.get_url_for_passenger(passenger),
                  body_dict=self.get_passenger_request_json(passenger),
-                 user=passenger.user.user)
+                 user=passenger.travel_user.user)
         self.assert_get(url=self.get_url_for_passengers(),
                         expected=[self.passenger_to_response_dict(passenger)],
-                        user=passenger.user)
+                        user=passenger.travel_user.user)
 
     def get_url_for_passenger(self, passenger):
         return self.get_url_for_passengers() + str(passenger.pk) + '/'
@@ -235,12 +235,12 @@ class MainRestTest(APITestCase):
 
     def get_passenger_request_json(self, passenger):
         request_json = self.passenger_to_response_dict(passenger)
-        request_json.pop('user')
+        request_json.pop('travel_user')
         return request_json
 
     def passenger_to_response_dict(self, passenger):
         return {'pk': passenger.pk,
-                'user': self.travel_user_to_response_dict(passenger.user),
+                'travel_user': self.travel_user_to_response_dict(passenger.travel_user),
                 'ride': passenger.ride.pk}
 
     def test_user_cannot_change_other_passengers_ride(self):
@@ -265,10 +265,10 @@ class MainRestTest(APITestCase):
         passenger1 = create_passenger_user(create_ride())
         passenger2 = create_passenger_user(create_ride())
         self.delete(url=self.get_url_for_passenger(passenger1),
-                    user=passenger1.user.user)
+                    user=passenger1.travel_user.user)
         self.assert_get(url=self.get_url_for_passengers(),
                         expected=[self.passenger_to_response_dict(passenger2)],
-                        user=passenger2.user)
+                        user=passenger2.travel_user.user)
 
     def test_driver_can_delete_his_passenger(self):
         ride = create_ride()

@@ -42,8 +42,7 @@ class Ride(models.Model):
 
 
 class Passenger(models.Model):
-    # TODO: rename user to travel_user
-    user = models.OneToOneField(TravelUser, on_delete=models.CASCADE)
+    travel_user = models.OneToOneField(TravelUser, on_delete=models.CASCADE)
     ride = models.ForeignKey(Ride, related_name='ride', verbose_name='Fuvar')
 
     class NoMoreSpaceException(Exception):
@@ -53,7 +52,7 @@ class Passenger(models.Model):
         pass
 
     def save(self, *args, **kwargs):
-        if len(Ride.objects.filter(driver=self.user)) > 0:
+        if len(Ride.objects.filter(driver=self.travel_user)) > 0:
             raise Passenger.DriverCannotBePassengerException
         if self.ride.get_num_of_free_seats() == 0:
             raise Passenger.NoMoreSpaceException

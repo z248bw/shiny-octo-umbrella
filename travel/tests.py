@@ -44,7 +44,7 @@ def create_ride():
 
 def create_passenger_user(ride):
     user = create_travel_user()
-    passenger = Passenger(user=user, ride=ride)
+    passenger = Passenger(travel_user=user, ride=ride)
     passenger.save()
     return passenger
 
@@ -97,22 +97,22 @@ class RideTest(TestCase):
     def test_add_same_passenger_to_ride_multiple_times(self):
         user = create_travel_user()
         ride = create_ride()
-        Passenger(user=user, ride=ride).save()
+        Passenger(travel_user=user, ride=ride).save()
         with self.assertRaises(expected_exception=IntegrityError):
-            Passenger(user=user, ride=ride,).save()
+            Passenger(travel_user=user, ride=ride,).save()
 
     def test_add_driver_as_passenger(self):
         ride = create_ride()
         with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
                                expected_message=''):
-            Passenger(user=ride.driver, ride=ride).save()
+            Passenger(travel_user=ride.driver, ride=ride).save()
 
     def test_add_driver_as_passenger_in_another_ride(self):
         ride = create_ride()
         other_ride = create_ride()
         with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
                                expected_message=''):
-            Passenger(user=ride.driver, ride=other_ride).save()
+            Passenger(travel_user=ride.driver, ride=other_ride).save()
 
     def test_driver_drives_multiple_rides(self):
         user = create_travel_user()
@@ -135,9 +135,9 @@ class RideTest(TestCase):
         user = create_travel_user()
         ride = create_ride()
         other_ride = create_ride()
-        Passenger(user=user, ride=ride).save()
+        Passenger(travel_user=user, ride=ride).save()
         with self.assertRaises(expected_exception=IntegrityError):
-            Passenger(user=user, ride=other_ride).save()
+            Passenger(travel_user=user, ride=other_ride).save()
 
     def assert_passengers(self, expected, actual):
         for i, e in enumerate(expected):
