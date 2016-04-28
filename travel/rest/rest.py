@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework.decorators import detail_route
+from rest_framework.response import Response
 
 from travel.models import Ride, TravelUser, Passenger
 from wedding import settings
@@ -77,6 +79,11 @@ class RideViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         driver = TravelUser.objects.get(user=self.request.user.pk)
         serializer.save(driver=driver)
+
+    @detail_route(methods=['get'])
+    def passengers(self, request, pk=None):
+        passengers = Ride.objects.get(pk=pk).get_passengers()
+        return Response(PassengerSerializer(passengers, many=True).data)
 
 
 class PassengerPermissions(permissions.BasePermission):

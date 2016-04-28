@@ -206,6 +206,14 @@ class MainRestTest(APITestCase):
                                user=ride1.driver.user)
         self.assertEqual(response.status_code, 405)
 
+    def test_user_can_list_passengers_of_ride(self):
+        user = create_user()
+        ride = create_ride()
+        passenger1 = create_passenger_user(ride)
+        passenger2 = create_passenger_user(ride)
+        expected = [self.passenger_to_response_dict(passenger1), self.passenger_to_response_dict(passenger2)]
+        self.assert_get(url=self.get_url_for_ride(ride) + 'passengers/', expected=expected, user=user)
+
     def test_user_can_list_passengers(self):
         ride = create_ride()
         user = create_user()
