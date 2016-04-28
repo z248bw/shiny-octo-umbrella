@@ -154,14 +154,6 @@ class RideUtils(UserUtils):
 
 
 class RideRestTest(RestTestBase, RideUtils):
-    def setUp(self):
-        self.admin = User(username='admin',
-                          first_name='admin',
-                          last_name='doe',
-                          email='admin@doe.com',
-                          is_superuser=True)
-        self.admin.save()
-
     def test_user_can_list_rides(self):
         user = create_user()
         ride1 = create_ride()
@@ -245,14 +237,6 @@ class PassengerUtilities(RideUtils):
 
 
 class PassengerRestTest(RestTestBase, PassengerUtilities):
-    def setUp(self):
-        self.admin = User(username='admin',
-                          first_name='admin',
-                          last_name='doe',
-                          email='admin@doe.com',
-                          is_superuser=True)
-        self.admin.save()
-
     def test_user_can_list_passengers_of_ride(self):
         user = create_user()
         ride = create_ride()
