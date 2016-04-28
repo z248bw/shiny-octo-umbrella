@@ -57,7 +57,13 @@ class SimpleTest(TestCase):
         self.assertEqual(1 + 1, 2)
 
 
-class CarTest(TestCase):
+class RideTest(TestCase):
+    def test_save_ride_with_less_than_one_seats(self):
+        ride = create_ride()
+        ride.num_of_seats = 0
+        with self.assertRaises(expected_exception=Ride.NotEnoughFreeSeatsException):
+            ride.save()
+
     def test_save_ride_without_driver_email(self):
         with self.assertRaisesMessage(expected_exception=Ride.NoDriverContactProvidedException,
                                       expected_message=''):
@@ -67,17 +73,18 @@ class CarTest(TestCase):
             driver.save()
             Ride(driver=driver,
                  price=0,
-                 num_of_seats=0,
+                 num_of_seats=1,
                  start_time=datetime(2015, 1, 1, 12, 0, 0),
                  start_location='asd street').save()
 
     def test_create_ride_passenger_if_ride_has_no_free_seat(self):
         ride_with_no_space = Ride(driver=create_travel_user(),
                                   price=0,
-                                  num_of_seats=0,
+                                  num_of_seats=1,
                                   start_time=datetime(2015, 1, 1, 12, 0, 0),
                                   start_location='asd street')
         ride_with_no_space.save()
+        create_passenger_user(ride_with_no_space)
         with self.assertRaisesMessage(expected_exception=Passenger.NoMoreSpaceException,
                                       expected_message=''):
             create_passenger_user(ride_with_no_space)
@@ -111,7 +118,7 @@ class CarTest(TestCase):
         user = create_travel_user()
         ride = Ride(driver=user,
                     price=0,
-                    num_of_seats=0,
+                    num_of_seats=1,
                     start_time=datetime(2015, 1, 1, 12, 0, 0),
                     start_location='asd street')
         ride.save()
@@ -119,7 +126,7 @@ class CarTest(TestCase):
                                expected_message=''):
             ride = Ride(driver=user,
                         price=0,
-                        num_of_seats=0,
+                        num_of_seats=1,
                         start_time=datetime(2015, 1, 1, 12, 0, 0),
                         start_location='asd street')
             ride.save()

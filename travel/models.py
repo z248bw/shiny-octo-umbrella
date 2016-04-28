@@ -19,6 +19,9 @@ class Ride(models.Model):
     class NoDriverContactProvidedException(Exception):
         pass
 
+    class NotEnoughFreeSeatsException(Exception):
+        pass
+
     def get_passengers(self):
         return Passenger.objects.filter(ride=self.pk)
 
@@ -26,6 +29,8 @@ class Ride(models.Model):
         return self.num_of_seats - len(self.get_passengers())
 
     def save(self, *args, **kwargs):
+        if self.num_of_seats < 1:
+            raise Ride.NotEnoughFreeSeatsException
         self.check_driver_contact_info()
         super(Ride, self).save(*args, **kwargs)
 
@@ -37,6 +42,7 @@ class Ride(models.Model):
 
 
 class Passenger(models.Model):
+    # TODO: rename user to travel_user
     user = models.OneToOneField(TravelUser, on_delete=models.CASCADE)
     ride = models.ForeignKey(Ride, related_name='ride', verbose_name='Fuvar')
 
