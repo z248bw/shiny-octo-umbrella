@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework import permissions
 
-from travel.models import Ride, TravelUser
+from travel.models import Ride, TravelUser, Passenger
 from wedding import settings
 
 
@@ -79,6 +79,36 @@ class RideViewSet(viewsets.ModelViewSet):
         serializer.save(driver=driver)
 
 
+class PassengerPermissions(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'DELETE' and request.user == obj.ride.driver.user:
+            return True
+        return request.user == obj.user.user or request.user.is_superuser
+
+
+class PassengerSerializer(serializers.ModelSerializer):
+    user = TravelUserSerializer(read_only=True)
+
+    class Meta:
+        model = Passenger
+        fields = ['pk', 'user', 'ride']
+
+
+class PassengerViewSet(viewsets.ModelViewSet):
+    base_path = 'passengers'
+    queryset = Passenger.objects.all()
+    serializer_class = PassengerSerializer
+    permission_classes = [PassengerPermissions]
+
+    def perform_create(self, serializer):
+        user = TravelUser.objects.get(user=self.request.user.pk)
+        serializer.save(user=user)
+
+
 def register(router):
     router.register(UserViewSet.base_path, UserViewSet)
     router.register(RideViewSet.base_path, RideViewSet)
+    router.register(PassengerViewSet.base_path, PassengerViewSet)

@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 
-from travel.tests import create_user, create_ride, get_ride, create_travel_user
+from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user
 
 
 class MainRestTest(APITestCase):
@@ -23,10 +23,10 @@ class MainRestTest(APITestCase):
         return json.loads(response.content.decode('utf-8'))
 
     def get(self, url, user):
-        user = self.login(user)
+        user = self.login_with_user_or_admin(user)
         return self.client.get(path=url, user=user)
 
-    def login(self, user):
+    def login_with_user_or_admin(self, user):
         user = self.admin if user is None else user
         self.client.force_authenticate(user=user)
         return user
@@ -42,7 +42,7 @@ class MainRestTest(APITestCase):
         self.assertEqual(response.status_code, expected)
 
     def post(self, url, user, body_dict):
-        self.login(user)
+        self.login_with_user_or_admin(user)
         return self.client.post(url, body_dict, format='json')
 
     def assert_has_no_create_permission(self, url, user, body_dict):
@@ -165,7 +165,7 @@ class MainRestTest(APITestCase):
                         user=ride.driver.user)
 
     def put(self, url, user, body_dict):
-        self.login(user)
+        self.login_with_user_or_admin(user)
         return self.client.put(url, body_dict, format='json')
 
     def get_url_for_ride(self, ride):
@@ -189,7 +189,7 @@ class MainRestTest(APITestCase):
                         user=ride2.driver.user)
 
     def delete(self, url, user):
-        self.login(user)
+        self.login_with_user_or_admin(user)
         return self.client.delete(url, format='json')
 
     def test_user_cannot_delete_other_ones_ride(self):
@@ -205,3 +205,90 @@ class MainRestTest(APITestCase):
         response = self.delete(url=self.get_url_for_rides(),
                                user=ride1.driver.user)
         self.assertEqual(response.status_code, 405)
+
+    def test_user_can_list_passengers(self):
+        ride = create_ride()
+        user = create_user()
+        passenger1 = create_passenger_user(ride)
+        passenger2 = create_passenger_user(ride)
+
+        self.assert_get(url=self.get_url_for_passengers(),
+                        expected=[self.passenger_to_response_dict(passenger1),
+                                  self.passenger_to_response_dict(passenger2)],
+                        user=user)
+
+    def test_passenger_can_change_his_ride(self):
+        passenger = create_passenger_user(create_ride())
+        passenger.ride = create_ride()
+        self.put(url=self.get_url_for_passenger(passenger),
+                 body_dict=self.get_passenger_request_json(passenger),
+                 user=passenger.user.user)
+        self.assert_get(url=self.get_url_for_passengers(),
+                        expected=[self.passenger_to_response_dict(passenger)],
+                        user=passenger.user)
+
+    def get_url_for_passenger(self, passenger):
+        return self.get_url_for_passengers() + str(passenger.pk) + '/'
+
+    def get_url_for_passengers(self):
+        return '/rest/1/passengers/'
+
+    def get_passenger_request_json(self, passenger):
+        request_json = self.passenger_to_response_dict(passenger)
+        request_json.pop('user')
+        return request_json
+
+    def passenger_to_response_dict(self, passenger):
+        return {'pk': passenger.pk,
+                'user': self.travel_user_to_response_dict(passenger.user),
+                'ride': passenger.ride.pk}
+
+    def test_user_cannot_change_other_passengers_ride(self):
+        user = create_user()
+        passenger = create_passenger_user(create_ride())
+        passenger.ride = create_ride()
+        response = self.put(url=self.get_url_for_passenger(passenger),
+                            body_dict=self.get_passenger_request_json(passenger),
+                            user=user)
+        self.assertEqual(response.status_code, 403)
+
+    def test_driver_cannot_change_other_passengers_ride(self):
+        ride = create_ride()
+        passenger = create_passenger_user(create_ride())
+        passenger.ride = ride
+        response = self.put(url=self.get_url_for_passenger(passenger),
+                            body_dict=self.get_passenger_request_json(passenger),
+                            user=ride.driver.user)
+        self.assertEqual(response.status_code, 403)
+
+    def test_passenger_can_delete_himself(self):
+        passenger1 = create_passenger_user(create_ride())
+        passenger2 = create_passenger_user(create_ride())
+        self.delete(url=self.get_url_for_passenger(passenger1),
+                    user=passenger1.user.user)
+        self.assert_get(url=self.get_url_for_passengers(),
+                        expected=[self.passenger_to_response_dict(passenger2)],
+                        user=passenger2.user)
+
+    def test_driver_can_delete_his_passenger(self):
+        ride = create_ride()
+        passenger = create_passenger_user(ride)
+        self.delete(url=self.get_url_for_passenger(passenger),
+                    user=ride.driver.user)
+        self.assert_get(url=self.get_url_for_passengers(),
+                        expected=[],
+                        user=ride.driver.user)
+
+    def test_user_cannot_delete_other_passenger(self):
+        user = create_user()
+        passenger = create_passenger_user(create_ride())
+        response = self.delete(url=self.get_url_for_passenger(passenger),
+                               user=user)
+        self.assertEqual(response.status_code, 403)
+
+    def test_driver_cannot_delete_others_passenger(self):
+        ride = create_ride()
+        passenger = create_passenger_user(create_ride())
+        response = self.delete(url=self.get_url_for_passenger(passenger),
+                               user=ride.driver.user)
+        self.assertEqual(response.status_code, 403)
