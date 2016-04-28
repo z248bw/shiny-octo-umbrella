@@ -103,7 +103,7 @@ class MainRestTest(APITestCase):
                 'price': ride.price,
                 'num_of_seats': ride.num_of_seats,
                 'num_of_free_seats': ride.get_num_of_free_seats(),
-                'start_time': ride.start_time.isoformat() + 'Z', # ECMA 262 date time string specification
+                'start_time': ride.start_time.isoformat() + 'Z',  # ECMA 262 date time string specification
                 'start_location': ride.start_location,
                 'car_name': ride.car_name,
                 'description': ride.description}
@@ -142,3 +142,66 @@ class MainRestTest(APITestCase):
         response.pop('pk')
         expected.pop('pk')
         self.assertEqual(response, expected)
+
+    def test_user_cannot_create_ride_in_another_users_name(self):
+        ride = get_ride()
+        other_user = create_travel_user()
+        request_json = self.get_ride_request_json(ride)
+        request_json['driver'] = other_user
+        with self.assertRaises(expected_exception=TypeError):
+            self.assert_post(url=self.get_url_for_rides(),
+                             body_dict=request_json,
+                             expected=self.ride_to_response_dict(ride),
+                             user=ride.driver.user)
+
+    def test_user_can_update_his_ride(self):
+        ride = create_ride()
+        ride.price += 1
+        self.put(url=self.get_url_for_ride(ride),
+                 body_dict=self.get_ride_request_json(ride),
+                 user=ride.driver.user)
+        self.assert_get(url=self.get_url_for_rides(),
+                        expected=[self.ride_to_response_dict(ride)],
+                        user=ride.driver.user)
+
+    def put(self, url, user, body_dict):
+        self.login(user)
+        return self.client.put(url, body_dict, format='json')
+
+    def get_url_for_ride(self, ride):
+        return self.get_url_for_rides() + str(ride.pk) + '/'
+
+    def test_user_cannot_update_other_ones_ride(self):
+        user = create_travel_user()
+        ride = create_ride()
+        response = self.put(url=self.get_url_for_ride(ride),
+                            body_dict=self.get_ride_request_json(ride),
+                            user=user.user)
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_can_delete_his_ride(self):
+        ride1 = create_ride()
+        ride2 = create_ride()
+        self.delete(url=self.get_url_for_ride(ride1),
+                    user=ride1.driver.user)
+        self.assert_get(url=self.get_url_for_rides(),
+                        expected=[self.ride_to_response_dict(ride2)],
+                        user=ride2.driver.user)
+
+    def delete(self, url, user):
+        self.login(user)
+        return self.client.delete(url, format='json')
+
+    def test_user_cannot_delete_other_ones_ride(self):
+        ride1 = create_ride()
+        ride2 = create_ride()
+        response = self.delete(url=self.get_url_for_ride(ride2),
+                               user=ride1.driver.user)
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_cannot_delete_all_cars(self):
+        ride1 = create_ride()
+        create_ride()
+        response = self.delete(url=self.get_url_for_rides(),
+                               user=ride1.driver.user)
+        self.assertEqual(response.status_code, 405)
