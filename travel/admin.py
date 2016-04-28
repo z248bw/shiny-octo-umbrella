@@ -1,6 +1,21 @@
 from django.contrib import admin
 
-from travel.models import Passenger, Ride
+from travel.models import Passenger, Ride, TravelUser
+
+
+class TravelUserAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'get_user_name', 'get_user_last_name')
+    search_fields = ['user__name', 'user__first_name', 'user_last_name']
+
+    def get_user_name(self, obj):
+        return obj.user.username
+
+    get_user_name.short_description = 'Username'
+
+    def get_user_last_name(self, obj):
+        return obj.user.last_name
+
+    get_user_last_name.short_description = 'Last name'
 
 
 class PassengerInline(admin.TabularInline):
@@ -17,3 +32,4 @@ class CarAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Ride, CarAdmin)
+admin.site.register(TravelUser, TravelUserAdmin)
