@@ -5,6 +5,7 @@ from django.db import models
 class TravelUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
+    accepted_eula = models.BooleanField(default=False, verbose_name='Elfogadta az eulat')
 
 
 class Ride(models.Model):
