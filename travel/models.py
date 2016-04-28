@@ -14,7 +14,7 @@ class Ride(models.Model):
     start_time = models.DateTimeField(verbose_name='Indulasi ido')
     start_location = models.CharField(max_length=100, verbose_name='Indulasi hely')
     car_name = models.CharField(max_length=20, verbose_name='Auto tipusa', null=True, blank=True)
-    description = models.CharField(max_length=100, verbose_name='Egyeb', null=True, blank=True)
+    description = models.TextField(max_length=200, verbose_name='Egyeb', null=True, blank=True)
 
     class NoDriverContactProvidedException(Exception):
         pass
