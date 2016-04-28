@@ -49,10 +49,7 @@ class TravelUserSerializer(serializers.ModelSerializer):
 
 class RidePermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return is_object_level_request(viewset_base_path=RideViewSet.base_path,
-                                       request_path=request.path) or request.user.is_superuser
+        return True
 
     def has_object_permission(self, request, view, obj):
         return request.user == obj.driver or request.user.is_superuser
@@ -67,7 +64,6 @@ class RideSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ride
-        # fields = ['pk', 'driver', 'price', 'num_of_seats', 'start_time', 'num_of_free_seats'
         fields = ['pk', 'driver', 'price', 'num_of_seats', 'start_time', 'num_of_free_seats',
                   'start_location', 'car_name', 'description']
 
@@ -77,6 +73,10 @@ class RideViewSet(viewsets.ModelViewSet):
     queryset = Ride.objects.all()
     serializer_class = RideSerializer
     permission_classes = [RidePermissions]
+
+    def perform_create(self, serializer):
+        driver = TravelUser.objects.get(user=self.request.user.pk)
+        serializer.save(driver=driver)
 
 
 def register(router):

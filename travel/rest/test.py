@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 
-from travel.tests import create_user, create_ride
+from travel.tests import create_user, create_ride, get_ride, create_travel_user
 
 
 class MainRestTest(APITestCase):
@@ -17,7 +17,10 @@ class MainRestTest(APITestCase):
 
     def assert_get(self, url, expected, user=None):
         response = self.get(url=url, user=user)
-        self.assertEqual(json.loads(response.content.decode('utf-8')), expected)
+        self.assertEqual(self.get_response_body(response), expected)
+
+    def get_response_body(self, response):
+        return json.loads(response.content.decode('utf-8'))
 
     def get(self, url, user):
         user = self.login(user)
@@ -35,9 +38,12 @@ class MainRestTest(APITestCase):
         self.assert_create_permission(url=url, user=user, body_dict=body_dict, expected=201)
 
     def assert_create_permission(self, url, user, body_dict, expected):
-        self.login(user)
-        response = self.client.post(url, body_dict, format='json')
+        response = self.post(url=url, user=user, body_dict=body_dict)
         self.assertEqual(response.status_code, expected)
+
+    def post(self, url, user, body_dict):
+        self.login(user)
+        return self.client.post(url, body_dict, format='json')
 
     def assert_has_no_create_permission(self, url, user, body_dict):
         self.assert_create_permission(url=url, user=user, body_dict=body_dict, expected=403)
@@ -115,3 +121,24 @@ class MainRestTest(APITestCase):
         return {'pk': travel_user.pk,
                 'user': self.user_to_response_dict(travel_user.user),
                 'phone': travel_user.phone}
+
+    def test_user_can_create_ride(self):
+        ride = get_ride()
+        self.assert_post(url=self.get_url_for_rides(),
+                         body_dict=self.get_ride_request_json(ride),
+                         expected=self.ride_to_response_dict(ride),
+                         user=ride.driver.user)
+
+    def get_ride_request_json(self, ride):
+        ride_json = self.ride_to_response_dict(ride)
+        ride_json.pop('driver')
+        return ride_json
+
+    def assert_post(self, url, body_dict, expected, user=None):
+        response = self.get_response_body(self.post(url=url, user=user, body_dict=body_dict))
+        self.assert_post_response_body(response, expected)
+
+    def assert_post_response_body(self, response, expected):
+        response.pop('pk')
+        expected.pop('pk')
+        self.assertEqual(response, expected)

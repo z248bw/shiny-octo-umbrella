@@ -28,12 +28,16 @@ def create_travel_user():
     return travel_user
 
 
-def create_ride():
-    ride = Ride(driver=create_travel_user(),
+def get_ride():
+    return Ride(driver=create_travel_user(),
                 price=0,
                 num_of_seats=4,
                 start_time=datetime(2015, 1, 1, 12, 0, 0),
                 start_location='asd street')
+
+
+def create_ride():
+    ride = get_ride()
     ride.save()
     return ride
 
