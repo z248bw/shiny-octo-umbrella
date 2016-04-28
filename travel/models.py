@@ -14,6 +14,7 @@ class Ride(models.Model):
     num_of_seats = models.IntegerField(verbose_name='Ferohelyek szama(soforules nelkul)')
     start_time = models.DateTimeField(verbose_name='Indulasi ido')
     start_location = models.CharField(max_length=100, verbose_name='Indulasi hely')
+    notify_when_passenger_joins = models.BooleanField(default=False, verbose_name='Ertesites utas csatlakozaskor')
     car_name = models.CharField(max_length=20, verbose_name='Auto tipusa', null=True, blank=True)
     description = models.TextField(max_length=200, verbose_name='Egyeb', null=True, blank=True)
 
@@ -45,6 +46,10 @@ class Ride(models.Model):
 class Passenger(models.Model):
     travel_user = models.OneToOneField(TravelUser, on_delete=models.CASCADE)
     ride = models.ForeignKey(Ride, related_name='ride', verbose_name='Fuvar')
+    notify_when_ride_changes = models.BooleanField(default=False, verbose_name='Ertesites fuvar valtozaskor')
+    notify_when_ride_is_deleted = models.BooleanField(default=False, verbose_name='Ertesites fuvar torlodeskor')
+    notify_when_thrown_out_of_ride = models.BooleanField(default=False,
+                                                         verbose_name='Ertesites fuvarbol valo kidobaskor')
 
     class NoMoreSpaceException(Exception):
         pass
