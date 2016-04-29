@@ -2,6 +2,7 @@ import json
 from copy import deepcopy
 
 from django.contrib.auth.models import User
+from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
 from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user, get_passenger
@@ -79,17 +80,17 @@ class UserRestTest(RestTestBase, UserUtils):
         self.admin.save()
 
     def assert_get_has_no_permission(self, url, user):
-        self.assertEqual(RestUtils(url=url, user=user).get().status_code, 403)
+        self.assertEqual(RestUtils(url=url, user=user).get().status_code, status.HTTP_403_FORBIDDEN)
 
     def assert_has_create_permission(self, url, user, body_dict):
-        self.assert_create_permission(url=url, user=user, body_dict=body_dict, expected=201)
+        self.assert_create_permission(url=url, user=user, body_dict=body_dict, expected=status.HTTP_201_CREATED)
 
     def assert_create_permission(self, url, user, body_dict, expected):
         response = RestUtils(url=url, user=user).post(body_dict=body_dict)
         self.assertEqual(response.status_code, expected)
 
     def assert_has_no_create_permission(self, url, user, body_dict):
-        self.assert_create_permission(url=url, user=user, body_dict=body_dict, expected=403)
+        self.assert_create_permission(url=url, user=user, body_dict=body_dict, expected=status.HTTP_403_FORBIDDEN)
 
     def test_get_users_with_admin(self):
         user2 = create_user()
@@ -196,7 +197,7 @@ class RideRestTest(RestTestBase, RideUtils):
         ride = create_ride()
         response = RestUtils(url=self.get_url_for_ride(ride), user=user.user).put(
             body_dict=self.get_ride_request_json(ride))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_user_can_delete_his_ride(self):
         ride1 = create_ride()
@@ -210,13 +211,13 @@ class RideRestTest(RestTestBase, RideUtils):
         ride1 = create_ride()
         ride2 = create_ride()
         response = RestUtils(url=self.get_url_for_ride(ride2), user=ride1.driver.user).delete()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_user_cannot_delete_all_cars(self):
         ride1 = create_ride()
         create_ride()
         response = RestUtils(url=self.get_url_for_rides(), user=ride1.driver.user).delete()
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class PassengerUtilities(RideUtils):
@@ -292,7 +293,7 @@ class PassengerRestTest(RestTestBase, PassengerUtilities):
         passenger.ride = create_ride()
         response = RestUtils(url=self.get_url_for_passenger(passenger), user=user).put(
             body_dict=self.get_passenger_request_json(passenger))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_driver_cannot_change_other_passengers_ride(self):
         ride = create_ride()
@@ -300,7 +301,7 @@ class PassengerRestTest(RestTestBase, PassengerUtilities):
         passenger.ride = ride
         response = RestUtils(url=self.get_url_for_passenger(passenger), user=ride.driver.user).put(
             body_dict=self.get_passenger_request_json(passenger))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_passenger_can_delete_himself(self):
         passenger1 = create_passenger_user(create_ride())
@@ -322,10 +323,10 @@ class PassengerRestTest(RestTestBase, PassengerUtilities):
         user = create_user()
         passenger = create_passenger_user(create_ride())
         response = RestUtils(url=self.get_url_for_passenger(passenger), user=user).delete()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_driver_cannot_delete_others_passenger(self):
         ride = create_ride()
         passenger = create_passenger_user(create_ride())
         response = RestUtils(url=self.get_url_for_passenger(passenger), user=ride.driver.user).delete()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
