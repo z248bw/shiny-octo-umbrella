@@ -1,9 +1,10 @@
 import json
+from copy import deepcopy
 
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
 
-from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user
+from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user, get_passenger
 
 
 class RestUtils:
@@ -250,11 +251,31 @@ class PassengerRestTest(RestTestBase, PassengerUtilities):
         user = create_user()
         passenger1 = create_passenger_user(ride)
         passenger2 = create_passenger_user(ride)
-
         self.assert_get(url=self.get_url_for_passengers(),
                         expected=[self.passenger_to_response_dict(passenger1),
                                   self.passenger_to_response_dict(passenger2)],
                         user=user)
+
+    def test_user_can_be_passenger(self):
+        ride = create_ride()
+        passenger = get_passenger(ride)
+        self.assert_post(url=self.get_url_for_passengers(),
+                         user=passenger.travel_user.user,
+                         body_dict=self.get_passenger_request_json(passenger),
+                         expected=self.passenger_to_response_dict(passenger))
+
+    def test_user_cannot_be_passenger_in_multiple_rides(self):
+        ride1 = create_ride()
+        ride2 = create_ride()
+        passenger1 = get_passenger(ride1)
+        RestUtils(url=self.get_url_for_passengers(), user=passenger1.travel_user.user).post(
+            body_dict=self.get_passenger_request_json(passenger1))
+        passenger2 = deepcopy(passenger1)
+        passenger2.ride = ride2
+        response_body = RestUtils(url=self.get_url_for_passengers(),
+                                  user=passenger1.travel_user.user).post_and_return_reponse_body(
+            body_dict=self.get_passenger_request_json(passenger2))
+        self.assertEqual(response_body, {'message': 'You can only travel in one ride a travel'})
 
     def test_passenger_can_change_his_ride(self):
         passenger = create_passenger_user(create_ride())

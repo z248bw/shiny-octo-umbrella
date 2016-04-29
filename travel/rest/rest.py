@@ -6,9 +6,25 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+from rest_framework.views import exception_handler
 
-from travel.models import Ride, TravelUser, Passenger
+from travel.models import Ride, TravelUser, Passenger, TravelException
 from wedding import settings
+
+
+def custom_exception_handler(exc, context):
+    if isinstance(exc, TravelException):
+        return Response(TravelExceptionSerializer(exc).data)
+
+    # Call REST framework's default exception handler,
+    # to get the standard error response.
+    response = exception_handler(exc, context)
+
+    return response
+
+
+class TravelExceptionSerializer(serializers.Serializer):
+    message = serializers.CharField(max_length=40)
 
 
 def is_object_level_request(viewset_base_path, request_path):
@@ -112,7 +128,7 @@ class PassengerViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = TravelUser.objects.get(user=self.request.user.pk)
-        serializer.save(user=user)
+        serializer.save(travel_user=user)
 
 
 def register(router):

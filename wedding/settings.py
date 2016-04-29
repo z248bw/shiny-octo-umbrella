@@ -136,7 +136,8 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'travel.rest.rest.custom_exception_handler'
 }
 
 REST_BASE_PATH = 'rest/'

@@ -1,12 +1,11 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
-from django.db import IntegrityError
 from django.test import TestCase
 
 from django.utils.crypto import get_random_string
 
-from travel.models import Ride, Passenger, TravelUser
+from travel.models import Ride, Passenger, TravelUser, TravelException
 
 
 def create_user():
@@ -42,9 +41,13 @@ def create_ride():
     return ride
 
 
-def create_passenger_user(ride):
+def get_passenger(ride):
     user = create_travel_user()
-    passenger = Passenger(travel_user=user, ride=ride)
+    return Passenger(travel_user=user, ride=ride)
+
+
+def create_passenger_user(ride):
+    passenger = get_passenger(ride)
     passenger.save()
     return passenger
 
@@ -98,8 +101,8 @@ class RideTest(TestCase):
         user = create_travel_user()
         ride = create_ride()
         Passenger(travel_user=user, ride=ride).save()
-        with self.assertRaises(expected_exception=IntegrityError):
-            Passenger(travel_user=user, ride=ride,).save()
+        with self.assertRaises(expected_exception=TravelException):
+            Passenger(travel_user=user, ride=ride, ).save()
 
     def test_add_driver_as_passenger(self):
         ride = create_ride()
@@ -122,8 +125,7 @@ class RideTest(TestCase):
                     start_time=datetime(2015, 1, 1, 12, 0, 0),
                     start_location='asd street')
         ride.save()
-        with self.assertRaises(expected_exception=IntegrityError,
-                               expected_message=''):
+        with self.assertRaises(expected_exception=TravelException):
             ride = Ride(driver=user,
                         price=0,
                         num_of_seats=1,
@@ -136,7 +138,7 @@ class RideTest(TestCase):
         ride = create_ride()
         other_ride = create_ride()
         Passenger(travel_user=user, ride=ride).save()
-        with self.assertRaises(expected_exception=IntegrityError):
+        with self.assertRaises(expected_exception=TravelException):
             Passenger(travel_user=user, ride=other_ride).save()
 
     def assert_passengers(self, expected, actual):
