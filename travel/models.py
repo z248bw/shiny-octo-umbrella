@@ -1,13 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-
-class TravelException(Exception):
-    @staticmethod
-    def raise_exception(message):
-        e = TravelException()
-        e.message = message
-        raise e
+from travel.utils import TravelException, EmailNotifier, PassengerDeleteEmailFormatter
 
 
 class TravelUser(models.Model):
@@ -78,8 +72,7 @@ class Passenger(AbstractTravelModel):
     ride = models.ForeignKey(Ride, related_name='ride', verbose_name='Fuvar')
     notify_when_ride_changes = models.BooleanField(default=False, verbose_name='Ertesites fuvar valtozaskor')
     notify_when_ride_is_deleted = models.BooleanField(default=False, verbose_name='Ertesites fuvar torlodeskor')
-    notify_when_thrown_out_of_ride = models.BooleanField(default=False,
-                                                         verbose_name='Ertesites fuvarbol valo kidobaskor')
+    notify_when_deleted = models.BooleanField(default=False, verbose_name='Ertesites fuvarbol valo kidobaskor')
 
     class NoMoreSpaceException(TravelException):
         message = 'There is no more free space available in the selected ride'
@@ -99,3 +92,15 @@ class Passenger(AbstractTravelModel):
     def get_rides_of_user(self):
         return Ride.objects.filter(
             pk__in=Passenger.objects.values_list('ride', flat=True).filter(travel_user=self.travel_user))
+
+    # TODO disable url!
+    def delete(self, *args, **kwargs):
+        super(Passenger, self).delete()
+        if self.notify_when_deleted:
+            EmailNotifier(to=[self.travel_user.user.email, self.ride.driver.user.email],
+                          formatter=PassengerDeleteEmailFormatter(driver=self.ride.driver,
+                                                                  passenger=self.travel_user,
+                                                                  disable_url='TODO')).notify()
+
+    def get_driver_name(self):
+        return self.ride.driver.user.last_name + ' ' + self.ride.driver.user.first_name

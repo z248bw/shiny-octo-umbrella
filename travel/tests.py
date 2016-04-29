@@ -1,11 +1,13 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.core import mail
 from django.test import TestCase
 
 from django.utils.crypto import get_random_string
 
-from travel.models import Ride, Passenger, TravelUser, TravelException
+from travel.models import Ride, Passenger, TravelUser
+from travel.utils import TravelException
 
 
 def create_user():
@@ -196,3 +198,19 @@ class RideTest(TestCase):
         create_passenger_user(ride)
         create_passenger_user(ride)
         self.assertEqual(2, ride.num_of_seats - 2)
+
+
+class EmailTest(TestCase):
+    def test_email_notification_sent_on_passenger_delete_if_enabled(self):
+        ride = create_ride()
+        passenger = get_passenger(ride)
+        passenger.notify_when_deleted = True
+        passenger.save()
+        passenger.delete()
+        self.assertEquals(len(mail.outbox), 1)
+
+    def test_email_notification_not_sent_by_default_on_passenger_delete(self):
+        ride = create_ride()
+        passenger = create_passenger_user(ride)
+        passenger.delete()
+        self.assertEquals(len(mail.outbox), 0)
