@@ -141,3 +141,8 @@ REST_FRAMEWORK = {
 
 REST_BASE_PATH = 'rest/'
 REST_VERSION = '1/'
+
+# heroku config:add EMAIL_HOST_USER=xxx
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
