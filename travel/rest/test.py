@@ -254,7 +254,7 @@ class PassengerRestTest(RestTestBase, PassengerUtilities):
                          body_dict=self.get_passenger_request_json(passenger),
                          expected=self.passenger_to_response_dict(passenger))
 
-    def test_user_cannot_be_passenger_in_multiple_rides(self):
+    def test_user_cannot_be_passenger_in_multiple_rides_a_direction(self):
         ride1 = create_ride()
         ride2 = create_ride()
         passenger1 = get_passenger(ride1)
@@ -265,7 +265,7 @@ class PassengerRestTest(RestTestBase, PassengerUtilities):
         response_body = RestUtils(url=self.get_url_for_passengers(),
                                   user=passenger1.travel_user.user).post_and_return_reponse_body(
             body_dict=self.get_passenger_request_json(passenger2))
-        self.assertEqual(response_body, {'message': 'You can only travel in one ride a travel'})
+        self.assertEqual(response_body, {'message': 'You already have a ride in that direction'})
 
     def test_passenger_can_change_his_ride(self):
         passenger = create_passenger_user(create_ride())

@@ -1,10 +1,13 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.utils import IntegrityError
 
 
 class TravelException(Exception):
-    pass
+    @staticmethod
+    def raise_exception(message):
+        e = TravelException()
+        e.message = message
+        raise e
 
 
 class TravelUser(models.Model):
@@ -13,12 +16,33 @@ class TravelUser(models.Model):
     accepted_eula = models.BooleanField(default=False, verbose_name='Elfogadta az eulat')
 
 
-class Ride(models.Model):
-    driver = models.OneToOneField(TravelUser, on_delete=models.CASCADE)
+class AbstractTravelModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def check_available_travels_for_user(self, travels_of_user, new_travel):
+        if len(travels_of_user) == 0:
+            return
+        if len(travels_of_user) > 1:
+            TravelException.raise_exception('You already have a ride there and back')
+        travel = travels_of_user[0]
+        if self.is_not_the_same_travel(travel) and self.is_travel_for_the_same_direction(travel, new_travel):
+            TravelException.raise_exception('You already have a ride in that direction')
+
+    def is_travel_for_the_same_direction(self, t1, t2):
+        return t1.is_return == t2.is_return
+
+    def is_not_the_same_travel(self, travel):
+        return self.pk != travel.pk
+
+
+class Ride(AbstractTravelModel):
+    driver = models.ForeignKey(TravelUser, related_name='driver', verbose_name='Sofor')
     price = models.IntegerField(verbose_name='Ar')
     num_of_seats = models.IntegerField(verbose_name='Ferohelyek szama(soforules nelkul)')
     start_time = models.DateTimeField(verbose_name='Indulasi ido')
     start_location = models.CharField(max_length=100, verbose_name='Indulasi hely')
+    is_return = models.BooleanField(default=False)
     notify_when_passenger_joins = models.BooleanField(default=False, verbose_name='Ertesites utas csatlakozaskor')
     car_name = models.CharField(max_length=20, verbose_name='Auto tipusa', null=True, blank=True)
     description = models.TextField(max_length=200, verbose_name='Egyeb', null=True, blank=True)
@@ -39,15 +63,8 @@ class Ride(models.Model):
         if self.num_of_seats < 1:
             raise Ride.NotEnoughFreeSeatsException
         self.check_driver_contact_info()
-        self.__try_save(*args, **kwargs)
-
-    def __try_save(self, *args, **kwargs):
-        try:
-            super(Ride, self).save(*args, **kwargs)
-        except IntegrityError:
-            e = TravelException()
-            e.message = 'You can only drive one ride a travel'
-            raise e
+        self.check_available_travels_for_user(travels_of_user=Ride.objects.filter(driver=self.driver), new_travel=self)
+        super(Ride, self).save(*args, **kwargs)
 
     def check_driver_contact_info(self):
         if self.driver.user.last_name == '' \
@@ -56,8 +73,8 @@ class Ride(models.Model):
             raise Ride.NoDriverContactProvidedException
 
 
-class Passenger(models.Model):
-    travel_user = models.OneToOneField(TravelUser, on_delete=models.CASCADE)
+class Passenger(AbstractTravelModel):
+    travel_user = models.ForeignKey(TravelUser, related_name='travel_user', verbose_name='Felhasznalo')
     ride = models.ForeignKey(Ride, related_name='ride', verbose_name='Fuvar')
     notify_when_ride_changes = models.BooleanField(default=False, verbose_name='Ertesites fuvar valtozaskor')
     notify_when_ride_is_deleted = models.BooleanField(default=False, verbose_name='Ertesites fuvar torlodeskor')
@@ -71,16 +88,14 @@ class Passenger(models.Model):
         message = 'You are already a driver'
 
     def save(self, *args, **kwargs):
+        travels = self.get_rides_of_user()
+        self.check_available_travels_for_user(travels_of_user=travels, new_travel=self.ride)
         if len(Ride.objects.filter(driver=self.travel_user)) > 0:
             raise Passenger.DriverCannotBePassengerException
         if self.ride.get_num_of_free_seats() == 0:
             raise Passenger.NoMoreSpaceException
-        self.__try_save(*args, **kwargs)
+        super(Passenger, self).save(*args, **kwargs)
 
-    def __try_save(self, *args, **kwargs):
-        try:
-            super(Passenger, self).save(*args, **kwargs)
-        except IntegrityError:
-            e = TravelException()
-            e.message = 'You can only travel in one ride a travel'
-            raise e
+    def get_rides_of_user(self):
+        return Ride.objects.filter(
+            pk__in=Passenger.objects.values_list('ride', flat=True).filter(travel_user=self.travel_user))

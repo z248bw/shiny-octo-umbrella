@@ -117,23 +117,28 @@ class RideTest(TestCase):
                                expected_message=''):
             Passenger(travel_user=ride.driver, ride=other_ride).save()
 
-    def test_driver_drives_multiple_rides(self):
+    def test_driver_cannot_drive_multiple_rides(self):
         user = create_travel_user()
-        ride = Ride(driver=user,
-                    price=0,
-                    num_of_seats=1,
-                    start_time=datetime(2015, 1, 1, 12, 0, 0),
-                    start_location='asd street')
+        ride = get_ride()
+        ride.driver = user
         ride.save()
         with self.assertRaises(expected_exception=TravelException):
-            ride = Ride(driver=user,
-                        price=0,
-                        num_of_seats=1,
-                        start_time=datetime(2015, 1, 1, 12, 0, 0),
-                        start_location='asd street')
+            ride = get_ride()
+            ride.driver = user
             ride.save()
 
-    def test_add_same_passenger_to_multiple_rides(self):
+    def test_driver_drives_a_ride_and_a_return_ride(self):
+        user = create_travel_user()
+        ride = get_ride()
+        ride.driver = user
+        ride.save()
+        ride_back = get_ride()
+        ride_back.driver = user
+        ride_back.is_return = True
+        ride_back.save()
+        self.assert_expected_actual_model_pks([ride, ride_back], Ride.objects.all())
+
+    def test_passenger_cannot_be_added_to_multiple_rides_there(self):
         user = create_travel_user()
         ride = create_ride()
         other_ride = create_ride()
@@ -141,37 +146,50 @@ class RideTest(TestCase):
         with self.assertRaises(expected_exception=TravelException):
             Passenger(travel_user=user, ride=other_ride).save()
 
-    def assert_passengers(self, expected, actual):
+    def test_add_same_passenger_to_ride_and_return_ride(self):
+        user = create_travel_user()
+        ride = create_ride()
+        other_ride = get_ride()
+        other_ride.is_return = True
+        other_ride.save()
+        passenger = Passenger(travel_user=user, ride=ride)
+        passenger.save()
+        return_passenger = Passenger(travel_user=user, ride=other_ride)
+        return_passenger.save()
+        self.assert_expected_actual_model_pks(expected=[passenger, return_passenger],
+                                              actual=Passenger.objects.filter(travel_user=passenger.travel_user))
+
+    def assert_expected_actual_model_pks(self, expected, actual):
         for i, e in enumerate(expected):
             self.assertEqual(e.pk, actual[i].pk)
 
     def test_get_passengers_of_ride_with_no_passengers(self):
         ride = create_ride()
-        self.assert_passengers(expected=[], actual=ride.get_passengers())
+        self.assert_expected_actual_model_pks(expected=[], actual=ride.get_passengers())
 
     def test_get_passengers_of_ride_with_one_passenger(self):
         ride = create_ride()
         expected = [create_passenger_user(ride)]
-        self.assert_passengers(expected=expected, actual=ride.get_passengers())
+        self.assert_expected_actual_model_pks(expected=expected, actual=ride.get_passengers())
 
     def test_get_passengers_of_ride_with_two_passengers(self):
         ride = create_ride()
         expected = [create_passenger_user(ride),
                     create_passenger_user(ride)]
-        self.assert_passengers(expected=expected, actual=ride.get_passengers())
+        self.assert_expected_actual_model_pks(expected=expected, actual=ride.get_passengers())
 
     def test_get_passengers_of_ride_with_passengers_in_the_other_ride(self):
         ride = create_ride()
         other_ride = create_ride()
         create_passenger_user(other_ride)
-        self.assert_passengers(expected=[], actual=ride.get_passengers())
+        self.assert_expected_actual_model_pks(expected=[], actual=ride.get_passengers())
 
     def test_get_passengers_of_ride_if_passengers_are_deleted(self):
         ride = create_ride()
         passenger = create_passenger_user(ride)
-        self.assert_passengers(expected=[passenger], actual=ride.get_passengers())
+        self.assert_expected_actual_model_pks(expected=[passenger], actual=ride.get_passengers())
         passenger.delete()
-        self.assert_passengers(expected=[], actual=ride.get_passengers())
+        self.assert_expected_actual_model_pks(expected=[], actual=ride.get_passengers())
 
     def test_get_num_of_free_seats(self):
         ride = create_ride()
