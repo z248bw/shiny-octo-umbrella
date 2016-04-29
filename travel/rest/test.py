@@ -172,17 +172,6 @@ class RideRestTest(RestTestBase, RideUtils):
                          expected=self.ride_to_response_dict(ride),
                          user=ride.driver.user)
 
-    def test_user_cannot_create_ride_in_another_users_name(self):
-        ride = get_ride()
-        other_user = create_travel_user()
-        request_json = self.get_ride_request_json(ride)
-        request_json['driver'] = other_user
-        with self.assertRaises(expected_exception=TypeError):
-            self.assert_post(url=self.get_url_for_rides(),
-                             body_dict=request_json,
-                             expected=self.ride_to_response_dict(ride),
-                             user=ride.driver.user)
-
     def test_user_can_update_his_ride(self):
         ride = create_ride()
         ride.price += 1
