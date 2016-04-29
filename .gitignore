@@ -1,5 +1,7 @@
 venv
-*.sqlite
+*.sqlite*
 migrations/
 *.pyc
 staticfiles
+.idea/
+README.md
