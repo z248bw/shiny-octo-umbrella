@@ -7,6 +7,7 @@ from rest_framework import permissions
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
+from rest_framework import status
 
 from travel.models import Ride, TravelUser, Passenger, TravelException
 from wedding import settings
@@ -14,7 +15,9 @@ from wedding import settings
 
 def custom_exception_handler(exc, context):
     if isinstance(exc, TravelException):
-        return Response(TravelExceptionSerializer(exc).data)
+        r = Response(TravelExceptionSerializer(exc).data)
+        r.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return r
 
     # Call REST framework's default exception handler,
     # to get the standard error response.
