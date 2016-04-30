@@ -95,12 +95,18 @@ class Passenger(AbstractTravelModel):
         message = 'You are already a driver'
 
     def save(self, *args, **kwargs):
-        self.check_available_travels_for_user(travels_of_user=self.get_rides_of_user(), new_travel=self.ride)
-        if len(Ride.objects.filter(driver=self.travel_user)) > 0:
+        if self.is_already_a_driver():
             raise Passenger.DriverCannotBePassengerException
-        if self.ride.get_num_of_free_seats() == 0:
+        if self.no_more_free_seats_in_ride():
             raise Passenger.NoMoreSpaceException
+        self.check_available_travels_for_user(travels_of_user=self.get_rides_of_user(), new_travel=self.ride)
         super(Passenger, self).save(*args, **kwargs)
+
+    def is_already_a_driver(self):
+        return len(Ride.objects.filter(driver=self.travel_user)) > 0
+
+    def no_more_free_seats_in_ride(self):
+        return self.ride.get_num_of_free_seats() == 0
 
     def get_rides_of_user(self):
         rides_of_user_in_both_direction = Passenger.objects.values_list('ride', flat=True).filter(
