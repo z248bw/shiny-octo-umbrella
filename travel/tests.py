@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.utils.crypto import get_random_string
 
 from travel.models import Ride, Passenger, TravelUser
-from travel.utils import TravelException
+from travel.utils import TravelException, date_to_naive_str
 
 
 def create_user():
@@ -200,6 +200,44 @@ class RideTest(TestCase):
         self.assertEqual(2, ride.num_of_seats - 2)
 
 
+class RideUnitTest(TestCase):
+    def test_get_changes_on_unsaved_ride(self):
+        ride = get_ride()
+        self.assertEqual(ride.get_model_changes(), [])
+
+    def test_get_changes_on_unchanged_ride(self):
+        ride = create_ride()
+        self.assertEqual(ride.get_model_changes(), [])
+
+    def test_get_changes_if_one_field_is_changed(self):
+        ride = create_ride()
+        old_price = ride.price
+        ride.price += 1
+        ride.save()
+        self.assertEqual(ride.get_model_changes(), [Ride.get_diff_dict('price', str(old_price), str(ride.price))])
+
+    def test_get_changes_if_date_field_is_changed(self):
+        ride = create_ride()
+        old_time = ride.start_time
+        ride.start_time = datetime.now()
+        ride.save()
+        self.assertEqual(ride.get_model_changes(), [Ride.get_diff_dict('start_time',
+                                                                       date_to_naive_str(old_time),
+                                                                       date_to_naive_str(ride.start_time))])
+
+    def test_get_changes_if_multiple_field_is_changed(self):
+        ride = create_ride()
+        old_price = ride.price
+        old_location = ride.start_location
+        ride.price += 1
+        ride.start_location = 'changed location'
+        ride.save()
+        self.assertEqual(ride.get_model_changes(), [Ride.get_diff_dict('price', str(old_price), str(ride.price)),
+                                                    Ride.get_diff_dict('start_location',
+                                                                       old_location,
+                                                                       ride.start_location)])
+
+
 class EmailTest(TestCase):
     def test_email_notification_sent_on_passenger_delete_if_enabled(self):
         ride = create_ride()
@@ -214,3 +252,49 @@ class EmailTest(TestCase):
         passenger = create_passenger_user(ride)
         passenger.delete()
         self.assertEquals(len(mail.outbox), 0)
+
+    def test_email_notification_not_sent_for_unchanged_ride(self):
+        ride = create_ride()
+        create_passenger_user(ride)
+        ride.save()
+        self.assertEquals(len(mail.outbox), 0)
+
+    def test_email_notification_not_sent_for_changed_ride_if_there_are_no_passengers_to_notify(self):
+        ride = create_ride()
+        create_passenger_user(ride)
+        ride.price += 1
+        ride.save()
+        self.assertEquals(len(mail.outbox), 0)
+
+    def test_email_notification_sent_for_changed_ride(self):
+        ride = create_ride()
+        passenger = self.create_ride_change_notifiable_passenger(ride)
+        ride.price += 1
+        ride.save()
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [passenger.travel_user.user.email])
+
+    def create_ride_change_notifiable_passenger(self, ride):
+        passenger = get_passenger(ride)
+        passenger.notify_when_ride_changes = True
+        passenger.save()
+        return passenger
+
+    def test_email_notification_sent_for_changed_ride_for_notifiable_passengers(self):
+        ride = create_ride()
+        passenger = self.create_ride_change_notifiable_passenger(ride)
+        create_passenger_user(ride)
+        create_passenger_user(ride)
+        ride.price += 1
+        ride.save()
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [passenger.travel_user.user.email])
+
+    def test_email_notification_sent_for_changed_ride_for_multiple_passengers(self):
+        ride = create_ride()
+        passenger1 = self.create_ride_change_notifiable_passenger(ride)
+        passenger2 = self.create_ride_change_notifiable_passenger(ride)
+        ride.price += 1
+        ride.save()
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [passenger1.travel_user.user.email, passenger2.travel_user.user.email])

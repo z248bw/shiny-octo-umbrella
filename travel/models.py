@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 
-from travel.utils import TravelException, EmailNotifier, PassengerDeleteEmailFormatter
+from travel.utils import TravelException, EmailNotifier, PassengerDeleteEmailFormatter, RideChangedEmailFormatter, \
+    date_to_naive_str
 
 
 class TravelUser(models.Model):
@@ -41,6 +44,10 @@ class Ride(AbstractTravelModel):
     car_name = models.CharField(max_length=20, verbose_name='Auto tipusa', null=True, blank=True)
     description = models.TextField(max_length=200, verbose_name='Egyeb', null=True, blank=True)
 
+    def __init__(self, *args, **kwargs):
+        super(Ride, self).__init__(*args, **kwargs)
+        self.old_instance = None
+
     class NoDriverContactProvidedException(TravelException):
         message = 'Driver contact should be provided to create ride'
 
@@ -58,13 +65,70 @@ class Ride(AbstractTravelModel):
             raise Ride.NotEnoughFreeSeatsException
         self.check_driver_contact_info()
         self.check_available_travels_for_user(travels_of_user=Ride.objects.filter(driver=self.driver), new_travel=self)
+        self.update_old_instance_reference()
         super(Ride, self).save(*args, **kwargs)
+        self.notify_passengers_on_change()
 
     def check_driver_contact_info(self):
         if self.driver.user.last_name == '' \
                 or self.driver.user.first_name == '' \
                 or self.driver.user.email == '':
             raise Ride.NoDriverContactProvidedException
+
+    # TODO
+    def notify_passengers_on_change(self):
+        changes = self.get_model_changes()
+        if len(changes) == 0:
+            return
+        passenger_emails = self.get_passenger_emails()
+        if len(passenger_emails) > 0:
+            EmailNotifier(to=passenger_emails,
+                          formatter=RideChangedEmailFormatter(ride=self,
+                                                              changes=changes,
+                                                              disable_url='TODO')).notify()
+
+    def get_passenger_emails(self):
+        passenger_emails = []
+        for passenger in self.get_passengers().filter(notify_when_ride_changes=True):
+            passenger_emails.append(passenger.travel_user.user.email)
+        return passenger_emails
+
+    def get_model_changes(self):
+        changes = []
+        if self.old_instance is None:
+            return changes
+        for field in Ride.get_fields():
+            field_name = field.name
+            self.collect_changes(changes, field_name)
+        return changes
+
+    def update_old_instance_reference(self):
+        if self.pk is None:
+            return
+        self.old_instance = Ride.objects.get(pk=self.pk)
+
+    @staticmethod
+    def get_fields():
+        return Ride._meta.get_fields()
+
+    def collect_changes(self, changes, field_name):
+        old_val, new_val = self.__get_old_and_new_values(field_name)
+        if new_val != old_val:
+            changes.append(Ride.get_diff_dict(field_name, old_val, new_val))
+
+    @staticmethod
+    def get_diff_dict(key, old, new):
+        return {key: {'old': old, 'new': new}}
+
+    def __get_old_and_new_values(self, field_name):
+        new_val = self.convert_value_to_str(getattr(self, field_name))
+        old_val = self.convert_value_to_str(getattr(self.old_instance, field_name))
+        return old_val, new_val
+
+    def convert_value_to_str(self, val):
+        if isinstance(val, datetime):
+            return date_to_naive_str(val)
+        return str(val)
 
 
 class Passenger(AbstractTravelModel):
@@ -98,9 +162,5 @@ class Passenger(AbstractTravelModel):
         super(Passenger, self).delete()
         if self.notify_when_deleted:
             EmailNotifier(to=[self.travel_user.user.email, self.ride.driver.user.email],
-                          formatter=PassengerDeleteEmailFormatter(driver=self.ride.driver,
-                                                                  passenger=self.travel_user,
+                          formatter=PassengerDeleteEmailFormatter(passenger=self,
                                                                   disable_url='TODO')).notify()
-
-    def get_driver_name(self):
-        return self.ride.driver.user.last_name + ' ' + self.ride.driver.user.first_name
