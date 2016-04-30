@@ -23,14 +23,14 @@ class AbstractTravelModel(models.Model):
         if len(travels_of_user) > 1:
             TravelException.raise_exception('You already have a ride there and back')
         travel = travels_of_user[0]
-        if self.is_not_the_same_travel(travel) and self.is_travel_for_the_same_direction(travel, new_travel):
+        if self.is_a_new_instance() and self.is_travel_for_the_same_direction(travel, new_travel):
             TravelException.raise_exception('You already have a ride in that direction')
 
     def is_travel_for_the_same_direction(self, t1, t2):
         return t1.is_return == t2.is_return
 
-    def is_not_the_same_travel(self, travel):
-        return self.pk != travel.pk
+    def is_a_new_instance(self):
+        return self.pk is None
 
 
 class Ride(AbstractTravelModel):
@@ -154,8 +154,9 @@ class Passenger(AbstractTravelModel):
         super(Passenger, self).save(*args, **kwargs)
 
     def get_rides_of_user(self):
-        return Ride.objects.filter(
-            pk__in=Passenger.objects.values_list('ride', flat=True).filter(travel_user=self.travel_user))
+        rides_of_user_in_both_direction = Passenger.objects.values_list('ride', flat=True).filter(
+            travel_user=self.travel_user)
+        return Ride.objects.filter(pk__in=rides_of_user_in_both_direction)
 
     # TODO disable url!
     def delete(self, *args, **kwargs):

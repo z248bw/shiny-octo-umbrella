@@ -99,12 +99,23 @@ class RideTest(TestCase):
         passenger = create_passenger_user(ride)
         self.assertEqual(passenger.ride, ride)
 
-    def test_add_same_passenger_to_ride_multiple_times(self):
+    def test_passenger_cannot_be_added_to_same_ride_multiple_times(self):
         user = create_travel_user()
         ride = create_ride()
         Passenger(travel_user=user, ride=ride).save()
         with self.assertRaises(expected_exception=TravelException):
-            Passenger(travel_user=user, ride=ride, ).save()
+            Passenger(travel_user=user, ride=ride).save()
+
+    def test_add_multiple_passengers_to_ride(self):
+        ride = create_ride()
+        create_passenger_user(ride)
+        create_passenger_user(ride)
+
+    def test_passenger_can_be_updated_if_ride_and_passenger_pk_is_not_the_same(self):
+        ride = create_ride()
+        create_passenger_user(ride)
+        passenger = create_passenger_user(ride)
+        passenger.save()
 
     def test_add_driver_as_passenger(self):
         ride = create_ride()
