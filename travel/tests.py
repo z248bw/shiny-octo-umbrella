@@ -266,7 +266,9 @@ class EmailTest(TestCase):
 
     def test_email_notification_not_sent_for_unchanged_ride(self):
         ride = create_ride()
-        create_passenger_user(ride)
+        passenger = get_passenger(ride)
+        passenger.notify_when_ride_changes = True
+        passenger.save()
         ride.save()
         self.assertEquals(len(mail.outbox), 0)
 
@@ -309,3 +311,23 @@ class EmailTest(TestCase):
         ride.save()
         self.assertEquals(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [passenger1.travel_user.user.email, passenger2.travel_user.user.email])
+
+    def test_email_notification_not_sent_about_passenger_join_if_it_is_disabled(self):
+        create_passenger_user(create_ride())
+        self.assertEquals(len(mail.outbox), 0)
+
+    def test_email_notification_not_sent_about_passenger_update_if_it_is_enabled(self):
+        ride = create_ride()
+        passenger = create_passenger_user(ride)
+        ride.notify_when_passenger_joins = True
+        ride.save()
+        passenger.notify_when_ride_is_deleted = True
+        passenger.save()
+        self.assertEquals(len(mail.outbox), 0)
+
+    def test_email_notification_sent_about_passenger_join_if_it_is_enabled(self):
+        ride = get_ride()
+        ride.notify_when_passenger_joins = True
+        ride.save()
+        create_passenger_user(ride)
+        self.assertEquals(len(mail.outbox), 1)

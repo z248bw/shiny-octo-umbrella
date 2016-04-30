@@ -39,6 +39,17 @@ class PassengerDeleteEmailFormatter(EmailFormatter):
                + ' fuvarjarol'
 
 
+class PassengerJoinedEmailFormatter(EmailFormatter):
+    def __init__(self, passenger, *args, **kwargs):
+        super(PassengerJoinedEmailFormatter, self).__init__(*args, **kwargs)
+        self.passenger = passenger
+
+    def get_title(self):
+        return self.get_user_full_name(self.passenger.travel_user.user) \
+               + ' csatlakozott ' \
+               + ' a fuvarodhoz'
+
+
 class RideChangedEmailFormatter(EmailFormatter):
     def __init__(self, ride, changes, *args, **kwargs):
         super(RideChangedEmailFormatter, self).__init__(*args, **kwargs)

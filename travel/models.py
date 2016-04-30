@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from travel.utils import TravelException, EmailNotifier, PassengerDeleteEmailFormatter, RideChangedEmailFormatter, \
-    date_to_naive_str
+    date_to_naive_str, PassengerJoinedEmailFormatter
 
 
 class TravelUser(models.Model):
@@ -145,18 +145,25 @@ class Passenger(AbstractTravelModel):
         message = 'You are already a driver'
 
     def save(self, *args, **kwargs):
-        travels = self.get_rides_of_user()
-        self.check_available_travels_for_user(travels_of_user=travels, new_travel=self.ride)
+        self.check_available_travels_for_user(travels_of_user=self.get_rides_of_user(), new_travel=self.ride)
         if len(Ride.objects.filter(driver=self.travel_user)) > 0:
             raise Passenger.DriverCannotBePassengerException
         if self.ride.get_num_of_free_seats() == 0:
             raise Passenger.NoMoreSpaceException
+        is_new_instance = self.is_a_new_instance()
         super(Passenger, self).save(*args, **kwargs)
+        self.notify_driver_on_creation(is_new_instance)
 
     def get_rides_of_user(self):
         rides_of_user_in_both_direction = Passenger.objects.values_list('ride', flat=True).filter(
             travel_user=self.travel_user)
         return Ride.objects.filter(pk__in=rides_of_user_in_both_direction)
+
+    def notify_driver_on_creation(self, is_new_instance):
+        if is_new_instance and self.ride.notify_when_passenger_joins:
+            EmailNotifier(to=[self.ride.driver.user.email],
+                          formatter=PassengerJoinedEmailFormatter(passenger=self,
+                                                                  disable_url='TODO')).notify()
 
     # TODO disable url!
     def delete(self, *args, **kwargs):
