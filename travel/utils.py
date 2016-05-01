@@ -77,6 +77,15 @@ class RideChangedEmailFormatter(EmailFormatter):
         return key + ': ' + old_version + '->' + new_version + '\n'
 
 
+class RideDeletedEmailFormatter(EmailFormatter):
+    def __init__(self, ride, *args, **kwargs):
+        super(RideDeletedEmailFormatter, self).__init__(*args, **kwargs)
+        self.ride = ride
+
+    def get_title(self):
+        return self.get_user_full_name(self.ride.driver.user) + ' fuvarja torlesre kerult'
+
+
 class TravelException(Exception):
     @staticmethod
     def raise_exception(message):

@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 
 from travel.models import Passenger, Ride
 from travel.utils import EmailNotifier, PassengerJoinedEmailFormatter, RideChangedEmailFormatter, date_to_naive_str, \
-    PassengerDeleteEmailFormatter
+    PassengerDeleteEmailFormatter, RideDeletedEmailFormatter
 
 
 @receiver(post_save, sender=Passenger)
@@ -22,7 +22,12 @@ def receive_passenger_post_delete(instance, **kwargs):
 @receiver(post_save, sender=Ride)
 def receive_ride_post_save(instance, created, **kwargs):
     if not created:
-        RideChangeNotifier(ride=instance).notify_passengers_on_change()
+        RideChangeNotifier(ride=instance).notify()
+
+
+@receiver(pre_delete, sender=Ride)
+def receive_ride_pre_delete(instance, **kwargs):
+        RideDeletedNotifier(ride=instance).notify()
 
 
 class PassengerNotifier:
@@ -47,13 +52,21 @@ class PassengerDeletedNotifier(PassengerNotifier):
                           formatter=PassengerDeleteEmailFormatter(passenger=self.passenger,
                                                                   disable_url='TODO')).notify()
 
-
-class RideChangeNotifier:
+class RideNotifier:
     def __init__(self, ride):
         self.ride = ride
 
+    def get_passenger_emails(self):
+        passengers = self.ride.get_passengers()
+        passengers = self.filter_passengers_by_email_flags(passengers)
+        return [passenger.travel_user.user.email for passenger in passengers]
+
+    def filter_passengers_by_email_flags(self, passengers):
+        raise NotImplementedError
+
+class RideChangeNotifier(RideNotifier):
     # TODO disable url
-    def notify_passengers_on_change(self):
+    def notify(self):
         changes = self.get_model_changes()
         if len(changes) == 0:
             return
@@ -64,11 +77,8 @@ class RideChangeNotifier:
                                                               changes=changes,
                                                               disable_url='TODO')).notify()
 
-    def get_passenger_emails(self):
-        passenger_emails = []
-        for passenger in self.ride.get_passengers().filter(notify_when_ride_changes=True):
-            passenger_emails.append(passenger.travel_user.user.email)
-        return passenger_emails
+    def filter_passengers_by_email_flags(self, passengers):
+        return passengers.filter(notify_when_ride_changes=True)
 
     def get_model_changes(self):
         changes = []
@@ -102,3 +112,15 @@ class RideChangeNotifier:
         if isinstance(val, datetime):
             return date_to_naive_str(val)
         return str(val)
+
+
+class RideDeletedNotifier(RideNotifier):
+    def notify(self):
+        passenger_emails = self.get_passenger_emails()
+        if len(passenger_emails) > 0:
+            EmailNotifier(to=passenger_emails,
+                          formatter=RideDeletedEmailFormatter(ride=self.ride,
+                                                              disable_url='TODO')).notify()
+
+    def filter_passengers_by_email_flags(self, passengers):
+        return passengers.filter(notify_when_ride_is_deleted=True)

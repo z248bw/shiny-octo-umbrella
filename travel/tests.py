@@ -335,3 +335,17 @@ class EmailTest(TestCase):
         ride.save()
         create_passenger_user(ride)
         self.assertEquals(len(mail.outbox), 1)
+
+    def test_email_notification_not_sent_about_ride_delete_if_it_is_not_enabled(self):
+        ride = create_ride()
+        create_passenger_user(ride)
+        ride.delete()
+        self.assertEquals(len(mail.outbox), 0)
+
+    def test_email_notification_sent_about_ride_delete_if_it_is_enabled(self):
+        ride = create_ride()
+        passenger = get_passenger(ride)
+        passenger.notify_when_ride_is_deleted = True
+        passenger.save()
+        ride.delete()
+        self.assertEquals(len(mail.outbox), 1)
