@@ -1,4 +1,4 @@
-var travelApp = angular.module('travelApp', ['ngResource', 'travelServices']); //'ngResource', 'travelServices'
+var travelApp = angular.module('travelApp', ['ngResource', 'ngMaterial', 'travelServices']); //'ngResource', 'travelServices'
 
 travelApp.config(function($resourceProvider, $httpProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
@@ -11,8 +11,6 @@ travelApp.controller('travelController', function ($scope, Ride, Passenger) {
 
     $scope.hey = function(){console.log('hey');};
 
-    $scope.rides = [1,2,3];
-
     $scope.listRides = function() {
         console.log('list rides called');
         Ride.query(function(response) {
@@ -21,11 +19,7 @@ travelApp.controller('travelController', function ($scope, Ride, Passenger) {
         });
     };
 
+    console.log('travelcontroller called');
+    $scope.listRides();
+
 });
-
-//
-// Ride.get({pk: pk}, function(response){
-//    console.log(response);
-//    $scope.rides = response;
-// });
-
