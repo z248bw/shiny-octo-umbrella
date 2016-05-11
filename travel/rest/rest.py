@@ -73,7 +73,9 @@ class RidePermissions(permissions.BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        return request.user == obj.driver.user or request.user.is_superuser
+        return request.method in permissions.SAFE_METHODS\
+               or request.user == obj.driver.user\
+               or request.user.is_superuser
 
 
 class RideSerializer(serializers.ModelSerializer):

@@ -165,6 +165,13 @@ class RideRestTest(RestTestBase, RideUtils):
                                   self.ride_to_response_dict(ride2)],
                         user=user)
 
+    def test_user_can_get_a_ride(self):
+        user = create_user()
+        ride = create_ride()
+        self.assert_get(url=self.get_url_for_ride(ride),
+                        expected=self.ride_to_response_dict(ride),
+                        user=user)
+
     def test_user_can_create_ride(self):
         ride = get_ride()
         self.assert_post(url=self.get_url_for_rides(),
