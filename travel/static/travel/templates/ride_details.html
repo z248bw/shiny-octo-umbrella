@@ -1,0 +1,32 @@
+<div style="padding-left: 10%" ng-controller="rideDetailsController" ng-init="initRideDetails()">
+    <h4>
+        <span>{{ride.driver.user.last_name}} {{ride.driver.user.first_name}} autoja</span>
+        <button style="margin-left: 60%"
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                ng-click="showDialog()">
+            Csatlakozas
+        </button>
+    </h4>
+    <h5>Reszletek</h5>
+    <span>Sofor elerhetosegei:</span>
+    <ul>
+        <li>Telefon: {{ride.driver.phone}}</li>
+        <li>Email: {{ride.driver.user.email}}</li>
+    </ul>
+    <span>Szabad helyek/Osszes hely: {{ride.num_of_free_seats}} / {{ride.num_of_seats}} </span> <br/>
+    <span>Indulas ideje: {{ride.start_time}} </span><br/>
+    <span>Honnan: {{ride.start_location}} </span><br/>
+    <span>Beugro: {{ride.price}} </span><br/>
+    <span>Auto: {{ride.price}} </span><br/>
+    <span>Egyeb: {{ride.details}} </span><br/>
+    <h5>Utaslista</h5>
+    <div ng-hide="passengers.length"> Meg nincsenek utasok</div>
+    <ul class=" mdl-list" ng-repeat="passenger in passengers">
+        <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-content">
+              {{passenger.travel_user.user.last_name}} {{passenger.travel_user.user.first_name}}
+                 ({{passenger.travel_user.user.username}})
+            </span>
+        </li>
+    </ul>
+</div>

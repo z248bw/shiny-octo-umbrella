@@ -17,6 +17,4 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/$', django.contrib.auth.views.login, name='login'),
     url(r'^travel/index/$', views.index, name='index'),
-    url(r'^travel/there/$', views.there, name='there'),
-    url(r'^travel/back/$', views.back, name='back')
 ]
