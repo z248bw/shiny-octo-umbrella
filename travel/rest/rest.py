@@ -122,7 +122,12 @@ class PassengerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Passenger
-        fields = ['pk', 'travel_user', 'ride']
+        fields = ['pk',
+                  'travel_user',
+                  'ride',
+                  'notify_when_ride_changes',
+                  'notify_when_ride_is_deleted',
+                  'notify_when_deleted']
 
 
 class PassengerViewSet(viewsets.ModelViewSet):

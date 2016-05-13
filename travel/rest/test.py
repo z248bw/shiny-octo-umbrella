@@ -231,8 +231,10 @@ class PassengerUtilities(RideUtils):
     def passenger_to_response_dict(self, passenger):
         return {'pk': passenger.pk,
                 'travel_user': self.travel_user_to_response_dict(passenger.travel_user),
-                'ride': passenger.ride.pk}
-
+                'ride': passenger.ride.pk,
+                'notify_when_ride_changes': passenger.notify_when_ride_changes,
+                'notify_when_ride_is_deleted': passenger.notify_when_ride_is_deleted,
+                'notify_when_deleted': passenger.notify_when_deleted}
 
 class PassengerRestTest(RestTestBase, PassengerUtilities):
     def test_user_can_list_passengers_of_ride(self):
