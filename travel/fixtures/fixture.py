@@ -3,6 +3,7 @@ from datetime import datetime
 
 import itertools
 from django.contrib.auth.models import User
+from django.db.models import Max
 
 from travel.models import Ride, TravelUser, Passenger
 from wedding.settings import BASE_DIR
@@ -42,15 +43,16 @@ class TestFixture:
         return ''.join([str(random.randint(0, 9)) for _ in range(0, 7)])
 
     def create_users(self, num=20):
+        self.last_user_id = User.objects.all().aggregate(Max('pk'))['pk__max']
         first_names_iterator = itertools.cycle(self.read_from_file('first_names.txt'))
         last_names_iterator = itertools.cycle(self.read_from_file('last_names.txt'))
         for _ in range(0, num):
             first_name = next(first_names_iterator)
-            user = User(username=first_name + str(self.last_user_id),
-                        first_name=first_name,
-                        last_name=next(last_names_iterator),
-                        email=first_name + '@' + 'test.com')
-            user.save()
+            user = User.objects.create_user(username=first_name + str(self.last_user_id),
+                                            password='a',
+                                            first_name=first_name,
+                                            last_name=next(last_names_iterator),
+                                            email=first_name + '@' + 'test.com')
             self.last_user_id += 1
             yield user
 
