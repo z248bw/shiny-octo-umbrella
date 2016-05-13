@@ -16,20 +16,32 @@ class Command(BaseCommand):
                             action='store',
                             nargs='?',
                             type=int,
-                            dest='required_num',
-                            default=1,
-                            help='Create users. Default number of users to create is one')
+                            dest='required_user_num',
+                            default=0,
+                            help='Create users.')
+        parser.add_argument('-t', '--create-travel-user',
+                            action='store',
+                            nargs='?',
+                            type=int,
+                            dest='required_travel_user_num',
+                            default=0,
+                            help='Create travel users.')
 
     def handle(self, *args, **options):
         if options['delete']:
             self.stdout.write('Start reseting db')
             TestFixture.reset_tables()
             self.stdout.write('Successfully reset db')
-        elif options['required_num'] > 0:
+        elif options['required_user_num'] > 0:
             self.stdout.write('Starting user creation')
-            for user in TestFixture().create_users(num=options['required_num']):
+            for user in TestFixture().create_users(num=options['required_user_num']):
                 self.stdout.write('Created user: ' + user.username)
             self.stdout.write('Finished user creation')
+        elif options['required_travel_user_num'] > 0:
+            self.stdout.write('Starting travel user creation')
+            for travel_user in TestFixture().create_travel_users(num=options['required_travel_user_num']):
+                self.stdout.write('Created travel user: ' + travel_user.user.username)
+            self.stdout.write('Finished travel user creation')
         else:
             self.stdout.write('Start creating the test data')
             TestFixture().create_rides()
