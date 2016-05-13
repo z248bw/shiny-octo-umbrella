@@ -1,12 +1,15 @@
 <md-dialog style="width: 40%">
-    <form>
-        <md-toolbar>
-            <h3>Csatlakozas a jarmuhoz</h3>
-        </md-toolbar>
+    <md-toolbar>
+        <h3>Csatlakozas a jarmuhoz</h3>
+    </md-toolbar>
+    <form name="passengerForm">
         <md-dialog-content>
             <md-input-container style="margin-top: 5%" class="md-block" flex-gt-sm>
                 <label>Telefonszam</label>
-                <input ng-model="passenger.phone">
+                <input required name="passengerPhone" ng-model="passenger.phone">
+                <div ng-messages="passengerForm.passengerPhone.$error">
+                    <div ng-message="required">A mezo kitoltese kotelezo!</div>
+                </div>
             </md-input-container>
             <div>
                 Email ertesitesek
@@ -24,7 +27,8 @@
         <md-dialog-actions>
             <md-button class="md-accent md-raised"
                        flex-offset="50"
-                       ng-click="joinRide()">
+                       ng-click="joinRide()"
+                       ng-disabled="passenger.phone == null">
                 Csatlakozas
             </md-button>
         </md-dialog-actions>
