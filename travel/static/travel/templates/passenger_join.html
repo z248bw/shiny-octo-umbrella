@@ -1,0 +1,32 @@
+<md-dialog style="width: 40%">
+    <form>
+        <md-toolbar>
+            <h3>Csatlakozas a jarmuhoz</h3>
+        </md-toolbar>
+        <md-dialog-content>
+            <md-input-container style="margin-top: 5%" class="md-block" flex-gt-sm>
+                <label>Telefonszam</label>
+                <input ng-model="passenger.phone">
+            </md-input-container>
+            <div>
+                Email ertesitesek
+                <md-switch ng-model="passenger.notify_on_ride_change" aria-label="Switch 1">
+                    ha valtozik a jarmu
+                </md-switch>
+                <md-switch ng-model="passenger.notify_on_ride_delete" aria-label="Switch 1">
+                    ha torlesre kerul a jarmu
+                </md-switch>
+                <md-switch ng-model="passenger.notiy_on_passenger_delete" aria-label="Switch 1">
+                    ha torolnek az utaslistarol
+                </md-switch>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions>
+            <md-button class="md-accent md-raised"
+                       flex-offset="50"
+                       ng-click="joinRide()">
+                Csatlakozas
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

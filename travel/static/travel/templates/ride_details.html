@@ -1,11 +1,11 @@
 <div style="padding-left: 10%" ng-controller="rideDetailsController" ng-init="initRideDetails()">
     <h4>
         <span>{{ride.driver.user.last_name}} {{ride.driver.user.first_name}} autoja</span>
-        <button style="margin-left: 60%"
-                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
-                ng-click="showDialog()">
+        <md-button class="md-accent md-raised"
+                   flex-offset="50"
+                   ng-click="showPassengerJoin($event, ride.pk)">
             Csatlakozas
-        </button>
+        </md-button>
     </h4>
     <h5>Reszletek</h5>
     <span>Sofor elerhetosegei:</span>
