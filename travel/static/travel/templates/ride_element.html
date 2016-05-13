@@ -5,7 +5,10 @@
                 Sofor: {{ride.driver.user.last_name}} {{ride.driver.user.first_name}}
             </span>
         </md-card-title-text>
-        <md-button class="md-accent md-raised">Csatlakozas</md-button>
+        <md-button class="md-accent md-raised"
+                   ng-click="showPassengerJoin($event, ride.pk)">
+            Csatlakozas
+        </md-button>
     </md-card-title>
     <md-card-content>
         <p>Szabad helyek / Osszes hely: {{ride.num_of_free_seats}} / {{ride.num_of_seats}}</p>
