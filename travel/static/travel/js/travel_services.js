@@ -17,8 +17,9 @@ travelServices.factory('PassengerModel', ['$mdDialog', function($mdDialog){
             notify_on_ride_delete: false,
             notify_on_passenger_delete: false
         },
-        showPassengerJoin: function(event, ride_pk){
+        showPassengerJoin: function(event, ride_pk, success_callback){
             this.passenger.ride = ride_pk;
+            this.success_callback = success_callback;
             $mdDialog.show({
                   controller: 'passengerController',
                   templateUrl: '/static/travel/templates/passenger_join.html',

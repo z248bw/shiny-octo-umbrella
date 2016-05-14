@@ -7,7 +7,8 @@ travelApp.controller('passengerController',
     {
         $mdDialog.hide();
         Passenger.save($scope.passenger, function(response){
-            console.log(response);
+            PassengerModel.passenger = response;
+            PassengerModel.success_callback(response);
         }, function(error){
             console.log(error);
             $mdDialog.show(

@@ -23,7 +23,10 @@ travelApp.controller('rideDetailsController',
     };
 
     $scope.showPassengerJoin = function(ev, ride_pk) {
-        PassengerModel.showPassengerJoin(ev, ride_pk);
+        PassengerModel.showPassengerJoin(ev, ride_pk, function(passenger) {
+            $scope.passengers.push(passenger);
+            $scope.ride.num_of_free_seats--;
+        });
     };
 
     $scope.initRideDetails();
