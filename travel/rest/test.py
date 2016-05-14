@@ -146,6 +146,7 @@ class RideUtils(UserUtils):
                 'num_of_free_seats': ride.get_num_of_free_seats(),
                 'start_time': ride.start_time.isoformat() + 'Z',  # ECMA 262 date time string specification
                 'start_location': ride.start_location,
+                'is_return': ride.is_return,
                 'car_name': ride.car_name,
                 'description': ride.description}
 

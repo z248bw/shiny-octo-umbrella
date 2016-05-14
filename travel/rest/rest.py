@@ -88,7 +88,7 @@ class RideSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ride
         fields = ['pk', 'driver', 'price', 'num_of_seats', 'start_time', 'num_of_free_seats',
-                  'start_location', 'car_name', 'description']
+                  'start_location', 'is_return', 'car_name', 'description']
 
 
 class RideViewSet(viewsets.ModelViewSet):
