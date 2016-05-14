@@ -28,7 +28,8 @@ class TestFixture:
                         price=0,
                         num_of_seats=random.randint(1, 6),
                         start_time=datetime.now(),
-                        start_location='asd street')
+                        start_location='asd street',
+                        is_return=True if random.randint(0, 1) == 0 else False)
             ride.save()
             self.create_passengers(ride)
 
