@@ -5,7 +5,9 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user, get_passenger
+from travel.models import TravelUser
+from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user, get_passenger, \
+    get_travel_user
 
 
 class RestUtils:
@@ -126,17 +128,78 @@ class UserRestTest(RestTestBase, UserUtils):
                                              body_dict={'username': 'john', 'password': 'doe'})
 
 
-class RideUtils(UserUtils):
+class TravelUserUtils(UserUtils):
+    def travel_user_to_response_dict(self, travel_user):
+        return {'pk': travel_user.pk,
+                'user': self.user_to_response_dict(travel_user.user),
+                'phone': travel_user.phone,
+                'accepted_eula': travel_user.accepted_eula}
+
+    def get_travel_user_request_json(self, travel_user):
+        travel_user_json = self.travel_user_to_response_dict(travel_user)
+        travel_user_json['accepted_eula'] = travel_user.accepted_eula
+        travel_user_json.pop('user')
+        return travel_user_json
+
+    def get_url_for_travel_users(self):
+        return '/rest/1/travel_users/'
+
+    def get_url_for_travel_user(self, travel_user):
+        return self.get_url_for_travel_users() + str(travel_user.pk) + '/'
+
+    def get_url_for_me(self):
+        return self.get_url_for_travel_users() + 'me/'
+
+
+class TravelUserRestTest(RestTestBase, TravelUserUtils):
+    def test_can_get_travel_user(self):
+        travel_user = create_travel_user()
+        self.assert_get(url=self.get_url_for_travel_user(travel_user),
+                        expected=self.travel_user_to_response_dict(travel_user),
+                        user=travel_user.user)
+
+    def test_can_create_travel_user(self):
+        travel_user = get_travel_user()
+        self.assert_post(url=self.get_url_for_travel_users(),
+                         body_dict=self.get_travel_user_request_json(travel_user),
+                         expected=self.travel_user_to_response_dict(travel_user),
+                         user=travel_user.user)
+
+    def test_can_delete_others_travel_user(self):
+        other_travel_user = create_travel_user()
+        travel_user = create_travel_user()
+        response = RestUtils(url=self.get_url_for_travel_user(other_travel_user), user=travel_user.user).delete()
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_can_update_his_travel_user(self):
+        travel_user = create_travel_user()
+        travel_user.phone = '7654321'
+        RestUtils(url=self.get_url_for_travel_user(travel_user), user=travel_user.user).put(
+            body_dict=self.get_travel_user_request_json(travel_user))
+        self.assert_get(url=self.get_url_for_travel_users(),
+                        expected=[self.travel_user_to_response_dict(travel_user)],
+                        user=travel_user.user)
+
+    def test_cannot_update_others_travel_user(self):
+        other_travel_user = create_travel_user()
+        travel_user = create_travel_user()
+        other_travel_user.phone = '7654321'
+        response = RestUtils(url=self.get_url_for_travel_user(other_travel_user), user=travel_user.user).put(
+            body_dict=self.get_travel_user_request_json(other_travel_user))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_me(self):
+        travel_user = create_travel_user()
+        expected = self.travel_user_to_response_dict(travel_user)
+        self.assert_get(url=self.get_url_for_me(), expected=expected, user=travel_user.user)
+
+
+class RideUtils(TravelUserUtils):
     def get_url_for_rides(self):
         return '/rest/1/rides/'
 
     def get_url_for_ride(self, ride):
         return self.get_url_for_rides() + str(ride.pk) + '/'
-
-    def travel_user_to_response_dict(self, travel_user):
-        return {'pk': travel_user.pk,
-                'user': self.user_to_response_dict(travel_user.user),
-                'phone': travel_user.phone}
 
     def ride_to_response_dict(self, ride):
         return {'pk': ride.pk,
@@ -236,6 +299,7 @@ class PassengerUtilities(RideUtils):
                 'notify_when_ride_changes': passenger.notify_when_ride_changes,
                 'notify_when_ride_is_deleted': passenger.notify_when_ride_is_deleted,
                 'notify_when_deleted': passenger.notify_when_deleted}
+
 
 class PassengerRestTest(RestTestBase, PassengerUtilities):
     def test_user_can_list_passengers_of_ride(self):

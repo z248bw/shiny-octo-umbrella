@@ -11,21 +11,31 @@ from travel.signals.handlers import RideChangeNotifier
 from travel.utils import TravelException, date_to_naive_str
 
 
-def create_user():
-    user = User(username=get_random_string(length=5),
+def get_user():
+    return User(username=get_random_string(length=5),
                 first_name=get_random_string(length=5),
                 last_name=get_random_string(length=5),
                 email=get_random_string(length=5) +
                       '@' +
                       get_random_string(length=5) +
                       'com')
+
+
+def create_user():
+    user = get_user()
     user.save()
     return user
 
 
-def create_travel_user():
+def get_travel_user():
     user = create_user()
-    travel_user = TravelUser(user=user, phone=get_random_string(length=5))
+    return TravelUser(user=user,
+                      phone=get_random_string(length=5),
+                      accepted_eula=True)
+
+
+def create_travel_user():
+    travel_user = get_travel_user()
     travel_user.save()
     return travel_user
 
@@ -235,8 +245,10 @@ class RideUnitTest(TestCase):
         ride.start_time = datetime.now()
         ride.save()
         self.assertEqual(RideChangeNotifier(ride).get_model_changes(), [RideChangeNotifier.get_diff_dict('start_time',
-                                                                       date_to_naive_str(old_time),
-                                                                       date_to_naive_str(ride.start_time))])
+                                                                                                         date_to_naive_str(
+                                                                                                             old_time),
+                                                                                                         date_to_naive_str(
+                                                                                                             ride.start_time))])
 
     def test_get_changes_if_multiple_field_is_changed(self):
         ride = create_ride()
@@ -247,10 +259,12 @@ class RideUnitTest(TestCase):
         ride.save()
         self.assertEqual(RideChangeNotifier(ride).get_model_changes(), [RideChangeNotifier.get_diff_dict('price',
                                                                                                          str(old_price),
-                                                                                                         str(ride.price)),
-                                                                        RideChangeNotifier.get_diff_dict('start_location',
-                                                                        old_location,
-                                                                        ride.start_location)])
+                                                                                                         str(
+                                                                                                             ride.price)),
+                                                                        RideChangeNotifier.get_diff_dict(
+                                                                            'start_location',
+                                                                            old_location,
+                                                                            ride.start_location)])
 
 
 class EmailTest(TestCase):

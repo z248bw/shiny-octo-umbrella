@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 from rest_framework import status
@@ -60,12 +60,40 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [UserPermissions]
 
 
+class TravelUserPermissions(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'PUT':
+            return request.user == obj.user or request.user.is_superuser
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return False
+
+
 class TravelUserSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = TravelUser
-        fields = ['pk', 'user', 'phone']
+        fields = ['pk', 'user', 'phone', 'accepted_eula']
+
+
+class TravelUserViewSet(viewsets.ModelViewSet):
+    base_path = 'travel_users'
+    queryset = TravelUser.objects.all()
+    serializer_class = TravelUserSerializer
+    permission_classes = [TravelUserPermissions]
+
+    def perform_create(self, serializer):
+        user = User.objects.get(pk=self.request.user.pk)
+        serializer.save(user=user)
+
+    @list_route(methods=['get'])
+    def me(self, request):
+        me = TravelUser.objects.get(user=request.user)
+        return Response(TravelUserSerializer(me).data)
 
 
 class RidePermissions(permissions.BasePermission):
@@ -73,8 +101,8 @@ class RidePermissions(permissions.BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        return request.method in permissions.SAFE_METHODS\
-               or request.user == obj.driver.user\
+        return request.method in permissions.SAFE_METHODS \
+               or request.user == obj.driver.user \
                or request.user.is_superuser
 
 
@@ -143,5 +171,6 @@ class PassengerViewSet(viewsets.ModelViewSet):
 
 def register(router):
     router.register(UserViewSet.base_path, UserViewSet)
+    router.register(TravelUserViewSet.base_path, TravelUserViewSet)
     router.register(RideViewSet.base_path, RideViewSet)
     router.register(PassengerViewSet.base_path, PassengerViewSet)
