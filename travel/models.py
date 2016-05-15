@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+import travel
 from travel.utils import TravelException
 
 
@@ -95,15 +96,21 @@ class Passenger(AbstractTravelModel):
         message = 'You are already a driver'
 
     def save(self, *args, **kwargs):
-        if self.is_already_a_driver():
+        if self.is_already_a_driver_in_that_direction():
             raise Passenger.DriverCannotBePassengerException
         if self.no_more_free_seats_in_ride():
             raise Passenger.NoMoreSpaceException
         self.check_available_travels_for_user(travels_of_user=self.get_rides_of_user(), new_travel=self.ride)
         super(Passenger, self).save(*args, **kwargs)
 
-    def is_already_a_driver(self):
-        return len(Ride.objects.filter(driver=self.travel_user)) > 0
+    def is_already_a_driver_in_that_direction(self):
+        rides = Ride.objects.filter(driver=self.travel_user)
+        for ride in rides:
+            is_already_a_driver_in_direction = ride.is_return == self.ride.is_return
+            if is_already_a_driver_in_direction:
+                return True
+        return False
+
 
     def no_more_free_seats_in_ride(self):
         return self.ride.get_num_of_free_seats() == 0

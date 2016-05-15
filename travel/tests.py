@@ -40,16 +40,17 @@ def create_travel_user():
     return travel_user
 
 
-def get_ride():
-    return Ride(driver=create_travel_user(),
+def get_ride(driver=None, is_return=None):
+    return Ride(driver=create_travel_user() if driver is None else driver,
                 price=0,
                 num_of_seats=4,
                 start_time=datetime(2015, 1, 1, 12, 0, 0),
-                start_location='asd street')
+                start_location='asd street',
+                is_return=False if is_return is None else is_return)
 
 
-def create_ride():
-    ride = get_ride()
+def create_ride(driver=None, is_return=None):
+    ride = get_ride(driver, is_return)
     ride.save()
     return ride
 
@@ -134,12 +135,18 @@ class RideTest(TestCase):
                                expected_message=''):
             Passenger(travel_user=ride.driver, ride=ride).save()
 
-    def test_add_driver_as_passenger_in_another_ride(self):
+    def test_driver_cannot_be_passenger_in_another_ride_in_same_direction(self):
         ride = create_ride()
         other_ride = create_ride()
         with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
                                expected_message=''):
-            Passenger(travel_user=ride.driver, ride=other_ride).save()
+            p = Passenger(travel_user=ride.driver, ride=other_ride)
+            p.save()
+
+    def test_add_driver_as_passenger_in_another_ride_in_another_direction(self):
+        ride = create_ride()
+        other_ride = create_ride(is_return=True)
+        Passenger(travel_user=ride.driver, ride=other_ride).save()
 
     def test_driver_cannot_drive_multiple_rides(self):
         user = create_travel_user()
@@ -152,14 +159,8 @@ class RideTest(TestCase):
             ride.save()
 
     def test_driver_drives_a_ride_and_a_return_ride(self):
-        user = create_travel_user()
-        ride = get_ride()
-        ride.driver = user
-        ride.save()
-        ride_back = get_ride()
-        ride_back.driver = user
-        ride_back.is_return = True
-        ride_back.save()
+        ride = create_ride()
+        ride_back = create_ride(driver=ride.driver, is_return=True)
         self.assert_expected_actual_model_pks([ride, ride_back], Ride.objects.all())
 
     def test_passenger_cannot_be_added_to_multiple_rides_there(self):
@@ -173,9 +174,7 @@ class RideTest(TestCase):
     def test_add_same_passenger_to_ride_and_return_ride(self):
         user = create_travel_user()
         ride = create_ride()
-        other_ride = get_ride()
-        other_ride.is_return = True
-        other_ride.save()
+        other_ride = create_ride(is_return=True)
         passenger = Passenger(travel_user=user, ride=ride)
         passenger.save()
         return_passenger = Passenger(travel_user=user, ride=other_ride)
