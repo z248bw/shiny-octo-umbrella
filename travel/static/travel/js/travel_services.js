@@ -10,6 +10,12 @@ travelServices.factory('Passenger', ['$resource', function($resource){
     return $resource('/rest/1/passengers/:pk');
 }]);
 
+travelServices.factory('TravelUser', ['$resource', function($resource){
+    return $resource('/rest/1/travel_users/:pk', null, {
+        'getMe': {method: 'GET', url: '/rest/1/travel_users/me', isArray: false}
+    });
+}]);
+
 travelServices.factory('PassengerModel', ['$mdDialog', function($mdDialog){
     return {
         passenger: {
