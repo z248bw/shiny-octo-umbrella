@@ -216,14 +216,16 @@ class TravelUserRestTest(RestTestBase, RideUtils):
     def test_get_me_without_rides(self):
         travel_user = create_travel_user()
         expected = {'travel_user': self.travel_user_to_response_dict(travel_user),
-                    'rides': []}
+                    'driven_rides': [],
+                    'passenger_of_rides': []}
         self.assert_get(url=self.get_url_for_me(), expected=expected, user=travel_user.user)
 
     def test_get_me_with_ride_there(self):
         ride = create_ride()
         passenger = create_passenger_user(ride)
         expected = {'travel_user': self.travel_user_to_response_dict(passenger.travel_user),
-                    'rides': [self.ride_to_response_dict(ride)]}
+                    'driven_rides': [],
+                    'passenger_of_rides': [self.ride_to_response_dict(ride)]}
         self.assert_get(url=self.get_url_for_me(), expected=expected, user=passenger.travel_user.user)
 
     def test_get_me_with_ride_there_and_back(self):
@@ -232,22 +234,25 @@ class TravelUserRestTest(RestTestBase, RideUtils):
         passenger = create_passenger_user(ride)
         Passenger(travel_user=passenger.travel_user, ride=ride_back).save()
         expected = {'travel_user': self.travel_user_to_response_dict(passenger.travel_user),
-                    'rides': [self.ride_to_response_dict(ride),
-                              self.ride_to_response_dict(ride_back)]}
+                    'driven_rides': [],
+                    'passenger_of_rides': [self.ride_to_response_dict(ride),
+                                           self.ride_to_response_dict(ride_back)]}
         self.assert_get(url=self.get_url_for_me(), expected=expected, user=passenger.travel_user.user)
 
     def test_get_me_with_ride_there_when_i_am_the_driver(self):
         ride = create_ride()
         expected = {'travel_user': self.travel_user_to_response_dict(ride.driver),
-                    'rides': [self.ride_to_response_dict(ride)]}
+                    'driven_rides': [self.ride_to_response_dict(ride)],
+                    'passenger_of_rides': []}
         self.assert_get(url=self.get_url_for_me(), expected=expected, user=ride.driver.user)
 
     def test_get_me_with_ride_there_and_back_when_i_am_the_driver(self):
         ride = create_ride()
         ride_back = create_ride(driver=ride.driver, is_return=True)
         expected = {'travel_user': self.travel_user_to_response_dict(ride.driver),
-                    'rides': [self.ride_to_response_dict(ride),
-                              self.ride_to_response_dict(ride_back)]}
+                    'driven_rides': [self.ride_to_response_dict(ride),
+                                     self.ride_to_response_dict(ride_back)],
+                    'passenger_of_rides': []}
         self.assert_get(url=self.get_url_for_me(), expected=expected, user=ride.driver.user)
 
     def test_get_me_with_ride_there_and_back_when_i_am_a_driver_and_a_passenger(self):
@@ -257,8 +262,8 @@ class TravelUserRestTest(RestTestBase, RideUtils):
         passenger.travel_user = ride.driver
         passenger.save()
         expected = {'travel_user': self.travel_user_to_response_dict(ride.driver),
-                    'rides': [self.ride_to_response_dict(ride_back),
-                              self.ride_to_response_dict(ride)]}
+                    'driven_rides': [self.ride_to_response_dict(ride)],
+                    'passenger_of_rides': [self.ride_to_response_dict(ride_back)]}
         self.assert_get(url=self.get_url_for_me(), expected=expected, user=ride.driver.user)
 
 

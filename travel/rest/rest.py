@@ -93,16 +93,19 @@ class TravelUserViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def me(self, request):
         me = TravelUser.objects.get(user=request.user)
-        my_rides = self.get_my_rides(me)
+        driven_rides = self.get_driven_rides(me)
+        passenger_of_rides = self.get_rides_where_i_am_a_passenger(me)
         response = {'travel_user': TravelUserSerializer(me).data,
-                    'rides': RideSerializer(my_rides, many=True).data}
+                    'driven_rides': RideSerializer(driven_rides, many=True).data,
+                    'passenger_of_rides': RideSerializer(passenger_of_rides, many=True).data}
         return Response(response)
 
-    def get_my_rides(self, me):
-        my_rides = [Ride.objects.get(pk=passenger['ride']) for passenger in
-                    Passenger.objects.values('ride').filter(travel_user=me)]
-        my_rides += list(Ride.objects.filter(driver=me))
-        return my_rides
+    def get_rides_where_i_am_a_passenger(self, me):
+        return [Ride.objects.get(pk=passenger['ride']) for passenger in
+                Passenger.objects.values('ride').filter(travel_user=me)]
+
+    def get_driven_rides(self, me):
+        return list(Ride.objects.filter(driver=me))
 
 
 class RidePermissions(permissions.BasePermission):
