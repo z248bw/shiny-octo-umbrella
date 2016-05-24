@@ -1,5 +1,7 @@
-travelApp.controller('travelController',
-    function ($scope, TravelUser, Passenger) {
+angular.module('travelApp')
+    .controller('travelController', TravelController);
+
+function TravelController($scope, TravelUser, Passenger) {
 
     $scope.driver_there = null;
     $scope.driver_back = null;
@@ -66,4 +68,4 @@ travelApp.controller('travelController',
 //        })
 //    };
 
-});
+};

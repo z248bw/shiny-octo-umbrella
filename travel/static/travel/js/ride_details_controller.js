@@ -1,5 +1,7 @@
-travelApp.controller('rideDetailsController',
-    function ($scope, $routeParams, $mdDialog, Ride, PassengerModel) {
+angular.module('travelApp')
+    .controller('rideDetailsController', RidesDetailController);
+
+function RidesDetailController($scope, $routeParams, $mdDialog, Ride, PassengerModel) {
 
     $scope.initRideDetails = function()
     {
@@ -30,4 +32,4 @@ travelApp.controller('rideDetailsController',
     };
 
     $scope.initRideDetails();
-});
+}

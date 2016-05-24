@@ -1,6 +1,8 @@
-var travelApp = angular.module('travelApp', ['ngResource', 'ngRoute', 'ngMaterial', 'travelServices']);
+angular
+    .module('travelApp', ['ngResource', 'ngRoute', 'ngMaterial', 'travelServices'])
+    .config(TravelAppConfig);
 
-travelApp.config(function($resourceProvider, $httpProvider, $routeProvider) {
+function TravelAppConfig($resourceProvider, $httpProvider, $routeProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -14,4 +16,4 @@ travelApp.config(function($resourceProvider, $httpProvider, $routeProvider) {
         redirectTo: '/rides',
         templateUrl: '/static/travel/templates/rides.html'
       });
-});
+}

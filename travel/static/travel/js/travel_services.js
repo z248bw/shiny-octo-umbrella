@@ -1,22 +1,22 @@
-var travelServices = angular.module('travelServices', ['ngResource']);
+angular.module('travelServices', ['ngResource']);
 
-travelServices.factory('Ride', ['$resource', function($resource){
+angular.module('travelServices').factory('Ride', ['$resource', function($resource){
     return $resource('/rest/1/rides/:pk', null, {
         'getPassengers': {method: 'GET', url: '/rest/1/rides/:pk/passengers/', isArray: true}
     });
 }]);
 
-travelServices.factory('Passenger', ['$resource', function($resource){
+angular.module('travelServices').factory('Passenger', ['$resource', function($resource){
     return $resource('/rest/1/passengers/:pk/');
 }]);
 
-travelServices.factory('TravelUser', ['$resource', function($resource){
+angular.module('travelServices').factory('TravelUser', ['$resource', function($resource){
     return $resource('/rest/1/travel_users/:pk', null, {
         'getMe': {method: 'GET', url: '/rest/1/travel_users/me/', isArray: false}
     });
 }]);
 
-travelServices.factory('PassengerModel', ['$mdDialog', function($mdDialog){
+angular.module('travelServices').factory('PassengerModel', ['$mdDialog', function($mdDialog){
     return {
         passenger: {
             notify_on_ride_change: false,

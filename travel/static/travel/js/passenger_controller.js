@@ -1,5 +1,7 @@
-travelApp.controller('passengerController',
-    function ($scope, $mdDialog, Passenger, PassengerModel) {
+angular.module('travelApp')
+    .controller('passengerController',PassengerController);
+
+function PassengerController($scope, $mdDialog, Passenger, PassengerModel) {
 
     $scope.passenger = PassengerModel.passenger;
 
@@ -22,4 +24,4 @@ travelApp.controller('passengerController',
         });
     };
 
-});
+}

@@ -1,5 +1,9 @@
-travelApp.controller('ridesController',
-    function ($scope, Ride, Passenger, PassengerModel) {
+angular.module('travelApp')
+    .controller('ridesController', RidesController);
+
+function RidesController($scope, Ride, Passenger, PassengerModel) {
+
+    var vm = this;
 
     var rides = [];
 
@@ -45,4 +49,4 @@ travelApp.controller('ridesController',
 
     $scope.listRides();
 
-});
+}
