@@ -78,12 +78,11 @@ class RideTest(TestCase):
     def test_save_ride_with_less_than_one_seats(self):
         ride = create_ride()
         ride.num_of_seats = 0
-        with self.assertRaises(expected_exception=Ride.NotEnoughFreeSeatsException):
+        with self.assertRaises(Ride.NotEnoughFreeSeatsException):
             ride.save()
 
     def test_save_ride_without_driver_email(self):
-        with self.assertRaisesMessage(expected_exception=Ride.NoDriverContactProvidedException,
-                                      expected_message=''):
+        with self.assertRaises(Ride.NoDriverContactProvidedException):
             noname_user = User(username='noname', password='')
             noname_user.save()
             driver = TravelUser(user=noname_user, phone=get_random_string(5))
@@ -102,8 +101,7 @@ class RideTest(TestCase):
                                   start_location='asd street')
         ride_with_no_space.save()
         create_passenger_user(ride_with_no_space)
-        with self.assertRaisesMessage(expected_exception=Passenger.NoMoreSpaceException,
-                                      expected_message=''):
+        with self.assertRaises(Passenger.NoMoreSpaceException):
             create_passenger_user(ride_with_no_space)
 
     def test_create_ride_passenger_if_ride_has_free_seats(self):
@@ -115,7 +113,7 @@ class RideTest(TestCase):
         user = create_travel_user()
         ride = create_ride()
         Passenger(travel_user=user, ride=ride).save()
-        with self.assertRaises(expected_exception=TravelException):
+        with self.assertRaises(TravelException):
             Passenger(travel_user=user, ride=ride).save()
 
     def test_add_multiple_passengers_to_ride(self):
@@ -131,15 +129,13 @@ class RideTest(TestCase):
 
     def test_add_driver_as_passenger(self):
         ride = create_ride()
-        with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
-                               expected_message=''):
+        with self.assertRaises(Passenger.DriverCannotBePassengerException):
             Passenger(travel_user=ride.driver, ride=ride).save()
 
     def test_driver_cannot_be_passenger_in_another_ride_in_same_direction(self):
         ride = create_ride()
         other_ride = create_ride()
-        with self.assertRaises(expected_exception=Passenger.DriverCannotBePassengerException,
-                               expected_message=''):
+        with self.assertRaises(Passenger.DriverCannotBePassengerException):
             p = Passenger(travel_user=ride.driver, ride=other_ride)
             p.save()
 
@@ -153,7 +149,7 @@ class RideTest(TestCase):
         ride = get_ride()
         ride.driver = user
         ride.save()
-        with self.assertRaises(expected_exception=TravelException):
+        with self.assertRaises(TravelException):
             ride = get_ride()
             ride.driver = user
             ride.save()
@@ -168,7 +164,7 @@ class RideTest(TestCase):
         ride = create_ride()
         other_ride = create_ride()
         Passenger(travel_user=user, ride=ride).save()
-        with self.assertRaises(expected_exception=TravelException):
+        with self.assertRaises(TravelException):
             Passenger(travel_user=user, ride=other_ride).save()
 
     def test_add_same_passenger_to_ride_and_return_ride(self):
