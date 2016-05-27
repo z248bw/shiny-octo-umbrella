@@ -1,18 +1,21 @@
 angular.module('travelApp')
-    .controller('passengerController',PassengerController);
+    .controller('passengerJoinController',PassengerJoinController);
 
-function PassengerController($scope, $mdDialog, Passenger, PassengerModel) {
+function PassengerJoinController($scope, $mdDialog, Passenger, Travel, ride_pk) {
 
-    $scope.passenger = PassengerModel.passenger;
-
+    $scope.passenger = {
+        ride: ride_pk,
+        phone: null,
+        notify_on_ride_change: false,
+        notify_on_ride_delete: false,
+        notify_on_passenger_delete: false
+    },
     $scope.joinRide = function()
     {
         $mdDialog.hide();
-        Passenger.save($scope.passenger, function(response){
-            PassengerModel.passenger = response;
-            PassengerModel.success_callback(response);
+        Passenger.save($scope.passenger, function(response) {
+            Travel.addPassenger(response);
         }, function(error){
-            console.log(error);
             $mdDialog.show(
               $mdDialog.alert()
                 .parent(angular.element(document.querySelector('#popupContainer')))
@@ -23,5 +26,4 @@ function PassengerController($scope, $mdDialog, Passenger, PassengerModel) {
             );
         });
     };
-
 }

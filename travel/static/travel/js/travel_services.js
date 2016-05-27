@@ -16,24 +16,76 @@ angular.module('travelServices').factory('TravelUser', ['$resource', function($r
     });
 }]);
 
-angular.module('travelServices').factory('PassengerModel', ['$mdDialog', function($mdDialog){
-    return {
-        passenger: {
-            notify_on_ride_change: false,
-            notify_on_ride_delete: false,
-            notify_on_passenger_delete: false
+angular.module('travelServices').factory('Travel', ['$mdDialog', function($mdDialog){
+
+    var passenger = {
+        model: null,
+        add: function(event, ride_pk) {
+            showPassengerJoin(ride_pk)
         },
-        showPassengerJoin: function(event, ride_pk, success_callback){
-            this.passenger.ride = ride_pk;
-            this.success_callback = success_callback;
-            $mdDialog.show({
-                  controller: 'passengerController',
-                  templateUrl: '/static/travel/templates/passenger_join.html',
-                  parent: angular.element(document.body),
-                  targetEvent: event,
-                  clickOutsideToClose:true,
-                  fullscreen: false
-            });
+        modify: function(passenger_mode) {
+
+        },
+        remove: function(passenger_pk) {
+
         }
+    };
+
+    var driver = {
+        model: null,
+    };
+
+    var travel = {
+        passenger: angular.copy(passenger),
+        driver: angular.copy(driver),
+        isDriving: function() {
+            return this.passenger.model == null;
+        }
+    };
+
+    var showPassengerJoin = function(event, ride_pk) {
+        $mdDialog.show({
+              controller: 'passengerJoinController',
+              templateUrl: '/static/travel/templates/passenger_join.html',
+              parent: angular.element(document.body),
+              targetEvent: event,
+              locals: {
+                ride_pk: ride_pk
+              },
+              clickOutsideToClose:true,
+              fullscreen: false
+        })
+    };
+
+    return {
+        there : angular.copy(travel),
+        back: angular.copy(travel),
+        addPassenger: function(passenger)
+        {
+            if (passenger.ride.is_return)
+            {
+                this.back.passenger.model = passenger;
+                this.back.driver.model = null;
+            }
+            else
+            {
+                this.there.passenger.model = passenger;
+                this.there.driver.model = null;
+            }
+        },
+        addDriver: function(ride)
+        {
+            if (ride.is_return)
+            {
+                this.there.driver.model = ride;
+                this.there.passenger.model = null;
+            }
+            else
+            {
+                this.back.driver.model = ride;
+                this.back.passenger.model = null;
+            }
+        },
+        showPassengerJoin: showPassengerJoin
     };
 }]);

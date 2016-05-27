@@ -8,12 +8,14 @@ angular.module('travelApp').directive('rideElement', function() {
     };
 });
 
-angular.module('travelApp').directive('passengerElement', function() {
+angular.module('travelApp').directive('travelElement', function() {
     return {
         restrict: 'E',
-        templateUrl: '/static/travel/templates/passenger_element.html',
+        templateUrl: '/static/travel/templates/travel_element.html',
         scope: {
-            passenger: '='
-        }
+            travel: '=',
+        },
+        controller: TravelElementController,
+        controllerAs: 'element'
     };
 });

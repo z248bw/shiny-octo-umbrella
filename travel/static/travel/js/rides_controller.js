@@ -1,17 +1,26 @@
 angular.module('travelApp')
     .controller('ridesController', RidesController);
 
-function RidesController($scope, Ride, Passenger, PassengerModel) {
+function RidesController($scope, Ride, Passenger, Travel) {
 
     var vm = this;
+    vm.there = [];
+    vm.back = [];
+    $scope.showPassengerJoin = function(ev, ride_pk) {
+        Travel.showPassengerJoin(ev, ride_pk);
+    };
+
+    var activate = function() {
+        listRides();
+    }
 
     var rides = [];
 
-    $scope.listRides = function() {
+    var listRides = function() {
         Ride.query(function(response) {
             rides = response;
-            $scope.rides_there = getRidesThere();
-            $scope.rides_back = getRidesBack();
+            vm.there = getRidesThere();
+            vm.back = getRidesBack();
         });
     };
 
@@ -27,10 +36,13 @@ function RidesController($scope, Ride, Passenger, PassengerModel) {
         });
     };
 
-    $scope.showPassengerJoin = function(ev, ride_pk) {
-        PassengerModel.showPassengerJoin(ev, ride_pk, function(passenger) {
-            addPassengerToCurrentPassengers(passenger);
-        });
+    var onPassengerJoined = function(ride_pk) {
+        //TODO
+    };
+
+    var addPassengerToCurrentPassengers = function(passenger) {
+        var ride = getRideByPk(passenger.ride);
+        ride.num_of_free_seats--;
     };
 
     var getRideByPk = function(ride_pk) {
@@ -41,12 +53,6 @@ function RidesController($scope, Ride, Passenger, PassengerModel) {
         }
     };
 
-    var addPassengerToCurrentPassengers = function(passenger) {
-        $scope.$parent.addPassenger(passenger);
-        var ride = getRideByPk(passenger.ride);
-        ride.num_of_free_seats--;
-    };
-
-    $scope.listRides();
+    activate();
 
 }

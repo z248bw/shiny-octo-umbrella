@@ -1,71 +1,43 @@
 angular.module('travelApp')
     .controller('travelController', TravelController);
 
-function TravelController($scope, TravelUser, Passenger) {
+function TravelController($scope, TravelUser, Passenger, Travel) {
 
-    $scope.driver_there = null;
-    $scope.driver_back = null;
-    $scope.passenger_there = null;
-    $scope.passenger_back = null;
+    var vm = this;
+    vm.me = null;
+    vm.there = Travel.there;
+    vm.back = Travel.back;
+    vm.deletePassenger = deletePassenger;
 
     TravelUser.getMe(function(response) {
-        $scope.me = response;
+        vm.me = response;
         initMyRides();
     });
 
     var initMyRides = function() {
-        for (var i = 0; i < $scope.me.driven_rides.length; i++)
+        for (var i = 0; i < vm.me.driven_rides.length; i++)
         {
-            var ride = $scope.me.driven_rides[i];
-            $scope.addDriver(ride);
+            var ride = vm.me.driven_rides[i];
+            Travel.addDriver(ride);
         }
-        for (var i = 0; i < $scope.me.passenger_of_rides.length; i++)
+        for (var i = 0; i < vm.me.passenger_of_rides.length; i++)
         {
-            var passenger = $scope.me.passenger_of_rides[i];
-            $scope.addPassenger(passenger);
-        }
-    };
-
-    $scope.addPassenger = function(passenger)
-    {
-        if (passenger.is_return)
-        {
-            $scope.passenger_back = passenger;
-        }
-        else
-        {
-            $scope.passenger_there = passenger;
+            var passenger = vm.me.passenger_of_rides[i];
+            Travel.addPassenger(passenger);
         }
     };
 
-    $scope.addDriver = function(ride)
-    {
-        if (ride.is_return)
-        {
-            $scope.driver_back = ride;
-        }
-        else
-        {
-            $scope.driver_there = ride;
-        }
-    };
-
-     $scope.deletePassenger = function(passenger) {
+    var deletePassenger = function(passenger) {
         Passenger.remove({pk: passenger.pk}, function(response) {
-            passenger = null;
+            if (vm.there.passenger.pk === passenger.pk)
+            {
+                vm.there.passenger = null;
+            }
+            else
+            {
+                vm.back.passenger = null;
+            }
         })
     };
-
-//    $scope.deletePassengerThere = function() {
-//        Passenger.remove({pk: $scope.passenger_there.pk}, function(response) {
-//            $scope.passenger_there = null;
-//        })
-//    };
-//
-//    $scope.deletePassengerBack = function() {
-//        Passenger.remove({pk: $scope.passenger_back.pk}, function(response) {
-//            $scope.passenger_back = null;
-//        })
-//    };
 
 };

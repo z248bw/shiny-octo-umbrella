@@ -1,0 +1,36 @@
+<div ng-hide="element.ride == null">
+    <md-card>
+        <md-card-title layout="row">
+            <md-card-title-text>
+            <span class="md-headline">
+                Sofor: {{element.ride.driver.user.last_name}} {{element.ride.driver.user.first_name}}
+            </span>
+            </md-card-title-text>
+            <md-button class="md-accent md-raised"
+                       ng-hide="element.object.model == null"
+                       ng-click="element.object.remove($event, element.object.model.pk)">
+                Torles
+            </md-button>
+            <md-button class="md-accent md-raised"
+                       ng-hide="element.object.model == null"
+                       ng-click="element.object.modify($event, element.object.model)">
+                Modositas
+            </md-button>
+            <md-button class="md-accent md-raised"
+                       ng-show="element.object.model == null"
+                       ng-click="element.object.add($event, element.ride.pk)">
+                Csatlakozas
+            </md-button>
+        </md-card-title>
+        <md-card-content>
+            <p>Szabad helyek / Osszes hely: {{element.ride.num_of_free_seats}} / {{element.ride.num_of_seats}}</p>
+            <p>Indulas ideje: {{element.ride.start_time}}</p>
+            <p>Indulas helye: {{element.ride.start_location}} </p>
+        </md-card-content>
+        <md-card-actions layout="row" layout-align="end center">
+            <md-button class="md-primary" ng-href="/travel/index/#/rides/{{element.ride.pk}}">
+                Reszletek es utaslista
+            </md-button>
+        </md-card-actions>
+    </md-card>
+</div>

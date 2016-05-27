@@ -1,26 +1,24 @@
 <div layout="row">
     <div flex="50">
-        <ride-element ride="driver_there" ng-show="driver_there != null"></ride-element>
-        <passenger-element passenger="passenger_there" ng-show="passenger_there != null"></passenger-element>
+        <travel-element travel="travel.there"></travel-element>
     </div>
 
     <div flex="50">
-        <ride-element ride="driver_back" ng-show="driver_back != null"></ride-element>
-        <passenger-element passenger="passenger_back" ng-show="passenger_back != null"></passenger-element>
+        <travel-element travel="travel.back"></travel-element>
     </div>
 </div>
 
-<div layout="row" ng-controller="ridesController">
+<div layout="row" ng-controller="ridesController as rides">
     <div flex="50" style="margin-left=10%;margin-right=10%">
         <h2 class="md-display-1" style="text-align: center">Odaut</h2>
-        <div ng-repeat="ride in rides_there">
+        <div ng-repeat="ride in rides.there">
             <ride-element ride="ride"></ride-element>
         </div>
     </div>
 
     <div flex="50" style="margin-left=10%;margin-right=10%">
         <h2 class="md-display-1" style="text-align: center">Visszaut</h2>
-        <div ng-repeat="ride in rides_back">
+        <div ng-repeat="ride in rides.back">
             <ride-element ride="ride"></ride-element>
         </div>
     </div>
