@@ -5,3 +5,4 @@ migrations/
 staticfiles
 .idea/
 README.md
+node_modules/
