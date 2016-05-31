@@ -1,25 +1,29 @@
-<div layout="row">
-    <div flex="50">
-        <travel-element travel="travel.there"></travel-element>
-    </div>
+<div ng-controller="ridesController as rides">
 
-    <div flex="50">
-        <travel-element travel="travel.back"></travel-element>
-    </div>
-</div>
+    <div layout="row">
+        <div flex="50">
+            <travel-element direction="'there'"></travel-element>
+        </div>
 
-<div layout="row" ng-controller="ridesController as rides">
-    <div flex="50" style="margin-left=10%;margin-right=10%">
-        <h2 class="md-display-1" style="text-align: center">Odaut</h2>
-        <div ng-repeat="ride in rides.there">
-            <ride-element ride="ride"></ride-element>
+        <div flex="50">
+            <travel-element direction="'back'"></travel-element>
         </div>
     </div>
 
-    <div flex="50" style="margin-left=10%;margin-right=10%">
-        <h2 class="md-display-1" style="text-align: center">Visszaut</h2>
-        <div ng-repeat="ride in rides.back">
-            <ride-element ride="ride"></ride-element>
+    <div layout="row">
+        <div flex="50" style="margin-left=10%;margin-right=10%">
+            <h2 class="md-display-1" style="text-align: center">Odaut</h2>
+            <div ng-repeat="ride in rides.there">
+                <ride-element ride="ride"></ride-element>
+            </div>
+        </div>
+
+        <div flex="50" style="margin-left=10%;margin-right=10%">
+            <h2 class="md-display-1" style="text-align: center">Visszaut</h2>
+            <div ng-repeat="ride in rides.back">
+                <ride-element ride="ride"></ride-element>
+            </div>
         </div>
     </div>
+
 </div>

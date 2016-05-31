@@ -1,4 +1,4 @@
-<div ng-hide="element.ride == null">
+<div ng-hide="element.object.model == null">
     <md-card>
         <md-card-title layout="row">
             <md-card-title-text>
@@ -7,19 +7,12 @@
             </span>
             </md-card-title-text>
             <md-button class="md-accent md-raised"
-                       ng-hide="element.object.model == null"
-                       ng-click="element.object.remove($event, element.object.model.pk)">
+                       ng-click="element.remove()">
                 Torles
             </md-button>
             <md-button class="md-accent md-raised"
-                       ng-hide="element.object.model == null"
-                       ng-click="element.object.modify($event, element.object.model)">
+                       ng-click="element.modify()">
                 Modositas
-            </md-button>
-            <md-button class="md-accent md-raised"
-                       ng-show="element.object.model == null"
-                       ng-click="element.object.add($event, element.ride.pk)">
-                Csatlakozas
             </md-button>
         </md-card-title>
         <md-card-content>

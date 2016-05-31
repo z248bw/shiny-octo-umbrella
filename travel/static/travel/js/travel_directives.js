@@ -13,7 +13,7 @@ angular.module('travelApp').directive('travelElement', function() {
         restrict: 'E',
         templateUrl: '/static/travel/templates/travel_element.html',
         scope: {
-            travel: '=',
+            direction: '=',
         },
         controller: TravelElementController,
         controllerAs: 'element'

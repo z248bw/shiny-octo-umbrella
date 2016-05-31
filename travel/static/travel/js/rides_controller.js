@@ -4,6 +4,7 @@ angular.module('travelApp')
 function RidesController($scope, Ride, Passenger, Travel) {
 
     var vm = this;
+    vm.travel = Travel;
     vm.there = [];
     vm.back = [];
     $scope.showPassengerJoin = function(ev, ride_pk) {
@@ -36,9 +37,12 @@ function RidesController($scope, Ride, Passenger, Travel) {
         });
     };
 
-    var onPassengerJoined = function(ride_pk) {
-        //TODO
-    };
+//    var onPassengerJoined = function(ride_pk) {
+//        $scope.$on('passengerJoined', function(event, args) {
+////            console.log('passenger joined ');
+////            console.log(args);
+//        });
+//    };
 
     var addPassengerToCurrentPassengers = function(passenger) {
         var ride = getRideByPk(passenger.ride);

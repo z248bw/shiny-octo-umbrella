@@ -1,10 +1,10 @@
 angular.module('travelApp')
     .controller('passengerJoinController',PassengerJoinController);
 
-function PassengerJoinController($scope, $mdDialog, Passenger, Travel, ride_pk) {
+function PassengerJoinController($scope, $mdDialog, Passenger, Travel, ride) {
 
     $scope.passenger = {
-        ride: ride_pk,
+        ride: ride.pk,
         phone: null,
         notify_on_ride_change: false,
         notify_on_ride_delete: false,
@@ -13,8 +13,9 @@ function PassengerJoinController($scope, $mdDialog, Passenger, Travel, ride_pk) 
     $scope.joinRide = function()
     {
         $mdDialog.hide();
-        Passenger.save($scope.passenger, function(response) {
-            Travel.addPassenger(response);
+        Passenger.save($scope.passenger, function(passenger) {
+            passenger.ride = ride;
+            Travel.addPassenger(Travel, passenger);
         }, function(error){
             $mdDialog.show(
               $mdDialog.alert()
