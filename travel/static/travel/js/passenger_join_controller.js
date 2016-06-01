@@ -15,7 +15,7 @@ function PassengerJoinController($scope, $mdDialog, Passenger, Travel, ride) {
         $mdDialog.hide();
         Passenger.save($scope.passenger, function(passenger) {
             passenger.ride = ride;
-            Travel.addPassenger(Travel, passenger);
+            Travel.addPassenger(passenger);
         }, function(error){
             $mdDialog.show(
               $mdDialog.alert()

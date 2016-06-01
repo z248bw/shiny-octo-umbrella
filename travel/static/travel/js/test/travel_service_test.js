@@ -10,36 +10,31 @@ describe('Given a Travel instance', function() {
         $provide.value("$mdDialog", mockDialog);
         $provide.value("Passenger", mockPassenger);
     }));
+    beforeEach(module('testUtils'));
 
-    var createPassenger = function(pk, isReturn) {
-        return {
-            pk: pk,
-            ride: {
-                is_return: isReturn
-            }
-        };
-    };
-
-    it('a passenger there can be added and only Travel.there will be set', inject(function(Travel) {
-        Travel.addPassenger(Travel, createPassenger('1', false));
+    it('a passenger there can be added and only Travel.there will be set',
+        inject(function(Travel, TestUtils) {
+        Travel.addPassenger(TestUtils.createPassengerThere('1'));
         expect(Travel.there.passenger.model.pk).toBe('1');
         expect(Travel.there.driver.model).toBe(null);
         expect(Travel.back.passenger.model).toBe(null);
         expect(Travel.back.driver.model).toBe(null);
     }));
 
-    it('when a passenger is added it will be emit on the rootscope',
-        inject(function($rootScope, Travel) {
-        var passenger = createPassenger('1', false);
+    it('when a passenger is added it will be emitted on the with one less free seat rootscope',
+        inject(function($rootScope, Travel, TestUtils) {
+        var passenger = TestUtils.createPassengerThere('1');
+        var emittedPassenger = TestUtils.createPassengerThere('1');
 
         spyOn($rootScope, "$emit")
-        Travel.addPassenger(Travel, passenger);
-        expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_ADDED", passenger);
+        Travel.addPassenger(passenger);
+        expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_ADDED", emittedPassenger);
     }));
 
-    it('a passenger there and back can be added', inject(function(Travel) {
-        Travel.addPassenger(Travel, createPassenger('1', false));
-        Travel.addPassenger(Travel, createPassenger('2', true));
+    it('a passenger there and back can be added',
+        inject(function(Travel, TestUtils) {
+        Travel.addPassenger(TestUtils.createPassengerThere('1'));
+        Travel.addPassenger(TestUtils.createPassengerBack('2'));
         expect(Travel.there.passenger.model.pk).toBe('1');
         expect(Travel.there.driver.model).toBe(null);
         expect(Travel.back.passenger.model.pk).toBe('2');
@@ -47,9 +42,9 @@ describe('Given a Travel instance', function() {
     }));
 
     it('a passenger there can be updated and only the Travel.there will be changed',
-        inject(function(Travel) {
-        Travel.addPassenger(Travel, createPassenger('1', false));
-        Travel.addPassenger(Travel, createPassenger('2', false));
+        inject(function(Travel, TestUtils) {
+        Travel.addPassenger(TestUtils.createPassengerThere('1'));
+        Travel.addPassenger(TestUtils.createPassengerThere('2'));
         expect(Travel.there.passenger.model.pk).toBe('2');
         expect(Travel.there.driver.model).toBe(null);
         expect(Travel.back.passenger.model).toBe(null);
@@ -57,27 +52,30 @@ describe('Given a Travel instance', function() {
     }));
 
     it('when a passenger is deleted it will be emit on the rootscope',
-        inject(function($rootScope, Travel) {
-        var passenger = createPassenger('1', false);
-        Travel.addPassenger(Travel, passenger);
+        inject(function($rootScope, Travel, TestUtils) {
+        var passenger = TestUtils.createPassengerThere('1');
+        var emittedPassenger = TestUtils.createPassengerThere('1');
+        Travel.addPassenger(passenger);
 
         spyOn($rootScope, "$emit")
         Travel.there.passenger.remove(Travel.there.passenger);
-        expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_DELETED", passenger);
+        expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_DELETED", emittedPassenger);
     }));
 
-    it('a passenger can be deleted and then added', inject(function(Travel) {
-        Travel.addPassenger(Travel, createPassenger('1', false));
+    it('a passenger can be deleted and then added',
+        inject(function(Travel, TestUtils) {
+        Travel.addPassenger(TestUtils.createPassengerThere('1'));
         Travel.there.passenger.remove(Travel.there.passenger);
-        Travel.addPassenger(Travel, createPassenger('2', false));
+        Travel.addPassenger(TestUtils.createPassengerThere('2'));
         expect(Travel.there.passenger.model.pk).toBe('2');
         expect(Travel.there.driver.model).toBe(null);
         expect(Travel.back.passenger.model).toBe(null);
         expect(Travel.back.driver.model).toBe(null);
     }));
 
-    it('a isDriving returns false for passenger', inject(function(Travel) {
-        Travel.addPassenger(Travel, createPassenger('1', false));
+    it('a isDriving returns false for passenger',
+        inject(function(Travel, TestUtils) {
+        Travel.addPassenger(TestUtils.createPassengerThere('1'));
         expect(Travel.there.isDriving()).toBe(false);
     }));
 

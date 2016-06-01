@@ -24,13 +24,12 @@ angular.module('travelServices').factory('Travel',
         add: function(event, ride) {
             showPassengerJoin(ride.pk)
         },
-        modify: function() {
-            //TODO
+        modify: function(event) {
+            showPassengerJoin(event, this.model);
         },
         remove: function() {
-            var passenger = this;
-            var pk = passenger.model.pk;
-            var deleted_passenger = passenger.model;
+            var pk = this.model.pk;
+            var deleted_passenger = this.model;
             Passenger.remove({pk: pk}, function() {
                 $rootScope.$emit('PASSENGER_DELETED', deleted_passenger);
             });
@@ -78,30 +77,30 @@ angular.module('travelServices').factory('Travel',
         })
     };
 
-    var addPassenger = function(travel, passenger) {
+    var addPassenger = function(passenger) {
         if (passenger.ride.is_return)
         {
-            travel.back.passenger.model = passenger;
-            travel.back.driver.model = null;
+            this.back.passenger.model = passenger;
+            this.back.driver.model = null;
         }
         else
         {
-            travel.there.passenger.model = passenger;
-            travel.there.driver.model = null;
+            this.there.passenger.model = passenger;
+            this.there.driver.model = null;
         }
         $rootScope.$emit('PASSENGER_ADDED', passenger);
     };
 
-    var addDriver = function(travel, driver) {
+    var addDriver = function(ride) {
         if (ride.is_return)
         {
-            travel.there.driver.model = ride;
-            travel.there.passenger.model = null;
+            this.there.driver.model = ride;
+            this.there.passenger.model = null;
         }
         else
         {
-            travel.back.driver.model = ride;
-            travel.back.passenger.model = null;
+            this.back.driver.model = ride;
+            this.back.passenger.model = null;
         }
     };
 

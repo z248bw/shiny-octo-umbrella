@@ -8,21 +8,25 @@ function TravelController($scope, TravelUser, Travel) {
     vm.there = Travel.there;
     vm.back = Travel.back;
 
-    TravelUser.getMe(function(response) {
-        vm.me = response;
-        initTravels();
-    });
+    var action = function() {
+        TravelUser.getMe(function(response) {
+            vm.me = response;
+            initTravels();
+        });
+    };
 
     var initTravels = function() {
         for (var i = 0; i < vm.me.driven_rides.length; i++)
         {
             var ride = vm.me.driven_rides[i];
-            Travel.addDriver(Travel, ride);
+            Travel.addDriver(ride);
         }
         for (var i = 0; i < vm.me.passenger_of_rides.length; i++)
         {
             var passenger = vm.me.passenger_of_rides[i];
-            Travel.addPassenger(Travel, passenger);
+            Travel.addPassenger(passenger);
         }
     };
+
+    action();
 };
