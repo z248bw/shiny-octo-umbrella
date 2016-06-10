@@ -1,13 +1,11 @@
 describe('Given a Travel element', function() {
 
-    var mockDialog = {};
     var mockPassenger = {
         remove: function(pk, callback) {
             callback();
         }
     };
     beforeEach(module("travelServices", function ($provide) {
-        $provide.value("$mdDialog", mockDialog);
         $provide.value("Passenger", mockPassenger);
     }));
 
@@ -83,12 +81,18 @@ describe('Given a Travel element', function() {
     );
 
     it('travelElementController can remove the element',
-        inject(function($controller, Travel, TestUtils) {
-            var scope = {direction: 'there'};
+        inject(function($rootScope, $q, $controller, $mdDialog, Travel, TestUtils) {
+            var $scope = $rootScope.$new();
+            $scope.direction = 'there';
             Travel.addPassenger(TestUtils.createPassengerThere('1'));
+            var deferred = $q.defer();
+            spyOn($mdDialog, "show").and.returnValue(deferred.promise);
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('travelElementController', {$scope: $scope});
             ctrl.remove();
+
+            deferred.resolve();
+            $scope.$apply();
 
             expect(ctrl.object.model).toBe(null);
         })
