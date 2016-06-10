@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('testUtils', []).factory('TestUtils', function() {
     var createPassenger = function(pk, isReturn) {
         return {

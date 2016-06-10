@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('travelApp').directive('rideElement', function() {
     return {
         restrict: 'E',

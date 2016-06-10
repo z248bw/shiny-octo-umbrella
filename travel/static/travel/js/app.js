@@ -1,3 +1,5 @@
+'use strict';
+
 angular
     .module('travelApp', ['ngResource', 'ngRoute', 'ngMaterial', 'travelServices'])
     .config(TravelAppConfig);

@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('travelApp')
     .controller('travelController', TravelController);
 
@@ -9,11 +11,13 @@ function TravelController($scope, TravelUser, Travel) {
     vm.back = Travel.back;
 
     var action = function() {
-        TravelUser.getMe(function(response) {
-            vm.me = response;
-            initTravels();
-        });
+        TravelUser.getMe(onGetMe);
     };
+
+    var onGetMe = function(me){
+        vm.me = me;
+        initTravels();
+    }
 
     var initTravels = function() {
         for (var i = 0; i < vm.me.driven_rides.length; i++)

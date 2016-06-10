@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('travelApp')
     .controller('passengerJoinController',PassengerJoinController);
 

@@ -1,3 +1,5 @@
+'use strict';
+
 describe('A simple test', function() {
 
     it('which checks that the js tests run perfectly', function() {

@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('travelApp')
     .controller('travelElementController', TravelElementController);
 
@@ -24,6 +26,10 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
     };
 
     var onPassengerDeleted = function (event, passenger) {
+        if (vm.object.model === null)
+        {
+            return;
+        }
         if (isTheSamePassenger(vm.object.model, passenger))
         {
             vm.object.model = null;

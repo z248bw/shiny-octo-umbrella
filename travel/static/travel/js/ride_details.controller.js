@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('travelApp')
     .controller('rideDetailsController', RidesDetailController);
 

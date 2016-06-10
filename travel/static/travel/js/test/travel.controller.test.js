@@ -1,3 +1,5 @@
+'use strict';
+
 describe('Given a TravelController', function() {
 
     beforeEach(module('travelApp'));

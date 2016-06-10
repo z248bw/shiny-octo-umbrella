@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('travelServices', ['ngResource']);
 
 angular.module('travelServices').factory('Ride', ['$resource', function($resource){

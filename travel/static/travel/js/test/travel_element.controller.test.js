@@ -1,3 +1,5 @@
+'use strict';
+
 describe('Given a Travel element', function() {
 
     var mockPassenger = {
