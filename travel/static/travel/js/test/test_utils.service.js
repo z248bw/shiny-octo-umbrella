@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('testUtils', []).factory('TestUtils', function() {
+angular.module('testUtils', []).factory('TestUtils',
+    ['$q', '$mdDialog', function($q, $mdDialog) {
     var createPassenger = function(pk, isReturn) {
         return {
             pk: pk,
@@ -32,10 +33,24 @@ angular.module('testUtils', []).factory('TestUtils', function() {
         return createPassenger(pk, true);
     };
 
+     var getMdDialogShowResponseDeferred = function() {
+        var deferred = $q.defer();
+        spyOn($mdDialog, "show").and.returnValue(deferred.promise);
+
+        return deferred;
+    };
+
+    var resolveDeferred = function($scope, deferred) {
+        deferred.resolve();
+        $scope.$apply();
+    };
+
     return {
         createPassengerThere: createPassengerThere,
         createPassengerBack: createPassengerBack,
         createRideThere: createRideThere,
         createRideBack: createRideBack,
+        getMdDialogShowResponseDeferred: getMdDialogShowResponseDeferred,
+        resolveDeferred: resolveDeferred
     };
-});
+}]);

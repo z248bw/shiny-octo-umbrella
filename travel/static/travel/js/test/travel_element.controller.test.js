@@ -83,18 +83,16 @@ describe('Given a Travel element', function() {
     );
 
     it('travelElementController can remove the element',
-        inject(function($rootScope, $q, $controller, $mdDialog, Travel, TestUtils) {
+        inject(function($rootScope, $controller, Travel, TestUtils) {
             var $scope = $rootScope.$new();
             $scope.direction = 'there';
             Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            var deferred = $q.defer();
-            spyOn($mdDialog, "show").and.returnValue(deferred.promise);
+            var deferred = TestUtils.getMdDialogShowResponseDeferred();
 
             var ctrl = $controller('travelElementController', {$scope: $scope});
             ctrl.remove();
 
-            deferred.resolve();
-            $scope.$apply();
+           TestUtils.resolveDeferred($scope, deferred);
 
             expect(ctrl.object.model).toBe(null);
         })
