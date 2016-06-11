@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from travel.models import TravelUser, Passenger
+from travel.models import  Passenger
 from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user, get_passenger, \
     get_travel_user
 
@@ -327,6 +327,16 @@ class RideRestTest(RestTestBase, RideUtils):
             body_dict=self.get_ride_request_json(ride))
         self.assert_get(url=self.get_url_for_rides(),
                         expected=[self.ride_to_response_dict(ride)],
+                        user=ride.driver.user)
+
+    def test_user_cannot_update_his_ride_via_post(self):
+        original_ride = create_ride()
+        ride = deepcopy(original_ride)
+        ride.price += 1
+        RestUtils(url=self.get_url_for_ride(ride), user=ride.driver.user).post(
+            body_dict=self.get_ride_request_json(ride))
+        self.assert_get(url=self.get_url_for_rides(),
+                        expected=[self.ride_to_response_dict(original_ride)],
                         user=ride.driver.user)
 
     def test_user_cannot_update_other_ones_ride(self):
