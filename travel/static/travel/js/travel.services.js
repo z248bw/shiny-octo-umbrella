@@ -20,7 +20,7 @@ angular.module('travelServices').factory('TravelUser', ['$resource', function($r
 }]);
 
 angular.module('travelServices').factory('Travel',
-    ['$rootScope', '$mdDialog', 'Passenger', function($rootScope, $mdDialog, Passenger){
+    ['$rootScope', '$mdDialog', 'Passenger', 'Ride', function($rootScope, $mdDialog, Passenger, Ride){
 
     var passenger = {
         model: null,
@@ -45,13 +45,31 @@ angular.module('travelServices').factory('Travel',
     var driver = {
         model: null,
         add: function() {
-            //TODO
+            Ride.save(this.model, function(response) {
+    //            TODO
+                console.log('success');
+            }, function(error) {
+    //            TODO
+                console.log('error');
+            });
         },
         modify: function() {
-            //TODO
+            Ride.update(this.model, function(response) {
+//                TODO
+                console.log('success');
+            }, function(error) {
+//                TODO
+                console.log('error');
+            });
         },
         remove: function() {
-            //TODO
+            var deleted_ride = this.model;
+            Ride.remove({pk: this.model.pk}, function(response) {
+                $rootScope.$emit('DRIVER_DELETED', deleted_ride);
+            }, function(error) {
+//              TODO
+                console.log('error');
+            });
         },
         getRide: function() {
             return this.model;
@@ -105,6 +123,7 @@ angular.module('travelServices').factory('Travel',
             this.back.driver.model = ride;
             this.back.passenger.model = null;
         }
+        $rootScope.$emit('DRIVER_ADDED', passenger);
     };
 
     return {

@@ -9,77 +9,9 @@ function RidesDetailController($scope, $routeParams, $mdDialog, Ride, Travel) {
     vm.ride = null;
     vm.passengers = [];
     vm.showPassengerJoin = showPassengerJoin;
-    vm.saveRide = null;
-    vm.deleteRide = null;
-    vm.shouldUpdateOnSave = false;
 
     var activate = function() {
-        vm.showRideSaveDialog = showRideSaveDialog;
-        vm.showRideDeleteDialog = showRideDeleteDialog;
         initRideDetails();
-    };
-
-    var showRideSaveDialog = function() {
-        if (vm.shouldUpdateOnSave)
-        {
-            var confirm = $mdDialog.confirm()
-                .title('Biztos vagy benne, hogy frissiteni akarod a jarmu tulajdonsagait?')
-                .targetEvent(event)
-                .ok('Igen')
-                .cancel('Megse');
-
-            $mdDialog.show(confirm).then(updateRide);
-        }
-        else
-        {
-            var confirm = $mdDialog.confirm()
-                .title('Biztos vagy benne, hogy letre akarod hozni a jarmuvet?')
-                .targetEvent(event)
-                .ok('Igen')
-                .cancel('Megse');
-
-            $mdDialog.show(confirm).then(createRide);
-        }
-    };
-
-    var updateRide = function() {
-        Ride.update(vm.ride, function(response) {
-//                TODO
-                console.log('success');
-            }, function(error) {
-//                TODO
-                console.log('error');
-            });
-    };
-
-    var createRide = function() {
-        Ride.save(vm.ride, function(response) {
-    //            TODO
-                console.log('success');
-            }, function(error) {
-    //            TODO
-                console.log('error');
-            })
-    };
-
-    var showRideDeleteDialog = function() {
-        var confirm = $mdDialog.confirm()
-            .title('Biztos vagy benne, hogy torolni akarod a jarmuvet?')
-            .targetEvent(event)
-            .ok('Igen')
-            .cancel('Megse');
-
-        $mdDialog.show(confirm).then(deleteRide);
-    };
-
-    var deleteRide = function() {
-        Ride.remove({pk: vm.ride.pk}, function(response) {
-//        TODO
-            console.log('success');
-        }, function(error) {
-//        TODO
-            console.log('error');
-        });
     };
 
     var initRideDetails = function()
