@@ -12,6 +12,14 @@ function ManageRideController($scope, $routeParams, $mdDialog, Ride, Travel) {
     vm.showDriverDeleteDialog = null;
     vm.shouldUpdateOnSave = false;
 
+    $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
+        if (vm.driver.model === null)
+        {
+            vm.driver.model = {};
+        }
+       vm.driver.model.start_time = timepicker.datetime;
+    });
+
     var activate = function() {
         vm.showDriverSaveDialog = showDriverSaveDialog;
         vm.showDriverDeleteDialog = showDriverDeleteDialog;
