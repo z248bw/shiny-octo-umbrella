@@ -23,6 +23,20 @@
                 </div>
             </md-input-container>
 
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Benzinpenz</label>
+                <input required name="price"
+                       ng-model="manager.driver.model.price"
+                       required type="number"
+                       min="0"
+                       max="99999">
+                <div ng-messages="rideForm.price.$error">
+                    <div ng-message="required">A mezo kitoltese kotelezo!</div>
+                    <div ng-message="min">A minimalis benzinkoltseg 0!</div>
+                    <div ng-message="max">A maximalis benzinkoltseg 99999!</div>
+                </div>
+            </md-input-container>
+
             <timepicker-element datetime="manager.driver.model.start_time"></timepicker-element>
 
             <md-input-container class="md-block" flex-gt-xs>
