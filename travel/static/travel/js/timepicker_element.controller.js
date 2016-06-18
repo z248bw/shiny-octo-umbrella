@@ -43,7 +43,7 @@ function TimePickerElementController($scope) {
             day = date.getUTCDate(),
             hour = date.getUTCHours(),
             minute = date.getUTCMinutes();
-        vm.date = new Date(year, month, day);
+        vm.date = new Date(Date.UTC(year, month, day));
         vm.time = hour + ':' + minute;
     };
 
@@ -52,7 +52,7 @@ function TimePickerElementController($scope) {
             + '-'
             + numberToZeroPaddedString(vm.date.getUTCMonth()+1)
             + '-'
-            + numberToZeroPaddedString(vm.date.getUTCDate()+1)
+            + numberToZeroPaddedString(vm.date.getUTCDate())
             + 'T'
             + vm.time;
     };
