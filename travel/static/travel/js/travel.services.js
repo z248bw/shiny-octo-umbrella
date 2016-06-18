@@ -115,15 +115,15 @@ angular.module('travelServices').factory('Travel',
     var addDriver = function(ride) {
         if (ride.is_return)
         {
-            this.there.driver.model = ride;
-            this.there.passenger.model = null;
-        }
-        else
-        {
             this.back.driver.model = ride;
             this.back.passenger.model = null;
         }
-        $rootScope.$emit('DRIVER_ADDED', passenger);
+        else
+        {
+            this.there.driver.model = ride;
+            this.there.passenger.model = null;
+        }
+        $rootScope.$emit('DRIVER_ADDED', ride);
     };
 
     return {
