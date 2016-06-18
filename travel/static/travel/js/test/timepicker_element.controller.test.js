@@ -15,13 +15,13 @@ describe('Given a datetimepicker element', function() {
         });
     });
 
-    it('instantiating the element with datetime as undefined returns null as the current date and time',
+    it('instantiating the element with datetime as undefined returns the current datetime as the current date and time',
         function() {
             var $scope = $rootScope.$new();
 
             var ctrl = $controller('timepickerElementController', {$scope: $scope});
 
-            expect(ctrl.date).toBe(null);
+            expect(ctrl.date.getTime()).not.toBe(new Date('invalid'));
             expect(ctrl.time.hour).toBe('00');
             expect(ctrl.time.min).toBe('00');
         }

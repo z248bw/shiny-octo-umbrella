@@ -30,7 +30,7 @@ function TimePickerElementController($scope) {
             return this.hour + ':' + this.min;
         }
     };
-    vm.date = null;
+    vm.date = new Date();
     vm.getDateTime = null;
 
     var action = function() {
@@ -56,6 +56,10 @@ function TimePickerElementController($scope) {
 
     var initDateTimes = function() {
         if (!('datetime' in $scope))
+        {
+            return;
+        }
+        if ($scope.datetime == null)
         {
             return;
         }
