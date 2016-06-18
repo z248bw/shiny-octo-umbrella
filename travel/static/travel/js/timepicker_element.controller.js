@@ -7,7 +7,29 @@ function TimePickerElementController($scope) {
 
     var vm = this;
     $scope.vm = vm;
-    vm.time = null;
+    vm.time = {
+        hour: '00',
+        min: '00',
+        getHours: function() {
+           var hours = [];
+           for (var i = 0; i < 24; i++)
+           {
+                hours.push(numberToZeroPaddedString(i));
+           }
+           return hours;
+        },
+        getMinutes: function() {
+           var mins = [];
+           for (var i = 0; i < 60; i++)
+           {
+                mins.push(numberToZeroPaddedString(i));
+           }
+           return mins;
+        },
+        getTime: function() {
+            return this.hour + ':' + this.min;
+        }
+    };
     vm.date = null;
     vm.getDateTime = null;
 
@@ -16,7 +38,11 @@ function TimePickerElementController($scope) {
        vm.getDateTime = getDateTime;
     };
 
-    $scope.$watch('vm.time', function() {
+    $scope.$watch('vm.time.hour', function() {
+        emitNewDateTime();
+    }, true);
+
+    $scope.$watch('vm.time.min', function() {
         emitNewDateTime();
     }, true);
 
@@ -44,7 +70,8 @@ function TimePickerElementController($scope) {
             hour = date.getUTCHours(),
             minute = date.getUTCMinutes();
         vm.date = new Date(Date.UTC(year, month, day));
-        vm.time = hour + ':' + minute;
+        vm.time.hour = hour;
+        vm.time.min = minute;
     };
 
     var getDateTime = function() {
@@ -54,7 +81,7 @@ function TimePickerElementController($scope) {
             + '-'
             + numberToZeroPaddedString(vm.date.getUTCDate())
             + 'T'
-            + vm.time;
+            + vm.time.getTime();
     };
 
     var numberToZeroPaddedString = function(n) {

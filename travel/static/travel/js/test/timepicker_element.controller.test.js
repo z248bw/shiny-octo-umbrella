@@ -22,7 +22,8 @@ describe('Given a datetimepicker element', function() {
             var ctrl = $controller('timepickerElementController', {$scope: $scope});
 
             expect(ctrl.date).toBe(null);
-            expect(ctrl.time).toBe(null);
+            expect(ctrl.time.hour).toBe('00');
+            expect(ctrl.time.min).toBe('00');
         }
     );
 
@@ -34,7 +35,7 @@ describe('Given a datetimepicker element', function() {
 
             // month is zero based in js Date implementation...
             expect(ctrl.date.getTime()).toBe(new Date(Date.UTC(2016, 4, 16)).getTime());
-            expect(ctrl.time).toBe('18:39');
+            expect(ctrl.time.getTime()).toBe('18:39');
         }
     );
 
@@ -75,7 +76,8 @@ describe('Given a datetimepicker element', function() {
             $scope.$digest();
 
             spyOn($scope, "$emit");
-            ctrl.time = '20:00';
+            ctrl.time.hour = '20';
+            ctrl.time.min = '00';
 
             $scope.$digest();
             expect($scope.$emit).toHaveBeenCalledWith("DATETIME_CHANGED", {id: 1, datetime: '2016-05-16T20:00'});
