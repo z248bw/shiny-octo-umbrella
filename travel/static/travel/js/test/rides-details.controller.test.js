@@ -7,16 +7,18 @@ describe('Given a RideDetailsController', function() {
     beforeEach(module('testUtils'));
 
     var $httpBackend,
+        $controller,
         TestUtils;
     beforeEach(function() {
         angular.mock.inject(function ($injector) {
             $httpBackend = $injector.get('$httpBackend');
+            $controller = $injector.get('$controller');
             TestUtils = $injector.get('TestUtils');
         });
     });
 
     it('on init the details of the current ride should be fetched',
-        inject(function($controller) {
+        function() {
             var scope = {},
                 routeParams = {pk: '1'},
                 currentRide = TestUtils.createRideThere('1'),
@@ -29,7 +31,7 @@ describe('Given a RideDetailsController', function() {
 
             expect(ctrl.ride.pk).toBe('1');
             expect(ctrl.passengers.length).toBe(1);
-        })
+        }
     );
 
 });
