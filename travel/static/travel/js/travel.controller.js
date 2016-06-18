@@ -3,7 +3,7 @@
 angular.module('travelApp')
     .controller('travelController', TravelController);
 
-function TravelController($scope, TravelUser, Travel) {
+function TravelController(TravelUser, Travel) {
 
     var vm = this;
     vm.me = null;

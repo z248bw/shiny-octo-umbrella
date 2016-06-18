@@ -14,78 +14,78 @@ describe('Given a TravelController', function() {
         };
     };
 
-    var $httpBackend;
-    var mockTravelUser;
+    var $httpBackend,
+        $controller,
+        TestUtils,
+        mockTravelUser;
     beforeEach(function() {
         angular.mock.inject(function ($injector) {
             $httpBackend = $injector.get('$httpBackend');
+            $controller = $injector.get('$controller');
+            TestUtils = $injector.get('TestUtils');
         });
 
         mockTravelUser = createMockTravelUser();
     });
 
     it('travelController instantiated with empty passengers and drivers',
-        inject(function($controller) {
-            var scope = {};
+        function() {
             $httpBackend.expectGET('/rest/1/travel_users/me/').respond(mockTravelUser.response);
 
-            var ctrl = $controller('travelController', {$scope: scope});
+            var ctrl = $controller('travelController');
 
             $httpBackend.flush();
             expect(ctrl.there.passenger.model).toBe(null);
             expect(ctrl.back.passenger.model).toBe(null);
             expect(ctrl.there.driver.model).toBe(null);
             expect(ctrl.back.driver.model).toBe(null);
-        })
+        }
     );
 
     it('travelController instantiated with a passenger there',
-        inject(function($controller, TestUtils) {
-            var scope = {};
+        function() {
             mockTravelUser.response.passenger_of_rides.push(TestUtils.createPassengerThere('1'));
             $httpBackend.expectGET('/rest/1/travel_users/me/').respond(mockTravelUser.response);
 
-            var ctrl = $controller('travelController', {$scope: scope});
+            var ctrl = $controller('travelController');
 
             $httpBackend.flush();
             expect(ctrl.there.passenger.model.pk).toBe('1');
             expect(ctrl.back.passenger.model).toBe(null);
             expect(ctrl.there.driver.model).toBe(null);
             expect(ctrl.back.driver.model).toBe(null);
-        })
+        }
     );
 
     it('travelController instantiated with a passenger back',
-        inject(function($controller, TestUtils) {
-            var scope = {};
+        function() {
             mockTravelUser.response.passenger_of_rides.push(TestUtils.createPassengerBack('1'));
             $httpBackend.expectGET('/rest/1/travel_users/me/').respond(mockTravelUser.response);
 
-            var ctrl = $controller('travelController', {$scope: scope});
+            var ctrl = $controller('travelController');
 
             $httpBackend.flush();
             expect(ctrl.there.passenger.model).toBe(null);
             expect(ctrl.back.passenger.model.pk).toBe('1');
             expect(ctrl.there.driver.model).toBe(null);
             expect(ctrl.back.driver.model).toBe(null);
-        })
+        }
     );
 
     it('travelController instantiated with a passenger there and back',
-        inject(function($controller, TestUtils) {
-            var scope = {};
+        function() {
             mockTravelUser.response.passenger_of_rides.push(TestUtils.createPassengerThere('1'));
             mockTravelUser.response.passenger_of_rides.push(TestUtils.createPassengerBack('2'));
             $httpBackend.expectGET('/rest/1/travel_users/me/').respond(mockTravelUser.response);
 
-            var ctrl = $controller('travelController', {$scope: scope});
+            var ctrl = $controller('travelController');
 
             $httpBackend.flush();
             expect(ctrl.there.passenger.model.pk).toBe('1');
             expect(ctrl.back.passenger.model.pk).toBe('2');
             expect(ctrl.there.driver.model).toBe(null);
             expect(ctrl.back.driver.model).toBe(null);
-        })
+        }
     );
 
 });
