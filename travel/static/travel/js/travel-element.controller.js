@@ -83,7 +83,7 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
     };
 
     var modifyElement = function() {
-        //TODO
+        vm.object.showModify();
     };
 
     var getTravellerByDirection = function(direction) {

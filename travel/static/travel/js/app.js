@@ -14,7 +14,7 @@ function TravelAppConfig($resourceProvider, $httpProvider, $routeProvider) {
         templateUrl: '/static/travel/templates/ride_details.html',
         controller: 'rideDetailsController'
       }).
-      when('/create/ride/:direction', {
+      when('/create/ride/:direction', {     //TODO rename to manage/ride/:direction
         templateUrl: '/static/travel/templates/manage_ride.html',
         controller: 'rideDetailsController'
       }).

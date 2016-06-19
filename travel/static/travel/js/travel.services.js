@@ -5,7 +5,7 @@ angular.module('travelServices', ['ngResource']);
 angular.module('travelServices').factory('Ride', ['$resource', function($resource){
     return $resource('/rest/1/rides/:pk', null, {
         'getPassengers': {method: 'GET', url: '/rest/1/rides/:pk/passengers/', isArray: true},
-        'update': {method: 'PUT', url: '/rest/1/rides/:pk', isArray: false}
+        'update': {method: 'PUT', url: '/rest/1/rides/:pk/', isArray: false}
     });
 }]);
 
@@ -28,8 +28,11 @@ angular.module('travelServices').factory('Travel',
         add: function(event, ride) {
             showPassengerJoin(ride.pk)
         },
+        showModify : function(){
+            showPassengerJoin(ride.pk);
+        },
         modify: function(event) {
-            showPassengerJoin(event, this.model);
+//        TODO
         },
         remove: function() {
             var pk = this.model.pk;
@@ -65,8 +68,11 @@ angular.module('travelServices').factory('Travel',
                 showError(error);
             });
         },
+        showModify : function(){
+            $location.url('/create/ride/' + (this.model.is_return? 'back' : 'there'));
+        },
         modify: function() {
-            Ride.update(this.model, function(response) {
+            Ride.update({pk: this.model.pk}, this.model, function(response) {
                 $mdDialog.show(
                    $mdDialog.alert()
                      .parent(angular.element(document.body))
@@ -88,7 +94,7 @@ angular.module('travelServices').factory('Travel',
         },
         getRide: function() {
             return this.model;
-        }
+        },
     };
 
     var travel = {
