@@ -1,27 +1,54 @@
 <div ng-controller="ridesController as rides">
 
-    <div layout="row">
-        <div flex="50">
-            <travel-element direction="'there'"></travel-element>
-        </div>
+    <md-tabs md-stretch-tabs="always" md-dynamic-height=true hide-gt-xs flex>
+        <md-tab label="Oda">
+            <md-tab-body>
+                <div layout="column">
+                    <travel-element direction="'there'"></travel-element>
+                    <h2 class="md-display-1" style="text-align: center">Odaut</h2>
+                    <div ng-repeat="ride in rides.there">
+                        <ride-element ride="ride"></ride-element>
+                    </div>
+                </div>
+            </md-tab-body>
+        </md-tab>
+        <md-tab label="Vissza">
+            <md-tab-body>
+                <div layout="column">
+                    <travel-element direction="'back'"></travel-element>
+                    <h2 class="md-display-1" style="text-align: center">Odaut</h2>
+                    <div ng-repeat="ride in rides.back">
+                        <ride-element ride="ride"></ride-element>
+                    </div>
+                </div>
+            </md-tab-body>
+        </md-tab>
+    </md-tabs>
 
-        <div flex="50">
-            <travel-element direction="'back'"></travel-element>
-        </div>
-    </div>
+    <div hide-xs flex>
+        <div layout="row">
+            <div flex="50">
+                <travel-element direction="'there'"></travel-element>
+            </div>
 
-    <div layout="row">
-        <div flex="50" style="margin-left=10%;margin-right=10%">
-            <h2 class="md-display-1" style="text-align: center">Odaut</h2>
-            <div ng-repeat="ride in rides.there">
-                <ride-element ride="ride"></ride-element>
+            <div flex="50">
+                <travel-element direction="'back'"></travel-element>
             </div>
         </div>
 
-        <div flex="50" style="margin-left=10%;margin-right=10%">
-            <h2 class="md-display-1" style="text-align: center">Visszaut</h2>
-            <div ng-repeat="ride in rides.back">
-                <ride-element ride="ride"></ride-element>
+        <div layout="row">
+            <div flex="50" style="margin-left=10%;margin-right=10%">
+                <h2 class="md-display-1" style="text-align: center">Odaut</h2>
+                <div ng-repeat="ride in rides.there">
+                    <ride-element ride="ride"></ride-element>
+                </div>
+            </div>
+
+            <div flex="50" style="margin-left=10%;margin-right=10%">
+                <h2 class="md-display-1" style="text-align: center">Visszaut</h2>
+                <div ng-repeat="ride in rides.back">
+                    <ride-element ride="ride"></ride-element>
+                </div>
             </div>
         </div>
     </div>
