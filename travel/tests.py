@@ -216,8 +216,17 @@ class RideTest(TestCase):
         create_passenger_user(ride)
         self.assertEqual(2, ride.num_of_seats - 2)
 
+    def test_update_passenger_when_ride_has_no_more_free_seats(self):
+        ride = get_ride()
+        ride.num_of_seats = 1
+        ride.save()
+        passenger = create_passenger_user(ride)
+        passenger.travel_user.phone = '1234567'
+        passenger.save()
+        self.assertEqual('1234567', passenger.travel_user.phone)
 
-class RideUnitTest(TestCase):
+
+class RideChangeUnitTest(TestCase):
     def test_get_changes_on_unsaved_ride(self):
         ride = get_ride()
         self.assertEqual(RideChangeNotifier(ride).get_model_changes(), [])

@@ -111,9 +111,8 @@ class Passenger(AbstractTravelModel):
                 return True
         return False
 
-
     def no_more_free_seats_in_ride(self):
-        return self.ride.get_num_of_free_seats() == 0
+        return self.pk is None and self.ride.get_num_of_free_seats() == 0
 
     def get_rides_of_user(self):
         rides_of_user_in_both_direction = Passenger.objects.values_list('ride', flat=True).filter(
