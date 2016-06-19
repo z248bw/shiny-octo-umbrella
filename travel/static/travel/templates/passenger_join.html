@@ -4,13 +4,6 @@
     </md-toolbar>
     <form name="passengerForm">
         <md-dialog-content>
-            <md-input-container style="margin-top: 5%" class="md-block" flex-gt-sm>
-                <label>Telefonszam</label>
-                <input required name="passengerPhone" ng-model="passenger.phone">
-                <div ng-messages="passengerForm.passengerPhone.$error">
-                    <div ng-message="required">A mezo kitoltese kotelezo!</div>
-                </div>
-            </md-input-container>
             <div>
                 Email ertesitesek
                 <md-switch ng-model="passenger.notify_on_ride_change" aria-label="Switch 1">
