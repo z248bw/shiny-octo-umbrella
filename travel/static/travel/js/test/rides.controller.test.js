@@ -76,15 +76,18 @@ describe('Given a RidesController', function() {
 
     it('if a passenger is added his ride will have one less free seats',
         function() {
-            var scope = {};
-            $httpBackend.expectGET('/rest/1/rides/').respond(
-                [TestUtils.createRideThere('1')]
-            );
+            var scope = {},
+                ride = TestUtils.createRideThere('1');
+            $httpBackend.expectGET('/rest/1/rides/').respond([ride]);
             var ctrl = $controller('ridesController', {$scope: scope});
             $httpBackend.flush();
             expect(ctrl.there[0].num_of_free_seats).toBe(1);
 
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
+            var passenger = TestUtils.createPassengerThere('1');
+            passenger.ride = ride;
+            $httpBackend.expectPOST('/rest/1/passengers/').respond(passenger);
+            Travel.there.passenger.add(passenger);
+            $httpBackend.flush();
 
             expect(ctrl.there[0].num_of_free_seats).toBe(0);
         }

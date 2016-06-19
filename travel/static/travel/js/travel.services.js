@@ -10,7 +10,9 @@ angular.module('travelServices').factory('Ride', ['$resource', function($resourc
 }]);
 
 angular.module('travelServices').factory('Passenger', ['$resource', function($resource){
-    return $resource('/rest/1/passengers/:pk/');
+    return $resource('/rest/1/passengers/:pk/', null, {
+        'update': {method: 'PUT', url: '/rest/1/passengers/:pk/', isArray: false}
+    });
 }]);
 
 angular.module('travelServices').factory('TravelUser', ['$resource', function($resource){
@@ -25,14 +27,32 @@ angular.module('travelServices').factory('Travel',
 
     var passenger = {
         model: null,
-        add: function(event, ride) {
-            showPassengerJoin(ride.pk)
+        showAdd: function(event, ride) {
+            this.model = {ride: ride};
+            showPassengerJoin(event, this.model);
+        },
+        add: function(passenger) {
+            var ride = passenger.ride,
+                self = this;
+            passenger.ride = ride.pk;
+            Passenger.save(passenger, function(response) {
+                response = response.toJSON();
+                response.ride = ride;
+                self.model = response;
+                $rootScope.$emit('PASSENGER_ADDED', response);
+            }, function(error) {
+                showError(error);
+            });
         },
         showModify : function(){
-            showPassengerJoin(ride.pk);
+            showPassengerJoin(this.model, ride);
         },
         modify: function(event) {
-//        TODO
+            Passenger.update({pk: this.model.pk}, this.model, function(response) {
+                showSuccess('Utas reszletek sikeresen frissitve!');
+            }, function(error) {
+                showError(error);
+            });
         },
         remove: function() {
             var pk = this.model.pk;
@@ -57,6 +77,16 @@ angular.module('travelServices').factory('Travel',
          );
     };
 
+    var showSuccess = function(title) {
+         $mdDialog.show(
+           $mdDialog.alert()
+             .parent(angular.element(document.body))
+             .clickOutsideToClose(true)
+             .title(title)
+             .ok('OK')
+         );
+    }
+
     var driver = {
         model: null,
         add: function() {
@@ -73,13 +103,7 @@ angular.module('travelServices').factory('Travel',
         },
         modify: function() {
             Ride.update({pk: this.model.pk}, this.model, function(response) {
-                $mdDialog.show(
-                   $mdDialog.alert()
-                     .parent(angular.element(document.body))
-                     .clickOutsideToClose(true)
-                     .title('Jarmu reszletek sikeresen frissitve!')
-                     .ok('OK')
-                 );
+                showSuccess('Jarmu reszletek sikeresen frissitve!');
             }, function(error) {
                 showError(error);
             });
@@ -105,19 +129,31 @@ angular.module('travelServices').factory('Travel',
         }
     };
 
-    var showPassengerJoin = function(event, ride) {
+    var showPassengerJoin = function(event, passengerModel) {
         $mdDialog.show({
               controller: 'passengerJoinController',
               templateUrl: '/static/travel/templates/passenger_join.html',
               parent: angular.element(document.body),
               targetEvent: event,
               locals: {
-                ride: ride
+                passengerModel: passengerModel,
               },
               clickOutsideToClose:true,
               fullscreen: false
-        })
+        });
     };
+
+    var showManagePassengerDialog = function(event, ride)
+    {
+        if (ride.is_return)
+        {
+            this.back.passenger.showAdd(event, ride);
+        }
+        else
+        {
+            this.there.passenger.showAdd(event, ride);
+        }
+    }
 
     var addPassenger = function(passenger) {
         if (passenger.ride.is_return)
@@ -130,7 +166,6 @@ angular.module('travelServices').factory('Travel',
             this.there.passenger.model = passenger;
             this.there.driver.model = null;
         }
-        $rootScope.$emit('PASSENGER_ADDED', passenger);
     };
 
     var addDriver = function(ride) {
@@ -144,7 +179,6 @@ angular.module('travelServices').factory('Travel',
             this.there.driver.model = ride;
             this.there.passenger.model = null;
         }
-        $rootScope.$emit('DRIVER_ADDED', ride);
     };
 
     return {
@@ -152,6 +186,6 @@ angular.module('travelServices').factory('Travel',
         back: angular.copy(travel),
         addPassenger: addPassenger,
         addDriver: addDriver,
-        showPassengerJoin: showPassengerJoin
+        showManagePassengerDialog: showManagePassengerDialog,
     };
 }]);

@@ -3,11 +3,6 @@
 describe('Given a Travel instance', function() {
 
     var mockDialog = {};
-    var mockPassenger = {
-        remove: function(pk, onSuccess) {
-            onSuccess();
-        }
-    };
     var mockRide = {
         remove: function(pk, onSuccess) {
             onSuccess();
@@ -16,20 +11,44 @@ describe('Given a Travel instance', function() {
 
     beforeEach(module("travelServices", function ($provide) {
         $provide.value("$mdDialog", mockDialog);
-        $provide.value("Passenger", mockPassenger);
         $provide.value("Ride", mockRide);
     }));
 
     beforeEach(module('testUtils'));
 
-    var Travel,
+    var $httpBackend,
+        $rootScope,
+        Travel,
         TestUtils;
     beforeEach(function() {
         angular.mock.inject(function ($injector) {
+            $httpBackend = $injector.get('$httpBackend');
+            $rootScope = $injector.get('$rootScope');
             Travel = $injector.get('Travel');
             TestUtils = $injector.get('TestUtils');
         });
     });
+
+    var addPassengerThere = function(passengerModel) {
+        $httpBackend.expectPOST('/rest/1/passengers').respond(passengerModel);
+        Travel.there.passenger.add(passengerModel);
+        $httpBackend.flush();
+    }
+
+     var removePassengerThere = function() {
+        $httpBackend.expectDELETE('/rest/1/passengers/'
+            + Travel.there.passenger.model.pk).respond({});
+        Travel.there.passenger.remove();
+        $httpBackend.flush();
+    }
+
+    it('on passenger add the new passenger will be emitted on the rootscope',
+        function() {
+            spyOn($rootScope, "$emit")
+            addPassengerThere(TestUtils.createPassengerThere('1'));
+            expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_ADDED", TestUtils.createPassengerThere('1'));
+        }
+    );
 
     it('a passenger there can be added and only Travel.there will be set',
         function() {
@@ -49,28 +68,6 @@ describe('Given a Travel instance', function() {
             expect(Travel.back.passenger.model).toBe(null);
             expect(Travel.back.driver.model).toBe(null);
         }
-    );
-
-    it('when a passenger is added it will be emitted on the rootscope',
-        inject(function($rootScope) {
-            var passenger = TestUtils.createPassengerThere('1');
-            var emittedPassenger = TestUtils.createPassengerThere('1');
-
-            spyOn($rootScope, "$emit")
-            Travel.addPassenger(passenger);
-            expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_ADDED", emittedPassenger);
-        })
-    );
-
-     it('when a driver is added it will be emitted on rootscope',
-        inject(function($rootScope) {
-            var driver = TestUtils.createRideThere('1');
-            var emittedDriver= TestUtils.createRideThere('1');
-
-            spyOn($rootScope, "$emit")
-            Travel.addDriver(driver);
-            expect($rootScope.$emit).toHaveBeenCalledWith("DRIVER_ADDED", emittedDriver);
-        })
     );
 
     it('a passenger there and back can be added',
@@ -132,10 +129,10 @@ describe('Given a Travel instance', function() {
         inject(function($rootScope) {
             var passenger = TestUtils.createPassengerThere('1');
             var emittedPassenger = TestUtils.createPassengerThere('1');
-            Travel.addPassenger(passenger);
+            Travel.there.passenger.model = passenger;
 
             spyOn($rootScope, "$emit")
-            Travel.there.passenger.remove();
+            removePassengerThere();
             expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_DELETED", emittedPassenger);
         })
     );

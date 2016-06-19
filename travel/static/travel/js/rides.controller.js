@@ -17,8 +17,8 @@ function RidesController($scope, $rootScope, Ride, Travel) {
         $rootScope.$on('PASSENGER_ADDED', onPassengerAdded);
     }
 
-    var showPassengerJoin = function(ev, ride_pk) {
-        Travel.showPassengerJoin(ev, ride_pk);
+    var showPassengerJoin = function(ev, ride) {
+        Travel.showManagePassengerDialog(ev, ride);
     };
 
     var onPassengerAdded = function(event, passenger) {

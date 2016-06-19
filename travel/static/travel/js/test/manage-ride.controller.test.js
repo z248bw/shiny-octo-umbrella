@@ -93,7 +93,7 @@ describe('Given a ManageRideController', function() {
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
             $httpBackend.flush();
 
-            $httpBackend.expectPUT('/rest/1/rides/').respond(currentRide);
+            $httpBackend.expectPUT('/rest/1/rides/1/').respond(currentRide);
             acceptDialogDecorator($scope, ctrl.showDriverSaveDialog);
 
             $httpBackend.flush();

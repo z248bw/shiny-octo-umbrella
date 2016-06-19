@@ -8,7 +8,6 @@ function RidesDetailController($routeParams, Ride, Travel) {
     var vm = this;
     vm.ride = null;
     vm.passengers = [];
-    vm.showPassengerJoin = showPassengerJoin;
 
     var activate = function() {
         initRideDetails();
@@ -35,13 +34,6 @@ function RidesDetailController($routeParams, Ride, Travel) {
     var listPassengersOfRide = function(pk) {
         Ride.getPassengers({pk: pk}, function(response) {
             vm.passengers = response;
-        });
-    };
-
-    var showPassengerJoin = function(ev) {
-        Travel.showPassengerJoin(ev, vm.ride.pk, function(passenger) {
-            vm.passengers.push(passenger);
-            vm.ride.num_of_free_seats--;
         });
     };
 
