@@ -13,10 +13,6 @@ function ManageRideController($scope, $routeParams, $mdDialog, Ride, Travel) {
     vm.shouldUpdateOnSave = false;
 
     $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
-        if (vm.driver.model === null)
-        {
-            vm.driver.model = {};
-        }
        vm.driver.model.start_time = timepicker.datetime;
     });
 
@@ -43,18 +39,28 @@ function ManageRideController($scope, $routeParams, $mdDialog, Ride, Travel) {
     };
 
     var getDriverByDirection = function(direction) {
+        var driver;
         if (direction === 'there')
         {
-            return Travel.there.driver;
+            driver = Travel.there.driver;
         }
         else
         {
-            return Travel.back.driver;
+            driver = Travel.back.driver;
         }
+        return initDriverDirection(driver, direction)
+    };
+
+    var initDriverDirection = function(driver, direction) {
+        if (driver.model == null)
+        {
+            driver.model = {is_return: direction === 'there' ? false : true};
+        }
+        return driver;
     };
 
     var fetchPassengers = function() {
-        if (vm.driver.model === null)
+        if (!isExistingDriver(vm.driver.model))
         {
             return;
         }
@@ -64,8 +70,12 @@ function ManageRideController($scope, $routeParams, $mdDialog, Ride, Travel) {
         });
     };
 
+    var isExistingDriver = function(driver) {
+        return driver.pk != null;
+    };
+
     var initSave = function() {
-        if (!(vm.driver.model === null))
+        if (isExistingDriver(vm.driver.model))
         {
             vm.shouldUpdateOnSave = true;
         }

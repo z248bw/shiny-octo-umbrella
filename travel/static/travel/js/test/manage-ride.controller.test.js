@@ -55,6 +55,14 @@ describe('Given a ManageRideController', function() {
         })
     );
 
+     it('if the ride is null the direction should be set according to the routeParams',
+        inject(function(Travel) {
+            var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
+
+            expect(Travel.there.driver.model.is_return).toBe(false);
+        })
+    );
+
     it('if the direction is not provided init should throw an error',
         function() {
             expect(function(){$controller('manageRideController', {$scope: $scope})})
