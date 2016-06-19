@@ -20,7 +20,8 @@ angular.module('travelServices').factory('TravelUser', ['$resource', function($r
 }]);
 
 angular.module('travelServices').factory('Travel',
-    ['$rootScope', '$mdDialog', 'Passenger', 'Ride', function($rootScope, $mdDialog, Passenger, Ride){
+    ['$rootScope', '$location', '$mdDialog', 'Passenger', 'Ride',
+     function($rootScope, $location, $mdDialog, Passenger, Ride){
 
     var passenger = {
         model: null,
@@ -42,24 +43,39 @@ angular.module('travelServices').factory('Travel',
         },
     };
 
+    var showError = function(error) {
+        $mdDialog.show(
+           $mdDialog.alert()
+             .parent(angular.element(document.body))
+             .clickOutsideToClose(true)
+             .title('Sikertelen tranzakcio!')
+             .textContent(error)
+             .ok('OK')
+         );
+    };
+
     var driver = {
         model: null,
         add: function() {
-            Ride.save(this.model, function(response) {
-    //            TODO
-                console.log('success');
+            var self = this;
+            Ride.save(self.model, function(response) {
+                self.model = response;
+                $location.url('/rides');
             }, function(error) {
-    //            TODO
-                console.log('error');
+                showError(error);
             });
         },
         modify: function() {
             Ride.update(this.model, function(response) {
-//                TODO
-                console.log('success');
+                $mdDialog.show(
+                   $mdDialog.alert()
+                     .parent(angular.element(document.body))
+                     .clickOutsideToClose(true)
+                     .title('Jarmu reszletek sikeresen frissitve!')
+                     .ok('OK')
+                 );
             }, function(error) {
-//                TODO
-                console.log('error');
+                showError(error);
             });
         },
         remove: function() {
@@ -67,8 +83,7 @@ angular.module('travelServices').factory('Travel',
             Ride.remove({pk: this.model.pk}, function(response) {
                 $rootScope.$emit('DRIVER_DELETED', deleted_ride);
             }, function(error) {
-//              TODO
-                console.log('error');
+                showError(error);
             });
         },
         getRide: function() {

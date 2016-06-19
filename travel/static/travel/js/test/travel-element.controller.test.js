@@ -7,8 +7,15 @@ describe('Given a Travel element', function() {
             callback();
         }
     };
+    var mockRide = {
+        remove: function(pk, callback) {
+            callback();
+        }
+    };
+
     beforeEach(module("travelServices", function ($provide) {
         $provide.value("Passenger", mockPassenger);
+        $provide.value("Ride", mockRide);
     }));
 
     beforeEach(module('travelApp'));
@@ -87,7 +94,19 @@ describe('Given a Travel element', function() {
             Travel.addPassenger(TestUtils.createPassengerThere('1'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
-            Travel.there.passenger.remove(Travel.there.passenger);
+            Travel.there.passenger.remove();
+
+            expect(ctrl.object.model).toBe(null);
+        }
+    );
+
+    it('travelElementController will set the object.model to null if the driver is deleted',
+        function() {
+            var scope = {direction: 'there'};
+            Travel.addDriver(TestUtils.createRideThere('1'));
+
+            var ctrl = $controller('travelElementController', {$scope: scope});
+            Travel.there.driver.remove();
 
             expect(ctrl.object.model).toBe(null);
         }

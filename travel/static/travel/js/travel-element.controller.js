@@ -19,6 +19,7 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
         vm.modify = modifyElement;
         $rootScope.$on('PASSENGER_DELETED', onPassengerDeleted);
         $rootScope.$on('PASSENGER_ADDED', onPassengerAdded);
+        $rootScope.$on('DRIVER_DELETED', onDriverDeleted);
     };
 
     var onPassengerAdded = function () {
@@ -26,29 +27,55 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
     };
 
     var onPassengerDeleted = function (event, passenger) {
+        onModelDeleted(passenger);
+    };
+
+    var onModelDeleted = function(model) {
         if (vm.object.model === null)
         {
             return;
         }
-        if (isTheSamePassenger(vm.object.model, passenger))
+        if (isTheSameModel(vm.object.model, model))
         {
-            vm.object.model = null;
-            vm.ride = null;
+            removeModel();
         }
     };
 
-    var isTheSamePassenger = function (p1, p2) {
+    var isTheSameModel = function (p1, p2) {
         return p1.pk === p2.pk;
     };
 
+    var removeModel = function() {
+        vm.object.model = null;
+        vm.ride = null;
+    };
+
+    var onDriverDeleted = function(event, driver) {
+        onModelDeleted(driver);
+    };
+
     var showElementRemove = function(event) {
-        var confirm = $mdDialog.confirm()
-            .title('Biztos vagy benne, hogy torolni szeretned magad az utaslistarol?')
+        var confirm = null;
+        if (getTravellerByDirection($scope.direction).isDriving())
+        {
+            confirm = getConfirmDialogWithTitle(event,
+                'Biztos vagy benne, hogy torolni szeretned a jarmuved?');
+        }
+        else
+        {
+            confirm = getConfirmDialogWithTitle(event,
+                'Biztos vagy benne, hogy torolni szeretned a magad az utaslistarol?');
+        }
+
+        $mdDialog.show(confirm).then(removeElement);
+    };
+
+    var getConfirmDialogWithTitle = function(event, title) {
+        return $mdDialog.confirm()
+            .title(title)
             .targetEvent(event)
             .ok('Igen')
             .cancel('Megse');
-
-        $mdDialog.show(confirm).then(removeElement);
     };
 
     var removeElement = function() {
