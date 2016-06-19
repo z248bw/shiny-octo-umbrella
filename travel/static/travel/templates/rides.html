@@ -5,8 +5,11 @@
             <md-tab-body>
                 <div layout="column">
                     <travel-element direction="'there'"></travel-element>
-                    <h2 class="md-display-1" style="text-align: center">Odaut</h2>
-                    <div ng-repeat="ride in rides.there">
+                    <md-input-container>
+                        <label>Kereses</label>
+                        <input ng-model="vm.searchThere">
+                    </md-input-container>
+                    <div ng-repeat="ride in rides.there | filter:vm.searchThere">
                         <ride-element ride="ride"></ride-element>
                     </div>
                 </div>
@@ -16,8 +19,11 @@
             <md-tab-body>
                 <div layout="column">
                     <travel-element direction="'back'"></travel-element>
-                    <h2 class="md-display-1" style="text-align: center">Odaut</h2>
-                    <div ng-repeat="ride in rides.back">
+                    <md-input-container>
+                        <label>Kereses</label>
+                        <input ng-model="vm.searchBack">
+                    </md-input-container>
+                    <div ng-repeat="ride in rides.back | filter:vm.searchBack">
                         <ride-element ride="ride"></ride-element>
                     </div>
                 </div>
@@ -39,14 +45,22 @@
         <div layout="row">
             <div flex="50" style="margin-left=10%;margin-right=10%">
                 <h2 class="md-display-1" style="text-align: center">Odaut</h2>
-                <div ng-repeat="ride in rides.there">
+                <md-input-container>
+                    <label>Kereses</label>
+                    <input ng-model="vm.searchThere">
+                </md-input-container>
+                <div ng-repeat="ride in rides.there | filter:vm.searchThere">
                     <ride-element ride="ride"></ride-element>
                 </div>
             </div>
 
             <div flex="50" style="margin-left=10%;margin-right=10%">
                 <h2 class="md-display-1" style="text-align: center">Visszaut</h2>
-                <div ng-repeat="ride in rides.back">
+                <md-input-container>
+                    <label>Kereses</label>
+                    <input ng-model="vm.searchBack">
+                </md-input-container>
+                <div ng-repeat="ride in rides.back | filter:vm.searchBack">
                     <ride-element ride="ride"></ride-element>
                 </div>
             </div>
