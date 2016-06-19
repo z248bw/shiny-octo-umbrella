@@ -31,7 +31,7 @@ angular.module('travelServices').factory('Travel',
             this.model = {ride: ride};
             showPassengerJoin(event, this.model);
         },
-        add: function(passenger) {
+        add: function(passenger) {      //TODO rename to save
             var ride = passenger.ride,
                 self = this;
             passenger.ride = ride.pk;
@@ -44,11 +44,13 @@ angular.module('travelServices').factory('Travel',
                 showError(error);
             });
         },
-        showModify : function(){
-            showPassengerJoin(this.model, ride);
+        showModify : function(event){
+            showPassengerJoin(event, this.model);
         },
         modify: function(event) {
-            Passenger.update({pk: this.model.pk}, this.model, function(response) {
+            var passenger = angular.copy(this.model);
+            passenger.ride = passenger.ride.pk;
+            Passenger.update({pk: this.model.pk}, passenger, function(response) {
                 showSuccess('Utas reszletek sikeresen frissitve!');
             }, function(error) {
                 showError(error);
@@ -89,7 +91,7 @@ angular.module('travelServices').factory('Travel',
 
     var driver = {
         model: null,
-        add: function() {
+        add: function() {       //TODO rename to save
             var self = this;
             Ride.save(self.model, function(response) {
                 self.model = response;

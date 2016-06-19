@@ -82,8 +82,8 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
         vm.object.remove();
     };
 
-    var modifyElement = function() {
-        vm.object.showModify();
+    var modifyElement = function(event) {
+        vm.object.showModify(event);
     };
 
     var getTravellerByDirection = function(direction) {

@@ -9,14 +9,33 @@ function PassengerJoinController($scope, $mdDialog, Travel, passengerModel) {
     $scope.joinRide = function()
     {
         $mdDialog.hide();
-        if (passengerModel.ride.is_return)
+         if ($scope.passenger.pk == null)
         {
-            Travel.back.passenger.add(passengerModel);
+            savePassenger();
         }
         else
         {
-            Travel.there.passenger.add(passengerModel);
+            updatePassenger();
         }
+    };
+
+    var savePassenger = function() {
+        getPassenger().add($scope.passenger);
+    };
+
+    var getPassenger = function() {
+        if (passengerModel.ride.is_return)
+        {
+            return Travel.back.passenger;
+        }
+        else
+        {
+            return Travel.there.passenger;
+        }
+    };
+
+    var updatePassenger = function() {
+        getPassenger().modify($scope.passenger);
     };
 
 }
