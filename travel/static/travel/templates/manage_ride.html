@@ -3,6 +3,7 @@
     <h4>
         <span>Jarmu menedzsment</span>
         <md-button class="md-accent md-raised"
+                   hide-xs flex
                    flex-offset="50"
                    ng-click="manager.showDriverSaveDialog($event)">
             Letrehozas/Modositas
@@ -55,6 +56,11 @@
                 </div>
             </md-input-container>
 
+            <div class="hint">
+                <p> Az alabbi mezokbe az utasokat segito opcionalis informaciokat lehet megadni.</p>
+                <p> Jo otlet lehet peldaul leirni a jarmu szinet, tipusat, azt hogy indulaskor hol fog parkolni... stb.</p>
+            </div>
+
             <md-input-container class="md-block" flex-gt-xs>
                 <label>Auto tipusa</label>
                 <input name="name"
@@ -67,9 +73,12 @@
 
             <md-input-container class="md-block" flex-gt-xs>
                 <label>Leiras</label>
-                <input name="description"
-                       ng-model="manager.driver.model.description"
-                       pattern="^[a-zA-Z0-9 . : ]{0,200}$">
+                 <textarea name="description"
+                              ng-model="user.biography"
+                              md-maxlength="200"
+                              rows="5"
+                              md-select-on-focus
+                              pattern="^[a-zA-Z0-9 . : ]{0,200}$"></textarea>
                 <div ng-messages="rideForm.description.$error">
                     <div ng-message="pattern">
                         A leiras 0-200 karakter hosszu lehet csak
@@ -78,5 +87,10 @@
                 </div>
             </md-input-container>
         </form>
+        <md-button class="md-accent md-raised"
+                   hide-gt-xs flex
+                   ng-click="manager.showDriverSaveDialog($event)">
+            Letrehozas/Modositas
+        </md-button>
     </md-content>
 </div>
