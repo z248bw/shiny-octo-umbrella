@@ -110,7 +110,7 @@ describe('Given a ManageRideController', function() {
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
             $httpBackend.flush();
 
-            $httpBackend.expectDELETE('/rest/1/rides/1').respond({});
+            $httpBackend.expectDELETE('/rest/1/rides/1/').respond({});
 
             acceptDialogDecorator($scope, ctrl.showDriverDeleteDialog);
 

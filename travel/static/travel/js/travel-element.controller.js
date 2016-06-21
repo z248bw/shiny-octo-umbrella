@@ -27,22 +27,18 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
     };
 
     var onPassengerDeleted = function (event, passenger) {
-        onModelDeleted(passenger);
-    };
-
-    var onModelDeleted = function(model) {
-        if (vm.object.model === null)
+        if(vm.ride == null)
         {
             return;
         }
-        if (isTheSameModel(vm.object.model, model))
+        if(isTheSameDirection(vm.ride, passenger.ride))
         {
-            removeModel();
+            vm.ride = null;
         }
     };
 
-    var isTheSameModel = function (p1, p2) {
-        return p1.pk === p2.pk;
+    var isTheSameDirection = function (r1, r2) {
+        return r1.is_return === r2.is_return;
     };
 
     var removeModel = function() {
@@ -51,7 +47,14 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
     };
 
     var onDriverDeleted = function(event, driver) {
-        onModelDeleted(driver);
+        if(vm.ride == null)
+         {
+            return;
+         }
+        if(isTheSameDirection(vm.ride, driver))
+        {
+            vm.ride = null;
+        }
     };
 
     var showElementRemove = function(event) {

@@ -3,7 +3,7 @@
 angular.module('travelServices', ['ngResource']);
 
 angular.module('travelServices').factory('Ride', ['$resource', function($resource){
-    return $resource('/rest/1/rides/:pk', null, {
+    return $resource('/rest/1/rides/:pk/', null, {
         'getPassengers': {method: 'GET', url: '/rest/1/rides/:pk/passengers/', isArray: true},
         'update': {method: 'PUT', url: '/rest/1/rides/:pk/', isArray: false}
     });
@@ -57,9 +57,10 @@ angular.module('travelServices').factory('Travel',
             });
         },
         remove: function() {
-            var pk = this.model.pk;
-            var deleted_passenger = this.model;
-            Passenger.remove({pk: pk}, function() {
+            var self = this;
+            Passenger.remove({pk: self.model.pk}, function() {
+                var deleted_passenger = angular.copy(self.model);
+                self.model = null;
                 $rootScope.$emit('PASSENGER_DELETED', deleted_passenger);
             });
         },
@@ -95,7 +96,7 @@ angular.module('travelServices').factory('Travel',
             var self = this;
             Ride.save(self.model, function(response) {
                 self.model = response;
-                $location.url('/rides');
+                $rootScope.$emit('DRIVER_ADDED', response);
             }, function(error) {
                 showError(error);
             });
@@ -111,8 +112,10 @@ angular.module('travelServices').factory('Travel',
             });
         },
         remove: function() {
-            var deleted_ride = this.model;
-            Ride.remove({pk: this.model.pk}, function(response) {
+            var self = this;
+            Ride.remove({pk: self.model.pk}, function(response) {
+                var deleted_ride = angular.copy(self.model);
+                self.model = null;
                 $rootScope.$emit('DRIVER_DELETED', deleted_ride);
             }, function(error) {
                 showError(error);
@@ -128,6 +131,16 @@ angular.module('travelServices').factory('Travel',
         driver: angular.copy(driver),
         isDriving: function() {
             return this.passenger.model == null;
+        },
+        isEmpty: function() {
+            if(this.isDriving())
+            {
+                return (this.driver.model == null);
+            }
+            else
+            {
+                return (this.passenger.model == null);
+            }
         }
     };
 
@@ -183,6 +196,7 @@ angular.module('travelServices').factory('Travel',
         }
     };
 
+//TODO do not expose the internal data structures
     return {
         there : angular.copy(travel),
         back: angular.copy(travel),

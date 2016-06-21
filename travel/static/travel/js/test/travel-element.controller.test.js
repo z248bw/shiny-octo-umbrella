@@ -28,19 +28,6 @@ describe('Given a Travel element', function() {
         });
     });
 
-    //TODO move to testutils
-    var addPassengerThere = function(passengerModel) {
-        $httpBackend.expectPOST('/rest/1/passengers/').respond(passengerModel);
-        Travel.there.passenger.add(passengerModel);
-        $httpBackend.flush();
-    }
-
-    var removePassengerThere = function() {
-        $httpBackend.expectDELETE('/rest/1/passengers/'
-            + Travel.there.passenger.model.pk + '/').respond({});
-        Travel.there.passenger.remove();
-        $httpBackend.flush();
-    }
 
     it('travelElementController instantiated as "there" will set the object to null when Travel.there is null',
         function() {
@@ -103,7 +90,7 @@ describe('Given a Travel element', function() {
             Travel.there.passenger.model = TestUtils.createPassengerThere('1');
 
             var ctrl = $controller('travelElementController', {$scope: scope});
-            removePassengerThere();
+            TestUtils.removePassengerThere();
 
             expect(ctrl.object.model).toBe(null);
         }
@@ -146,7 +133,7 @@ describe('Given a Travel element', function() {
             Travel.back.passenger.model = TestUtils.createPassengerBack('2');
 
             var ctrl = $controller('travelElementController', {$scope: scope});
-            removePassengerThere();
+            TestUtils.removePassengerThere();
 
             expect(ctrl.object.model.pk).toBe('2');
         }
@@ -158,8 +145,7 @@ describe('Given a Travel element', function() {
             Travel.there.passenger.model = TestUtils.createPassengerThere('1');
 
             var ctrl = $controller('travelElementController', {$scope: scope});
-//            Travel.there.passenger.remove();
-            removePassengerThere();
+            TestUtils.removePassengerThere();
 
             expect(ctrl.ride).toBe(null);
         }
@@ -171,7 +157,7 @@ describe('Given a Travel element', function() {
             var passenger = TestUtils.createPassengerThere('1');
 
             var ctrl = $controller('travelElementController', {$scope: scope});
-            addPassengerThere(TestUtils.createPassengerThere('1'));
+            TestUtils.addPassengerThere('1');
 
             expect(ctrl.object.model.pk).toBe('1');
             expect(ctrl.ride.pk).toBe('1');

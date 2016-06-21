@@ -23,7 +23,7 @@ describe('Given a RideDetailsController', function() {
                 routeParams = {pk: '1'},
                 currentRide = TestUtils.createRideThere('1'),
                 passengers = [TestUtils.createPassengerThere('1')];
-            $httpBackend.expectGET('/rest/1/rides/1').respond(currentRide);
+            $httpBackend.expectGET('/rest/1/rides/1/').respond(currentRide);
             $httpBackend.expectGET('/rest/1/rides/1/passengers/').respond(passengers);
 
             var ctrl = $controller('rideDetailsController', {$scope: scope, $routeParams: routeParams});

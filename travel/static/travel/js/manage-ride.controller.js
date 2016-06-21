@@ -3,7 +3,7 @@
 angular.module('travelApp')
     .controller('manageRideController', ManageRideController);
 
-function ManageRideController($scope, $routeParams, $mdDialog, Ride, Travel) {
+function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDialog, Ride, Travel) {
 
     var vm = this;
     vm.driver = null;
@@ -13,8 +13,14 @@ function ManageRideController($scope, $routeParams, $mdDialog, Ride, Travel) {
     vm.shouldUpdateOnSave = false;
 
     $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
-       vm.driver.model.start_time = timepicker.datetime;
+        vm.driver.model.start_time = timepicker.datetime;
     });
+
+    $rootScope.$on('DRIVER_ADDED', function(event, driver) {
+        $location.url('/rides');
+    });
+
+//    TODO driver delete?
 
     var activate = function() {
         vm.showDriverSaveDialog = showDriverSaveDialog;

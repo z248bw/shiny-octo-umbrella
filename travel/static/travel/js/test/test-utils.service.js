@@ -1,7 +1,20 @@
 'use strict';
 
-angular.module('testUtils', []).factory('TestUtils',
-    ['$q', '$mdDialog', function($q, $mdDialog) {
+angular.module('testUtils', []);
+
+angular.module('testUtils').config(TestUtilsConfig);
+
+function TestUtilsConfig($resourceProvider, $httpProvider) {
+    $resourceProvider.defaults.stripTrailingSlashes = false;
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+}
+
+angular.module('testUtils').factory('TestUtils',
+    ['$q', '$httpBackend', 'Travel', '$mdDialog', TestUtils]);
+
+//TODO investigate the splitting of this service
+function TestUtils($q, $httpBackend, Travel, $mdDialog) {
     var createPassenger = function(pk, isReturn) {
         return {
             pk: pk,
@@ -45,12 +58,44 @@ angular.module('testUtils', []).factory('TestUtils',
         $scope.$apply();
     };
 
+    var addPassengerThere = function(pk) {
+        var passengerModel = createPassengerThere(pk);
+        $httpBackend.expectPOST('/rest/1/passengers/').respond(passengerModel);
+        Travel.there.passenger.add(passengerModel);
+        $httpBackend.flush();
+    };
+
+    var removePassengerThere = function() {
+        $httpBackend.expectDELETE('/rest/1/passengers/'
+            + Travel.there.passenger.model.pk + '/').respond({});
+        Travel.there.passenger.remove();
+        $httpBackend.flush();
+    };
+
+    var addDriverThere = function(pk) {
+        var rideModel = createRideThere(pk);
+        $httpBackend.expectPOST('/rest/1/rides/').respond(rideModel);
+        Travel.there.driver.add(rideModel);
+        $httpBackend.flush();
+    };
+
+    var removeDriverThere = function() {
+        $httpBackend.expectDELETE('/rest/1/rides/'
+            + Travel.there.driver.model.pk + '/').respond({});
+        Travel.there.driver.remove();
+        $httpBackend.flush();
+    };
+
     return {
         createPassengerThere: createPassengerThere,
         createPassengerBack: createPassengerBack,
         createRideThere: createRideThere,
         createRideBack: createRideBack,
         getMdDialogShowResponseDeferred: getMdDialogShowResponseDeferred,
-        resolveDeferred: resolveDeferred
+        resolveDeferred: resolveDeferred,
+        addPassengerThere: addPassengerThere,
+        removePassengerThere: removePassengerThere,
+        addDriverThere: addDriverThere,
+        removeDriverThere: removeDriverThere
     };
-}]);
+}

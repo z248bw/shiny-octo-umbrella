@@ -6,7 +6,9 @@ angular.module('travelApp').directive('rideElement', function() {
         templateUrl: '/static/travel/templates/ride_element.html',
         scope: {
             ride: '='
-        }
+        },
+        controller: RideElementController,
+        controllerAs: 'element'
     };
 });
 

@@ -2,20 +2,21 @@
     <md-card-title layout="row">
         <md-card-title-text>
             <span class="md-headline">
-                Sofor: {{ride.driver.user.last_name}} {{ride.driver.user.first_name}}
+                Sofor: {{element.ride.driver.user.last_name}} {{element.ride.driver.user.first_name}}
             </span>
         </md-card-title-text>
         <md-button class="md-accent md-raised ride-card-button"
-                   ng-click="$parent.showPassengerJoin($event, ride)">
+                   ng-show="element.isJoinable"
+                   ng-click="element.showPassengerJoin($event, ride)">
             Csatlakozas
         </md-button>
     </md-card-title>
     <md-card-content>
-        <p>Szabad helyek / Osszes hely: {{ride.num_of_free_seats}} / {{ride.num_of_seats}}</p>
-        <p>Indulas ideje: {{ride.start_time}}</p>
-        <p>Indulas helye: {{ride.start_location}} </p>
+        <p>Szabad helyek / Osszes hely: {{element.ride.num_of_free_seats}} / {{element.ride.num_of_seats}}</p>
+        <p>Indulas ideje: {{element.ride.start_time}}</p>
+        <p>Indulas helye: {{element.ride.start_location}} </p>
     </md-card-content>
     <md-card-actions layout="row" layout-align="end center">
-        <md-button class="md-primary" ng-href="/travel/index/#/rides/{{ride.pk}}">Reszletek es utaslista</md-button>
+        <md-button class="md-primary" ng-href="/travel/index/#/rides/{{element.ride.pk}}">Reszletek es utaslista</md-button>
     </md-card-actions>
 </md-card>

@@ -29,23 +29,10 @@ describe('Given a Travel instance', function() {
         });
     });
 
-    var addPassengerThere = function(passengerModel) {
-        $httpBackend.expectPOST('/rest/1/passengers').respond(passengerModel);
-        Travel.there.passenger.add(passengerModel);
-        $httpBackend.flush();
-    }
-
-     var removePassengerThere = function() {
-        $httpBackend.expectDELETE('/rest/1/passengers/'
-            + Travel.there.passenger.model.pk).respond({});
-        Travel.there.passenger.remove();
-        $httpBackend.flush();
-    }
-
     it('on passenger add the new passenger will be emitted on the rootscope',
         function() {
             spyOn($rootScope, "$emit")
-            addPassengerThere(TestUtils.createPassengerThere('1'));
+            TestUtils.addPassengerThere('1');
             expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_ADDED", TestUtils.createPassengerThere('1'));
         }
     );
@@ -125,19 +112,20 @@ describe('Given a Travel instance', function() {
         }
     );
 
-    it('when a passenger is deleted it will be emit on the rootscope',
+    it('when a passenger is deleted it will be emit on the rootscope and the model will be set to null',
         inject(function($rootScope) {
             var passenger = TestUtils.createPassengerThere('1');
             var emittedPassenger = TestUtils.createPassengerThere('1');
             Travel.there.passenger.model = passenger;
 
             spyOn($rootScope, "$emit")
-            removePassengerThere();
+            TestUtils.removePassengerThere();
             expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_DELETED", emittedPassenger);
+            expect(Travel.there.passenger.model).toBe(null);
         })
     );
 
-     it('when a driver is deleted it will be emit on the rootscope',
+     it('when a driver is deleted it will be emit on the rootscope and the model will be set to null',
         inject(function($rootScope) {
             var driver = TestUtils.createRideThere('1');
             var emittedDriver = TestUtils.createRideThere('1');
@@ -146,6 +134,7 @@ describe('Given a Travel instance', function() {
             spyOn($rootScope, "$emit")
             Travel.there.driver.remove();
             expect($rootScope.$emit).toHaveBeenCalledWith("DRIVER_DELETED", emittedDriver);
+            expect(Travel.there.driver.model).toBe(null);
         })
     );
 
@@ -184,6 +173,33 @@ describe('Given a Travel instance', function() {
         function() {
             Travel.addDriver(TestUtils.createRideThere('1'));
             expect(Travel.there.isDriving()).toBe(true);
+        }
+    );
+
+    it('a isEmpty returns true when neither a driver nor a passenger exist in that direction',
+        function() {
+            expect(Travel.there.isEmpty()).toBe(true);
+        }
+    );
+
+    it('a isEmpty returns false when a driver exist in that direction',
+        function() {
+            Travel.addDriver(TestUtils.createRideThere('1'));
+            expect(Travel.there.isEmpty()).toBe(false);
+        }
+    );
+
+    it('a isEmpty returns false when a passenger exist in that direction',
+        function() {
+            Travel.addPassenger(TestUtils.createPassengerThere('1'));
+            expect(Travel.there.isEmpty()).toBe(false);
+        }
+    );
+
+    it('a isEmpty returns true when a passenger exist in the other direction',
+        function() {
+            Travel.addPassenger(TestUtils.createPassengerThere('1'));
+            expect(Travel.back.isEmpty()).toBe(true);
         }
     );
 
