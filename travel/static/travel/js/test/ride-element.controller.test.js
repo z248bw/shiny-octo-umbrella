@@ -37,13 +37,23 @@ describe('Given a RideElementController', function() {
         }
     );
 
-     it('if there is a travel in the other rides direction then joinable will be true',
+    it('if there is a travel in the other rides direction then joinable will be true',
         function() {
             Travel.addDriver(TestUtils.createRideBack('2'));
 
             var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
 
             expect(ctrl.isJoinable).toBe(true);
+        }
+    );
+
+    it('if the number of free seats is zero then then joinable will be false',
+        function() {
+            var ride = TestUtils.createRideThere('1');
+            ride.num_of_free_seats = 0;
+            var ctrl = $controller('rideElementController', {$scope: {ride: ride}});
+
+            expect(ctrl.isJoinable).toBe(false);
         }
     );
 

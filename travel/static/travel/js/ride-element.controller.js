@@ -33,7 +33,7 @@ function RideElementController($rootScope, $scope, Travel) {
     };
 
     var configureIsJoinable = function() {
-        vm.isJoinable = getCurrentTravel().isEmpty();
+        vm.isJoinable = getCurrentTravel().isEmpty() && (vm.ride.num_of_free_seats != 0);
     };
 
     action();
