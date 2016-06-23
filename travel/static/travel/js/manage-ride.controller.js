@@ -48,11 +48,11 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDi
         var driver;
         if (direction === 'there')
         {
-            driver = Travel.there.driver;
+            driver = Travel.getDriverThere();
         }
         else
         {
-            driver = Travel.back.driver;
+            driver = Travel.getDriverBack();
         }
         return initDriverDirection(driver, direction)
     };

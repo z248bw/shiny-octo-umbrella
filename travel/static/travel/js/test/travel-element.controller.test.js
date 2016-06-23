@@ -42,7 +42,7 @@ describe('Given a Travel element', function() {
     it('travelElementController instantiated as "there" will set the object to Travel.there',
         function() {
             var scope = {direction: 'there'};
-            Travel.there.passenger.model = TestUtils.createPassengerThere('1');
+            Travel.addPassenger(TestUtils.createPassengerThere('1'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
 
@@ -53,7 +53,7 @@ describe('Given a Travel element', function() {
     it('travelElementController instantiated as "there" will set the ride object',
         function() {
             var scope = {direction: 'there'};
-            Travel.there.passenger.model = TestUtils.createPassengerThere('1');
+            Travel.addPassenger(TestUtils.createPassengerThere('1'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
 
@@ -64,7 +64,7 @@ describe('Given a Travel element', function() {
     it('travelElementController instantiated as "back" will set the object to Travel.back',
         function() {
             var scope = {direction: 'back'};
-            Travel.back.passenger.model = TestUtils.createPassengerBack('1');
+            Travel.addPassenger(TestUtils.createPassengerBack('1'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
 
@@ -75,7 +75,7 @@ describe('Given a Travel element', function() {
      it('travelElementController will not set the object and ride if the direction of the new passenger is not the same',
         function() {
             var scope = {direction: 'there'};
-            Travel.back.passenger.model = TestUtils.createPassengerBack('1');
+            Travel.addPassenger(TestUtils.createPassengerBack('1'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
 
@@ -87,7 +87,7 @@ describe('Given a Travel element', function() {
     it('travelElementController will set the object.model to null if the passenger is deleted',
         function() {
             var scope = {direction: 'there'};
-            Travel.there.passenger.model = TestUtils.createPassengerThere('1');
+            Travel.addPassenger(TestUtils.createPassengerThere('1'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
             TestUtils.removePassengerThere();
@@ -99,10 +99,10 @@ describe('Given a Travel element', function() {
     it('travelElementController will set the object.model to null if the driver is deleted',
         function() {
             var scope = {direction: 'there'};
-            Travel.there.driver.model = TestUtils.createRideThere('1');
+            Travel.addDriver(TestUtils.createRideThere('1'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
-            Travel.there.driver.remove();
+            Travel.getDriverThere().remove();
 
             expect(ctrl.object.model).toBe(null);
         }
@@ -112,7 +112,7 @@ describe('Given a Travel element', function() {
         inject(function($rootScope) {
             var $scope = $rootScope.$new();
             $scope.direction = 'there';
-            Travel.there.passenger.model = TestUtils.createPassengerThere('1');
+            Travel.addPassenger(TestUtils.createPassengerThere('1'));
             var deferred = TestUtils.getMdDialogShowResponseDeferred();
 
             var ctrl = $controller('travelElementController', {$scope: $scope});
@@ -129,8 +129,8 @@ describe('Given a Travel element', function() {
     it('travelElementController will do nothing if another passenger is deleted',
         function() {
             var scope = {direction: 'back'};
-            Travel.there.passenger.model = TestUtils.createPassengerThere('1');
-            Travel.back.passenger.model = TestUtils.createPassengerBack('2');
+            Travel.addPassenger(TestUtils.createPassengerThere('1'));
+            Travel.addPassenger(TestUtils.createPassengerBack('2'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
             TestUtils.removePassengerThere();
@@ -142,7 +142,7 @@ describe('Given a Travel element', function() {
     it('travelElementController will set the ride to null if the passenger is deleted',
         function() {
             var scope = {direction: 'there'};
-            Travel.there.passenger.model = TestUtils.createPassengerThere('1');
+            Travel.addPassenger(TestUtils.createPassengerThere('1'));
 
             var ctrl = $controller('travelElementController', {$scope: scope});
             TestUtils.removePassengerThere();

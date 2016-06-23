@@ -69,7 +69,7 @@ angular.module('travelServices').factory('Travel',
         },
     };
 
-    var showError = function(error) {
+    function showError(error) {
         $mdDialog.show(
            $mdDialog.alert()
              .parent(angular.element(document.body))
@@ -78,9 +78,9 @@ angular.module('travelServices').factory('Travel',
              .textContent(error)
              .ok('OK')
          );
-    };
+    }
 
-    var showSuccess = function(title) {
+    function showSuccess(title) {
          $mdDialog.show(
            $mdDialog.alert()
              .parent(angular.element(document.body))
@@ -141,10 +141,22 @@ angular.module('travelServices').factory('Travel',
             {
                 return (this.passenger.model == null);
             }
+        },
+        getObject: function() {
+            if(this.isEmpty())
+            {
+                return null;
+            }
+            if(this.isDriving())
+            {
+                return this.driver;
+            }
+
+            return this.passenger;
         }
     };
 
-    var showPassengerJoin = function(event, passengerModel) {
+    function showPassengerJoin(event, passengerModel) {
         $mdDialog.show({
               controller: 'passengerJoinController',
               templateUrl: '/static/travel/templates/passenger_join.html',
@@ -156,9 +168,9 @@ angular.module('travelServices').factory('Travel',
               clickOutsideToClose:true,
               fullscreen: false
         });
-    };
+    }
 
-    var showManagePassengerDialog = function(event, ride)
+    function showManagePassengerDialog(event, ride)
     {
         if (ride.is_return)
         {
@@ -170,36 +182,85 @@ angular.module('travelServices').factory('Travel',
         }
     }
 
-    var addPassenger = function(passenger) {
+    var there = angular.copy(travel);
+    var back = angular.copy(travel);
+
+    function addPassenger(passenger) {
         if (passenger.ride.is_return)
         {
-            this.back.passenger.model = passenger;
-            this.back.driver.model = null;
+            back.passenger.model = passenger;
+            back.driver.model = null;
         }
         else
         {
-            this.there.passenger.model = passenger;
-            this.there.driver.model = null;
+            there.passenger.model = passenger;
+            there.driver.model = null;
         }
-    };
+    }
 
-    var addDriver = function(ride) {
+    function addDriver(ride) {
         if (ride.is_return)
         {
-            this.back.driver.model = ride;
-            this.back.passenger.model = null;
+            back.driver.model = ride;
+            back.passenger.model = null;
         }
         else
         {
-            this.there.driver.model = ride;
-            this.there.passenger.model = null;
+            there.driver.model = ride;
+            there.passenger.model = null;
         }
-    };
+    }
 
-//TODO do not expose the internal data structures
+    function getTravelThere() {
+        return there;
+    }
+
+    function getTravelBack() {
+        return back;
+    }
+
+    function getModel(travel) {
+        var object = travel.getObject();
+        if (object === null)
+        {
+            return null;
+        }
+        return object.model;
+    }
+
+    function getModelThere() {
+        return getModel(there);
+    }
+
+    function getModelBack() {
+        return getModel(back);
+    }
+
+    function getDriverThere() {
+        return there.driver;
+    }
+
+    function getDriverBack() {
+        return back.driver;
+    }
+
+    function getPassengerThere() {
+        return there.passenger;
+    }
+
+    function getPassengerBack() {
+        return back.passenger;
+    }
+
     return {
-        there : angular.copy(travel),
-        back: angular.copy(travel),
+        getPassengerThere: getPassengerThere,
+        getPassengerBack: getPassengerBack,
+        getDriverThere: getDriverThere,
+        getDriverBack: getDriverBack,
+        getTravelThere: getTravelThere,
+        getTravelBack: getTravelBack,
+        getModelThere: getModelThere,
+        getModelBack: getModelBack,
         addPassenger: addPassenger,
         addDriver: addDriver,
         showManagePassengerDialog: showManagePassengerDialog,

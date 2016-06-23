@@ -61,28 +61,28 @@ function TestUtils($q, $httpBackend, Travel, $mdDialog) {
     var addPassengerThere = function(pk) {
         var passengerModel = createPassengerThere(pk);
         $httpBackend.expectPOST('/rest/1/passengers/').respond(passengerModel);
-        Travel.there.passenger.add(passengerModel);
+        Travel.getPassengerThere().add(passengerModel);
         $httpBackend.flush();
     };
 
     var removePassengerThere = function() {
         $httpBackend.expectDELETE('/rest/1/passengers/'
-            + Travel.there.passenger.model.pk + '/').respond({});
-        Travel.there.passenger.remove();
+            + Travel.getPassengerThere().model.pk + '/').respond({});
+        Travel.getPassengerThere().remove();
         $httpBackend.flush();
     };
 
     var addDriverThere = function(pk) {
         var rideModel = createRideThere(pk);
         $httpBackend.expectPOST('/rest/1/rides/').respond(rideModel);
-        Travel.there.driver.add(rideModel);
+        Travel.getDriverThere().add(rideModel);
         $httpBackend.flush();
     };
 
     var removeDriverThere = function() {
         $httpBackend.expectDELETE('/rest/1/rides/'
-            + Travel.there.driver.model.pk + '/').respond({});
-        Travel.there.driver.remove();
+            + Travel.getDriverThere().model.pk + '/').respond({});
+        Travel.getDriverThere().remove();
         $httpBackend.flush();
     };
 

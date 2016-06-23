@@ -92,14 +92,15 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
     var getTravellerByDirection = function(direction) {
         if (direction === 'there')
         {
-            return Travel.there;
+            return Travel.getTravelThere();
         }
         else if (direction === 'back')
         {
-            return Travel.back
+            return Travel.getTravelBack();
         }
     }
 
+//TODO think this over
     var getObject = function(traveller) {
         if (traveller.isDriving())
         {

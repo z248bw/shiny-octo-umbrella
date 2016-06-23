@@ -34,7 +34,7 @@ describe('Given a ManageRideController', function() {
         inject(function(Travel) {
             var currentRide = TestUtils.createRideThere('1'),
                 passengers = [];
-            Travel.there.driver.model = currentRide;
+            Travel.addDriver(currentRide);
             $httpBackend.expectGET('/rest/1/rides/1/passengers/').respond(passengers);
 
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
@@ -59,7 +59,7 @@ describe('Given a ManageRideController', function() {
         inject(function(Travel) {
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
 
-            expect(Travel.there.driver.model.is_return).toBe(false);
+            expect(Travel.getDriverThere().model.is_return).toBe(false);
         })
     );
 
@@ -87,7 +87,7 @@ describe('Given a ManageRideController', function() {
             var currentRide = TestUtils.createRideThere('1'),
                 passengers = [];
 
-            Travel.there.driver.model = currentRide;
+            Travel.addDriver(currentRide);
             $httpBackend.expectGET('/rest/1/rides/1/passengers/').respond(passengers);
 
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
@@ -105,7 +105,7 @@ describe('Given a ManageRideController', function() {
             var currentRide = TestUtils.createRideThere('1'),
                 passengers = [];
 
-            Travel.there.driver.model = currentRide;
+            Travel.addDriver(currentRide);
             $httpBackend.expectGET('/rest/1/rides/1/passengers/').respond(passengers);
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
             $httpBackend.flush();

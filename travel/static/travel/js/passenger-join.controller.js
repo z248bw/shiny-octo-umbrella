@@ -26,11 +26,11 @@ function PassengerJoinController($scope, $mdDialog, Travel, passengerModel) {
     var getPassenger = function() {
         if (passengerModel.ride.is_return)
         {
-            return Travel.back.passenger;
+            return Travel.getPassengerBack();
         }
         else
         {
-            return Travel.there.passenger;
+            return Travel.getPassengerThere();
         }
     };
 

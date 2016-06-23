@@ -27,9 +27,9 @@ function RideElementController($rootScope, $scope, Travel) {
     var getCurrentTravel = function() {
         if(vm.ride.is_return)
         {
-            return Travel.back;
+            return Travel.getTravelBack();
         }
-        return Travel.there;
+        return Travel.getTravelThere();
     };
 
     var configureIsJoinable = function() {

@@ -7,8 +7,8 @@ function TravelController(TravelUser, Travel) {
 
     var vm = this;
     vm.me = null;
-    vm.there = Travel.there;
-    vm.back = Travel.back;
+    vm.there = Travel.getTravelThere();
+    vm.back = Travel.getTravelBack();
 
     var action = function() {
         TravelUser.getMe(onGetMe);
