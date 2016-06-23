@@ -21,58 +21,15 @@ angular.module('travelServices').factory('TravelUser', ['$resource', function($r
     });
 }]);
 
-angular.module('travelServices').factory('Travel',
-    ['$rootScope', '$location', '$mdDialog', 'Passenger', 'Ride',
-    function($rootScope, $location, $mdDialog, Passenger, Ride) {
-        var passenger = {
-            model: null,
-            showAdd: function(event, ride) {
-                this.model = {ride: ride};
-                showPassengerJoin(event, this.model);
-            },
-            add: function(passenger) {      //TODO rename to save
-                var ride = passenger.ride,
-                    self = this;
-                passenger.ride = ride.pk;
-                Passenger.save(passenger, function(response) {
-                    response = response.toJSON();
-                    response.ride = ride;
-                    self.model = response;
-                    $rootScope.$emit('PASSENGER_ADDED', response);
-                }, function(error) {
-                    showError(error);
-                });
-            },
-            showModify : function(event){
-                showPassengerJoin(event, this.model);
-            },
-            modify: function(event) {
-                var passenger = angular.copy(this.model);
-                passenger.ride = passenger.ride.pk;
-                Passenger.update({pk: this.model.pk}, passenger, function(response) {
-                    showSuccess('Utas reszletek sikeresen frissitve!');
-                }, function(error) {
-                    showError(error);
-                });
-            },
-            remove: function() {
-                var self = this;
-                Passenger.remove({pk: self.model.pk}, function() {
-                    var deleted_passenger = angular.copy(self.model);
-                    self.model = null;
-                    $rootScope.$emit('PASSENGER_DELETED', deleted_passenger);
-                });
-            },
-            getRide: function() {
-                return this.model.ride;
-            },
-        };
+angular.module('travelServices').factory('Dialog',
+    ['$mdDialog',
+    function($mdDialog) {
 
-         function showPassengerJoin(event, passengerModel) {
+        function showPassengerJoin(event, passengerModel) {
             $mdDialog.show({
                   controller: 'passengerJoinController',
                   templateUrl: '/static/travel/templates/passenger_join.html',
-                  parent: angular.element(document.body),
+                  parent: angular.element(document.body),   //TODO do i really need this?
                   targetEvent: event,
                   locals: {
                     passengerModel: passengerModel,
@@ -103,6 +60,74 @@ angular.module('travelServices').factory('Travel',
              );
         }
 
+        return {
+            showPassengerJoin: showPassengerJoin,
+            showSuccess: showSuccess,
+            showError: showError
+        };
+
+    }]
+);
+
+//TODO rename or refactor
+angular.module('travelServices').factory('PassengerObject',
+    ['$rootScope', 'Dialog', 'Passenger',
+    function($rootScope, Dialog, Passenger) {
+        var passenger = {
+            model: null,
+            showAdd: function(event, ride) {
+                this.model = {ride: ride};
+                Dialog.showPassengerJoin(event, this.model);
+            },
+            add: function(passenger) {      //TODO rename to save
+                var ride = passenger.ride,
+                    self = this;
+                passenger.ride = ride.pk;
+                Passenger.save(passenger, function(response) {
+                    response = response.toJSON();
+                    response.ride = ride;
+                    self.model = response;
+                    $rootScope.$emit('PASSENGER_ADDED', response);
+                }, function(error) {
+                    Dialog.showError(error);
+                });
+            },
+            showModify : function(event){
+                Dialog.showPassengerJoin(event, this.model);
+            },
+            modify: function(event) {
+                var passenger = angular.copy(this.model);
+                passenger.ride = passenger.ride.pk;
+                Passenger.update({pk: this.model.pk}, passenger, function(response) {
+                    Dialog.showSuccess('Utas reszletek sikeresen frissitve!');
+                }, function(error) {
+                    Dialog.showError(error);
+                });
+            },
+            remove: function() {
+                var self = this;
+                Passenger.remove({pk: self.model.pk}, function() {
+                    var deleted_passenger = angular.copy(self.model);
+                    self.model = null;
+                    $rootScope.$emit('PASSENGER_DELETED', deleted_passenger);
+                });
+            },
+            getRide: function() {
+                return this.model.ride;
+            },
+        };
+
+        return {
+            passenger: passenger
+        };
+
+    }]
+);
+
+angular.module('travelServices').factory('DriverObject',
+    ['$rootScope', '$location', 'Dialog', 'Ride',
+    function($rootScope, $location, Dialog, Ride) {
+
         var driver = {
             model: null,
             add: function() {       //TODO rename to save
@@ -111,7 +136,7 @@ angular.module('travelServices').factory('Travel',
                     self.model = response;
                     $rootScope.$emit('DRIVER_ADDED', response);
                 }, function(error) {
-                    showError(error);
+                    Dialog.showError(error);
                 });
             },
             showModify : function(){
@@ -119,9 +144,9 @@ angular.module('travelServices').factory('Travel',
             },
             modify: function() {
                 Ride.update({pk: this.model.pk}, this.model, function(response) {
-                    showSuccess('Jarmu reszletek sikeresen frissitve!');
+                    Dialog.showSuccess('Jarmu reszletek sikeresen frissitve!');
                 }, function(error) {
-                    showError(error);
+                    Dialog.showError(error);
                 });
             },
             remove: function() {
@@ -131,7 +156,7 @@ angular.module('travelServices').factory('Travel',
                     self.model = null;
                     $rootScope.$emit('DRIVER_DELETED', deleted_ride);
                 }, function(error) {
-                    showError(error);
+                    Dialog.showError(error);
                 });
             },
             getRide: function() {
@@ -139,9 +164,20 @@ angular.module('travelServices').factory('Travel',
             },
         };
 
+        return {
+            driver: driver
+        };
+
+    }]
+);
+
+angular.module('travelServices').factory('Travel',
+    ['$rootScope', 'PassengerObject', 'DriverObject',
+    function($rootScope, PassengerObject, DriverObject) {
+
         var travel = {
-            passenger: angular.copy(passenger),
-            driver: angular.copy(driver),
+            passenger: angular.copy(PassengerObject.passenger),
+            driver: angular.copy(DriverObject.driver),
             isDriving: function() {
                 return this.passenger.model == null;
             },
@@ -169,12 +205,8 @@ angular.module('travelServices').factory('Travel',
             }
         };
 
-        function getTravel() {
-            return travel;
-        }
-
         return {
-            getTravel: getTravel
+            travel: travel
         };
     }]
 )
@@ -183,8 +215,8 @@ angular.module('travelServices').factory('TravelManager',
     ['$mdDialog', 'Travel',
      function($mdDialog, Travel){
 
-    var there = angular.copy(Travel.getTravel());
-    var back = angular.copy(Travel.getTravel());
+    var there = angular.copy(Travel.travel);
+    var back = angular.copy(Travel.travel);
 
      return {
         getPassengerThere: getPassengerThere,
