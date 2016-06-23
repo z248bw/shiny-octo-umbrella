@@ -8,13 +8,13 @@ describe('Given a RidesController', function() {
 
     var $httpBackend,
         $controller,
-        Travel,
+        TravelManager,
         TestUtils;
     beforeEach(function() {
         angular.mock.inject(function ($injector) {
             $httpBackend = $injector.get('$httpBackend');
             $controller = $injector.get('$controller');
-            Travel = $injector.get('Travel');
+            TravelManager = $injector.get('TravelManager');
             TestUtils = $injector.get('TestUtils');
         });
     });
@@ -86,7 +86,7 @@ describe('Given a RidesController', function() {
             var passenger = TestUtils.createPassengerThere('1');
             passenger.ride = ride;
             $httpBackend.expectPOST('/rest/1/passengers/').respond(passenger);
-            Travel.getPassengerThere().add(passenger);
+            TravelManager.getPassengerThere().add(passenger);
             $httpBackend.flush();
 
             expect(ctrl.there[0].num_of_free_seats).toBe(0);
@@ -101,10 +101,10 @@ describe('Given a RidesController', function() {
             );
             var ctrl = $controller('ridesController', {$scope: scope});
             $httpBackend.flush();
-            Travel.getPassengerThere().model = TestUtils.createPassengerThere('1');
+            TravelManager.getPassengerThere().model = TestUtils.createPassengerThere('1');
 
             $httpBackend.expectDELETE('/rest/1/passengers/1/').respond({});
-            Travel.getPassengerThere().remove();
+            TravelManager.getPassengerThere().remove();
             $httpBackend.flush();
 
             expect(ctrl.there[0].num_of_free_seats).toBe(2);

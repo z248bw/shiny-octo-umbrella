@@ -11,10 +11,10 @@ function TestUtilsConfig($resourceProvider, $httpProvider) {
 }
 
 angular.module('testUtils').factory('TestUtils',
-    ['$q', '$httpBackend', 'Travel', '$mdDialog', TestUtils]);
+    ['$q', '$httpBackend', 'TravelManager', '$mdDialog', TestUtils]);
 
 //TODO investigate the splitting of this service
-function TestUtils($q, $httpBackend, Travel, $mdDialog) {
+function TestUtils($q, $httpBackend, TravelManager, $mdDialog) {
     var createPassenger = function(pk, isReturn) {
         return {
             pk: pk,
@@ -61,28 +61,28 @@ function TestUtils($q, $httpBackend, Travel, $mdDialog) {
     var addPassengerThere = function(pk) {
         var passengerModel = createPassengerThere(pk);
         $httpBackend.expectPOST('/rest/1/passengers/').respond(passengerModel);
-        Travel.getPassengerThere().add(passengerModel);
+        TravelManager.getPassengerThere().add(passengerModel);
         $httpBackend.flush();
     };
 
     var removePassengerThere = function() {
         $httpBackend.expectDELETE('/rest/1/passengers/'
-            + Travel.getPassengerThere().model.pk + '/').respond({});
-        Travel.getPassengerThere().remove();
+            + TravelManager.getPassengerThere().model.pk + '/').respond({});
+        TravelManager.getPassengerThere().remove();
         $httpBackend.flush();
     };
 
     var addDriverThere = function(pk) {
         var rideModel = createRideThere(pk);
         $httpBackend.expectPOST('/rest/1/rides/').respond(rideModel);
-        Travel.getDriverThere().add(rideModel);
+        TravelManager.getDriverThere().add(rideModel);
         $httpBackend.flush();
     };
 
     var removeDriverThere = function() {
         $httpBackend.expectDELETE('/rest/1/rides/'
-            + Travel.getDriverThere().model.pk + '/').respond({});
-        Travel.getDriverThere().remove();
+            + TravelManager.getDriverThere().model.pk + '/').respond({});
+        TravelManager.getDriverThere().remove();
         $httpBackend.flush();
     };
 

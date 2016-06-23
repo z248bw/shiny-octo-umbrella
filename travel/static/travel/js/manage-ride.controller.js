@@ -3,7 +3,7 @@
 angular.module('travelApp')
     .controller('manageRideController', ManageRideController);
 
-function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDialog, Ride, Travel) {
+function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDialog, Ride, TravelManager) {
 
     var vm = this;
     vm.driver = null;
@@ -48,11 +48,11 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDi
         var driver;
         if (direction === 'there')
         {
-            driver = Travel.getDriverThere();
+            driver = TravelManager.getDriverThere();
         }
         else
         {
-            driver = Travel.getDriverBack();
+            driver = TravelManager.getDriverBack();
         }
         return initDriverDirection(driver, direction)
     };

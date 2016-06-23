@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Given a Travel instance', function() {
+describe('Given a TravelManager instance', function() {
 
     var mockDialog = {};
     var mockRide = {
@@ -18,13 +18,13 @@ describe('Given a Travel instance', function() {
 
     var $httpBackend,
         $rootScope,
-        Travel,
+        TravelManager,
         TestUtils;
     beforeEach(function() {
         angular.mock.inject(function ($injector) {
             $httpBackend = $injector.get('$httpBackend');
             $rootScope = $injector.get('$rootScope');
-            Travel = $injector.get('Travel');
+            TravelManager = $injector.get('TravelManager');
             TestUtils = $injector.get('TestUtils');
         });
     });
@@ -37,78 +37,78 @@ describe('Given a Travel instance', function() {
         }
     );
 
-    it('a passenger there can be added and only Travel.there will be set',
+    it('a passenger there can be added and only TravelManager.there will be set',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            expect(Travel.getPassengerThere().model.pk).toBe('1');
-            expect(Travel.getDriverThere().model).toBe(null);
-            expect(Travel.getPassengerBack().model).toBe(null);
-            expect(Travel.getDriverBack().model).toBe(null);
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
+            expect(TravelManager.getPassengerThere().model.pk).toBe('1');
+            expect(TravelManager.getDriverThere().model).toBe(null);
+            expect(TravelManager.getPassengerBack().model).toBe(null);
+            expect(TravelManager.getDriverBack().model).toBe(null);
         }
     );
 
-    it('a driver there can be added and only Travel.there will be set',
+    it('a driver there can be added and only TravelManager.there will be set',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
-            expect(Travel.getDriverThere().model.pk).toBe('1');
-            expect(Travel.getPassengerThere().model).toBe(null);
-            expect(Travel.getPassengerBack().model).toBe(null);
-            expect(Travel.getDriverBack().model).toBe(null);
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
+            expect(TravelManager.getDriverThere().model.pk).toBe('1');
+            expect(TravelManager.getPassengerThere().model).toBe(null);
+            expect(TravelManager.getPassengerBack().model).toBe(null);
+            expect(TravelManager.getDriverBack().model).toBe(null);
         }
     );
 
     it('a passenger there and back can be added',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            Travel.addPassenger(TestUtils.createPassengerBack('2'));
-            expect(Travel.getPassengerThere().model.pk).toBe('1');
-            expect(Travel.getDriverThere().model).toBe(null);
-            expect(Travel.getPassengerBack().model.pk).toBe('2');
-            expect(Travel.getDriverBack().model).toBe(null);
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
+            TravelManager.addPassenger(TestUtils.createPassengerBack('2'));
+            expect(TravelManager.getPassengerThere().model.pk).toBe('1');
+            expect(TravelManager.getDriverThere().model).toBe(null);
+            expect(TravelManager.getPassengerBack().model.pk).toBe('2');
+            expect(TravelManager.getDriverBack().model).toBe(null);
         }
     );
 
     it('a driver there and back can be added',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
-            Travel.addDriver(TestUtils.createRideBack('2'));
-            expect(Travel.getDriverThere().model.pk).toBe('1');
-            expect(Travel.getPassengerThere().model).toBe(null);
-            expect(Travel.getPassengerBack().model).toBe(null);
-            expect(Travel.getDriverBack().model.pk).toBe('2');
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
+            TravelManager.addDriver(TestUtils.createRideBack('2'));
+            expect(TravelManager.getDriverThere().model.pk).toBe('1');
+            expect(TravelManager.getPassengerThere().model).toBe(null);
+            expect(TravelManager.getPassengerBack().model).toBe(null);
+            expect(TravelManager.getDriverBack().model.pk).toBe('2');
         }
     );
 
     it('a driver there and a passenger back can be added',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
-            Travel.addPassenger(TestUtils.createPassengerBack('2'));
-            expect(Travel.getDriverThere().model.pk).toBe('1');
-            expect(Travel.getPassengerThere().model).toBe(null);
-            expect(Travel.getPassengerBack().model.pk).toBe('2');
-            expect(Travel.getDriverBack().model).toBe(null);
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
+            TravelManager.addPassenger(TestUtils.createPassengerBack('2'));
+            expect(TravelManager.getDriverThere().model.pk).toBe('1');
+            expect(TravelManager.getPassengerThere().model).toBe(null);
+            expect(TravelManager.getPassengerBack().model.pk).toBe('2');
+            expect(TravelManager.getDriverBack().model).toBe(null);
         }
     );
 
-    it('a passenger there can be updated and only the Travel.there will be changed',
+    it('a passenger there can be updated and only the TravelManager.there will be changed',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            Travel.addPassenger(TestUtils.createPassengerThere('2'));
-            expect(Travel.getDriverThere().model).toBe(null);
-            expect(Travel.getPassengerThere().model.pk).toBe('2');
-            expect(Travel.getPassengerBack().model).toBe(null);
-            expect(Travel.getDriverBack().model).toBe(null);
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
+            TravelManager.addPassenger(TestUtils.createPassengerThere('2'));
+            expect(TravelManager.getDriverThere().model).toBe(null);
+            expect(TravelManager.getPassengerThere().model.pk).toBe('2');
+            expect(TravelManager.getPassengerBack().model).toBe(null);
+            expect(TravelManager.getDriverBack().model).toBe(null);
         }
     );
 
-    it('a driver there can be updated and only the Travel.there will be changed',
+    it('a driver there can be updated and only the TravelManager.there will be changed',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
-            Travel.addDriver(TestUtils.createRideThere('2'));
-            expect(Travel.getDriverThere().model.pk).toBe('2');
-            expect(Travel.getPassengerThere().model).toBe(null);
-            expect(Travel.getPassengerBack().model).toBe(null);
-            expect(Travel.getDriverBack().model).toBe(null);
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
+            TravelManager.addDriver(TestUtils.createRideThere('2'));
+            expect(TravelManager.getDriverThere().model.pk).toBe('2');
+            expect(TravelManager.getPassengerThere().model).toBe(null);
+            expect(TravelManager.getPassengerBack().model).toBe(null);
+            expect(TravelManager.getDriverBack().model).toBe(null);
         }
     );
 
@@ -116,12 +116,12 @@ describe('Given a Travel instance', function() {
         inject(function($rootScope) {
             var passenger = TestUtils.createPassengerThere('1');
             var emittedPassenger = TestUtils.createPassengerThere('1');
-            Travel.addPassenger(passenger);
+            TravelManager.addPassenger(passenger);
 
             spyOn($rootScope, "$emit")
             TestUtils.removePassengerThere();
             expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_DELETED", emittedPassenger);
-            expect(Travel.getPassengerThere().model).toBe(null);
+            expect(TravelManager.getPassengerThere().model).toBe(null);
         })
     );
 
@@ -129,128 +129,128 @@ describe('Given a Travel instance', function() {
         inject(function($rootScope) {
             var driver = TestUtils.createRideThere('1');
             var emittedDriver = TestUtils.createRideThere('1');
-            Travel.addDriver(driver);
+            TravelManager.addDriver(driver);
 
             spyOn($rootScope, "$emit")
-            Travel.getDriverThere().remove()
+            TravelManager.getDriverThere().remove()
 
             expect($rootScope.$emit).toHaveBeenCalledWith("DRIVER_DELETED", emittedDriver);
-            expect(Travel.getDriverThere().model).toBe(null);
+            expect(TravelManager.getDriverThere().model).toBe(null);
         })
     );
 
     it('a passenger can be deleted and then added',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            Travel.getPassengerThere().remove();
-            Travel.addPassenger(TestUtils.createPassengerThere('2'));
-            expect(Travel.getPassengerThere().model.pk).toBe('2');
-            expect(Travel.getDriverThere().model).toBe(null);
-            expect(Travel.getPassengerBack().model).toBe(null);
-            expect(Travel.getDriverBack().model).toBe(null);
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
+            TravelManager.getPassengerThere().remove();
+            TravelManager.addPassenger(TestUtils.createPassengerThere('2'));
+            expect(TravelManager.getPassengerThere().model.pk).toBe('2');
+            expect(TravelManager.getDriverThere().model).toBe(null);
+            expect(TravelManager.getPassengerBack().model).toBe(null);
+            expect(TravelManager.getDriverBack().model).toBe(null);
         }
     );
 
     it('a driver can be deleted and then added',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
-            Travel.getDriverThere().remove();
-            Travel.addDriver(TestUtils.createRideThere('2'));
-            expect(Travel.getDriverThere().model.pk).toBe('2');
-            expect(Travel.getPassengerThere().model).toBe(null);
-            expect(Travel.getPassengerBack().model).toBe(null);
-            expect(Travel.getDriverBack().model).toBe(null);
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
+            TravelManager.getDriverThere().remove();
+            TravelManager.addDriver(TestUtils.createRideThere('2'));
+            expect(TravelManager.getDriverThere().model.pk).toBe('2');
+            expect(TravelManager.getPassengerThere().model).toBe(null);
+            expect(TravelManager.getPassengerBack().model).toBe(null);
+            expect(TravelManager.getDriverBack().model).toBe(null);
         }
     );
 
     it('a isDriving returns false for passenger',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            expect(Travel.getTravelThere().isDriving()).toBe(false);
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
+            expect(TravelManager.getTravelThere().isDriving()).toBe(false);
         }
     );
 
      it('a isDriving returns true for driver',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
-            expect(Travel.getTravelThere().isDriving()).toBe(true);
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
+            expect(TravelManager.getTravelThere().isDriving()).toBe(true);
         }
     );
 
     it('a isEmpty returns true when neither a driver nor a passenger exist in that direction',
         function() {
-            expect(Travel.getTravelThere().isEmpty()).toBe(true);
+            expect(TravelManager.getTravelThere().isEmpty()).toBe(true);
         }
     );
 
     it('a isEmpty returns false when a driver exist in that direction',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
-            expect(Travel.getTravelThere().isEmpty()).toBe(false);
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
+            expect(TravelManager.getTravelThere().isEmpty()).toBe(false);
         }
     );
 
     it('a isEmpty returns false when a passenger exist in that direction',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            expect(Travel.getTravelThere().isEmpty()).toBe(false);
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
+            expect(TravelManager.getTravelThere().isEmpty()).toBe(false);
         }
     );
 
     it('a isEmpty returns true when a passenger exist in the other direction',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            expect(Travel.getTravelBack().isEmpty()).toBe(true);
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
+            expect(TravelManager.getTravelBack().isEmpty()).toBe(true);
         }
     );
 
     it('getModelThere returns null if there is no passenger neither driver there',
         function() {
-            expect(Travel.getModelThere()).toBe(null);
+            expect(TravelManager.getModelThere()).toBe(null);
         }
     );
 
     it('getModelThere returns passenger model if there is a passenger there',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
-            expect(Travel.getModelThere().pk).toBe('1');
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
+            expect(TravelManager.getModelThere().pk).toBe('1');
         }
     );
 
      it('getModelThere returns driver model if there is a driver there',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
-            expect(Travel.getModelThere().pk).toBe('1');
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
+            expect(TravelManager.getModelThere().pk).toBe('1');
         }
     );
 
     it('getModelThere returns null if there is a passenger back',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerBack('1'));
-            expect(Travel.getModelThere()).toBe(null);
+            TravelManager.addPassenger(TestUtils.createPassengerBack('1'));
+            expect(TravelManager.getModelThere()).toBe(null);
         }
     );
 
     it('getModelThere returns null if there is a driver back',
         function() {
-            Travel.addDriver(TestUtils.createRideBack('1'));
-            expect(Travel.getModelThere()).toBe(null);
+            TravelManager.addDriver(TestUtils.createRideBack('1'));
+            expect(TravelManager.getModelThere()).toBe(null);
         }
     );
 
     it('getModelThere returns passenger if there is a driver back',
         function() {
-            Travel.addDriver(TestUtils.createRideBack('1'));
-            Travel.addPassenger(TestUtils.createPassengerThere('2'));
-            expect(Travel.getModelThere().pk).toBe('2');
+            TravelManager.addDriver(TestUtils.createRideBack('1'));
+            TravelManager.addPassenger(TestUtils.createPassengerThere('2'));
+            expect(TravelManager.getModelThere().pk).toBe('2');
         }
     );
 
     it('getModelThere returns passenger if there is a passenger back',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerBack('1'));
-            Travel.addPassenger(TestUtils.createPassengerThere('2'));
-            expect(Travel.getModelThere().pk).toBe('2');
+            TravelManager.addPassenger(TestUtils.createPassengerBack('1'));
+            TravelManager.addPassenger(TestUtils.createPassengerThere('2'));
+            expect(TravelManager.getModelThere().pk).toBe('2');
         }
     );
 

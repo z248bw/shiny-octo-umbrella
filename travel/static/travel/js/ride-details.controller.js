@@ -3,7 +3,7 @@
 angular.module('travelApp')
     .controller('rideDetailsController', RidesDetailController);
 
-function RidesDetailController($routeParams, Ride, Travel) {
+function RidesDetailController($routeParams, Ride) {
 
     var vm = this;
     vm.ride = null;

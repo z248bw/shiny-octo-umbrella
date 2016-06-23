@@ -3,7 +3,7 @@
 angular.module('travelApp')
     .controller('travelElementController', TravelElementController);
 
-function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
+function TravelElementController($rootScope, $scope, $mdDialog, TravelManager) {
 
     var vm = this;
     vm.object = null;
@@ -92,11 +92,11 @@ function TravelElementController($rootScope, $scope, $mdDialog, Travel) {
     var getTravellerByDirection = function(direction) {
         if (direction === 'there')
         {
-            return Travel.getTravelThere();
+            return TravelManager.getTravelThere();
         }
         else if (direction === 'back')
         {
-            return Travel.getTravelBack();
+            return TravelManager.getTravelBack();
         }
     }
 

@@ -9,14 +9,14 @@ describe('Given a RideElementController', function() {
     var $controller,
         $rootScope,
         $httpBackend,
-        Travel,
+        TravelManager,
         TestUtils;
     beforeEach(function() {
         angular.mock.inject(function ($injector) {
             $controller = $injector.get('$controller');
             $rootScope = $injector.get('$rootScope');
             $httpBackend = $injector.get('$httpBackend');
-            Travel = $injector.get('Travel');
+            TravelManager = $injector.get('TravelManager');
             TestUtils = $injector.get('TestUtils');
         });
     });
@@ -39,7 +39,7 @@ describe('Given a RideElementController', function() {
 
     it('if there is a travel in the other rides direction then joinable will be true',
         function() {
-            Travel.addDriver(TestUtils.createRideBack('2'));
+            TravelManager.addDriver(TestUtils.createRideBack('2'));
 
             var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
 
@@ -59,7 +59,7 @@ describe('Given a RideElementController', function() {
 
     it('if there is a travel in the current rides direction then joinable will be false',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('2'));
+            TravelManager.addDriver(TestUtils.createRideThere('2'));
 
             var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
 
@@ -78,7 +78,7 @@ describe('Given a RideElementController', function() {
 
     it('if a passenger is removed in the current rides direction then joinable will be true',
         function() {
-            Travel.addPassenger(TestUtils.createPassengerThere('1'));
+            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
 
             var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
             TestUtils.removePassengerThere();
@@ -98,7 +98,7 @@ describe('Given a RideElementController', function() {
 
     it('if a driver is removed in the current rides direction then joinable will be true',
         function() {
-            Travel.addDriver(TestUtils.createRideThere('1'));
+            TravelManager.addDriver(TestUtils.createRideThere('1'));
 
             var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
             TestUtils.removeDriverThere();

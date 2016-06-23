@@ -3,7 +3,7 @@
 angular.module('travelApp')
     .controller('rideElementController', RideElementController);
 
-function RideElementController($rootScope, $scope, Travel) {
+function RideElementController($rootScope, $scope, TravelManager) {
 
     var vm = this;
     vm.ride = null;
@@ -27,9 +27,9 @@ function RideElementController($rootScope, $scope, Travel) {
     var getCurrentTravel = function() {
         if(vm.ride.is_return)
         {
-            return Travel.getTravelBack();
+            return TravelManager.getTravelBack();
         }
-        return Travel.getTravelThere();
+        return TravelManager.getTravelThere();
     };
 
     var configureIsJoinable = function() {

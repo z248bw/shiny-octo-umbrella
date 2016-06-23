@@ -3,12 +3,12 @@
 angular.module('travelApp')
     .controller('travelController', TravelController);
 
-function TravelController(TravelUser, Travel) {
+function TravelController(TravelUser, TravelManager) {
 
     var vm = this;
     vm.me = null;
-    vm.there = Travel.getTravelThere();
-    vm.back = Travel.getTravelBack();
+    vm.there = TravelManager.getTravelThere();
+    vm.back = TravelManager.getTravelBack();
 
     var action = function() {
         TravelUser.getMe(onGetMe);
@@ -23,12 +23,12 @@ function TravelController(TravelUser, Travel) {
         for (var i = 0; i < vm.me.driven_rides.length; i++)
         {
             var ride = vm.me.driven_rides[i];
-            Travel.addDriver(ride);
+            TravelManager.addDriver(ride);
         }
         for (var i = 0; i < vm.me.passenger_of_rides.length; i++)
         {
             var passenger = vm.me.passenger_of_rides[i];
-            Travel.addPassenger(passenger);
+            TravelManager.addPassenger(passenger);
         }
     };
 

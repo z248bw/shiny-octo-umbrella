@@ -3,7 +3,7 @@
 angular.module('travelApp')
     .controller('passengerJoinController',PassengerJoinController);
 
-function PassengerJoinController($scope, $mdDialog, Travel, passengerModel) {
+function PassengerJoinController($scope, $mdDialog, TravelManager, passengerModel) {
 
     $scope.passenger = passengerModel;
     $scope.joinRide = function()
@@ -26,11 +26,11 @@ function PassengerJoinController($scope, $mdDialog, Travel, passengerModel) {
     var getPassenger = function() {
         if (passengerModel.ride.is_return)
         {
-            return Travel.getPassengerBack();
+            return TravelManager.getPassengerBack();
         }
         else
         {
-            return Travel.getPassengerThere();
+            return TravelManager.getPassengerThere();
         }
     };
 

@@ -30,11 +30,11 @@ describe('Given a ManageRideController', function() {
         TestUtils.resolveDeferred(scope, deferred);
     }
 
-    it('on init the details of the current ride should be get from Travel and passengers should be fetched',
-        inject(function(Travel) {
+    it('on init the details of the current ride should be get from TravelManager and passengers should be fetched',
+        inject(function(TravelManager) {
             var currentRide = TestUtils.createRideThere('1'),
                 passengers = [];
-            Travel.addDriver(currentRide);
+            TravelManager.addDriver(currentRide);
             $httpBackend.expectGET('/rest/1/rides/1/passengers/').respond(passengers);
 
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
@@ -56,10 +56,10 @@ describe('Given a ManageRideController', function() {
     );
 
      it('if the ride is null the direction should be set according to the routeParams',
-        inject(function(Travel) {
+        inject(function(TravelManager) {
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
 
-            expect(Travel.getDriverThere().model.is_return).toBe(false);
+            expect(TravelManager.getDriverThere().model.is_return).toBe(false);
         })
     );
 
@@ -83,11 +83,11 @@ describe('Given a ManageRideController', function() {
     );
 
     it('if the ride was not null it should update the existing one on save',
-        inject(function(Travel) {
+        inject(function(TravelManager) {
             var currentRide = TestUtils.createRideThere('1'),
                 passengers = [];
 
-            Travel.addDriver(currentRide);
+            TravelManager.addDriver(currentRide);
             $httpBackend.expectGET('/rest/1/rides/1/passengers/').respond(passengers);
 
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
@@ -101,11 +101,11 @@ describe('Given a ManageRideController', function() {
     );
 
     it('deleting a ride should delete it on the backend as well',
-        inject(function(Travel) {
+        inject(function(TravelManager) {
             var currentRide = TestUtils.createRideThere('1'),
                 passengers = [];
 
-            Travel.addDriver(currentRide);
+            TravelManager.addDriver(currentRide);
             $httpBackend.expectGET('/rest/1/rides/1/passengers/').respond(passengers);
             var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
             $httpBackend.flush();

@@ -3,10 +3,10 @@
 angular.module('travelApp')
     .controller('ridesController', RidesController);
 
-function RidesController($scope, $rootScope, Ride, Travel) {
+function RidesController($scope, $rootScope, Ride, TravelManager) {
 
     var vm = this;
-    vm.travel = Travel;
+    vm.travel = TravelManager;
     vm.there = [];
     vm.back = [];
 
@@ -18,7 +18,7 @@ function RidesController($scope, $rootScope, Ride, Travel) {
     }
 
     var showPassengerJoin = function(ev, ride) {
-        Travel.showManagePassengerDialog(ev, ride);
+        TravelManager.showManagePassengerDialog(ev, ride);
     };
 
     var onPassengerAdded = function(event, passenger) {

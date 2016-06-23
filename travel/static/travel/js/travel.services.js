@@ -21,7 +21,7 @@ angular.module('travelServices').factory('TravelUser', ['$resource', function($r
     });
 }]);
 
-angular.module('travelServices').factory('Travel',
+angular.module('travelServices').factory('TravelManager',
     ['$rootScope', '$location', '$mdDialog', 'Passenger', 'Ride',
      function($rootScope, $location, $mdDialog, Passenger, Ride){
 
@@ -185,6 +185,20 @@ angular.module('travelServices').factory('Travel',
     var there = angular.copy(travel);
     var back = angular.copy(travel);
 
+     return {
+        getPassengerThere: getPassengerThere,
+        getPassengerBack: getPassengerBack,
+        getDriverThere: getDriverThere,
+        getDriverBack: getDriverBack,
+        getTravelThere: getTravelThere,
+        getTravelBack: getTravelBack,
+        getModelThere: getModelThere,
+        getModelBack: getModelBack,
+        addPassenger: addPassenger,
+        addDriver: addDriver,
+        showManagePassengerDialog: showManagePassengerDialog,
+    };
+
     function addPassenger(passenger) {
         if (passenger.ride.is_return)
         {
@@ -251,18 +265,4 @@ angular.module('travelServices').factory('Travel',
     function getPassengerBack() {
         return back.passenger;
     }
-
-    return {
-        getPassengerThere: getPassengerThere,
-        getPassengerBack: getPassengerBack,
-        getDriverThere: getDriverThere,
-        getDriverBack: getDriverBack,
-        getTravelThere: getTravelThere,
-        getTravelBack: getTravelBack,
-        getModelThere: getModelThere,
-        getModelBack: getModelBack,
-        addPassenger: addPassenger,
-        addDriver: addDriver,
-        showManagePassengerDialog: showManagePassengerDialog,
-    };
 }]);
