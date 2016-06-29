@@ -76,8 +76,7 @@ angular.module('travelServices').factory('PassengerObject',
         var passenger = {
             model: null,
             showAdd: function(event, ride) {
-                this.model = {ride: ride};
-                Dialog.showPassengerJoin(event, this.model);
+                Dialog.showPassengerJoin(event, {ride: ride});
             },
             add: function(passenger) {      //TODO rename to save
                 var ride = passenger.ride,

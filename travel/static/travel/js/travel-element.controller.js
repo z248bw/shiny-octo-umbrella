@@ -33,7 +33,7 @@ function TravelElementController($rootScope, $scope, $mdDialog, TravelManager) {
         }
         if(isTheSameDirection(vm.ride, passenger.ride))
         {
-            vm.ride = null;
+            removeModel();
         }
     };
 
@@ -53,7 +53,7 @@ function TravelElementController($rootScope, $scope, $mdDialog, TravelManager) {
          }
         if(isTheSameDirection(vm.ride, driver))
         {
-            vm.ride = null;
+            removeModel();
         }
     };
 
