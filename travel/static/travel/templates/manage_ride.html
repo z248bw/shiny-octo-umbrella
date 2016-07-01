@@ -9,6 +9,12 @@
                    ng-click="manager.showDriverSaveDialog($event)">
             Letrehozas/Modositas
         </md-button>
+        <md-button ng-show="manager.isDriverExists()"
+                   class="md-accent md-raised"
+                   hide-xs flex
+                   ng-click="manager.showDriverDeleteDialog($event)">
+            Torles
+        </md-button>
     </h4>
     <md-content layout-padding layout-gt-xs="row">
         <form name="rideForm">
@@ -94,6 +100,12 @@
                    ng-click="manager.showDriverSaveDialog($event)">
             Letrehozas/Modositas
         </md-button>
+        <md-button ng-show="manager.driver.pk"
+                   class="md-accent md-raised"
+                   hide-gt-xs flex
+                   ng-click="manager.showDriverDeleteDialog($event)">
+            Torles
+        </md-button>
     </md-content>
 
     <div>
@@ -106,7 +118,8 @@
                     ({{passenger.travel_user.user.username}})
                 </md-checkbox>
             </div>
-            <md-button class="md-primary md-raised"
+            <md-button ng-show="manager.isDriverExists()"
+                       class="md-primary md-raised"
                        ng-click="manager.showPassengerDeleteDialog($event)">
                 Kivalasztott utasok torlese
             </md-button>

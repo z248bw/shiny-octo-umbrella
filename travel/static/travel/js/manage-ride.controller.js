@@ -11,6 +11,7 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, Dialo
     vm.showDriverSaveDialog = showDriverSaveDialog;
     vm.showDriverDeleteDialog = showDriverDeleteDialog;
     vm.showPassengerDeleteDialog = showPassengerDeleteDialog;
+    vm.isDriverExists = isDriverExists;
 
     vm.shouldUpdateOnSave = false;
 
@@ -18,9 +19,12 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, Dialo
         vm.driver.model.start_time = timepicker.datetime;
     });
 
-    $rootScope.$on('DRIVER_ADDED', function(event, driver) {
+    $rootScope.$on('DRIVER_ADDED', navigateToRides);
+    $rootScope.$on('DRIVER_DELETED', navigateToRides);
+
+    function navigateToRides() {
         $location.url('/rides');
-    });
+    }
 
     var activate = function() {
         vm.driver = getDriver();
@@ -59,7 +63,7 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, Dialo
     };
 
     function fetchPassengers() {
-        if (!isExistingDriver(vm.driver.model))
+        if (!isDriverExists())
         {
             return;
         }
@@ -69,12 +73,12 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, Dialo
         });
     };
 
-    function isExistingDriver(driver) {
-        return driver.pk != null;
+    function isDriverExists() {
+        return vm.driver.model.pk != null;
     };
 
     function initSave() {
-        if (isExistingDriver(vm.driver.model))
+        if (isDriverExists())
         {
             vm.shouldUpdateOnSave = true;
         }
