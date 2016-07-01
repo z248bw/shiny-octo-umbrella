@@ -3,13 +3,15 @@
 angular.module('travelApp')
     .controller('manageRideController', ManageRideController);
 
-function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDialog, Ride, TravelManager) {
+function ManageRideController($scope, $rootScope, $location, $routeParams, Dialog, Ride, Passenger, TravelManager) {
 
     var vm = this;
     vm.driver = null;
     vm.passengers = [];
-    vm.showDriverSaveDialog = null;
-    vm.showDriverDeleteDialog = null;
+    vm.showDriverSaveDialog = showDriverSaveDialog;
+    vm.showDriverDeleteDialog = showDriverDeleteDialog;
+    vm.showPassengerDeleteDialog = showPassengerDeleteDialog;
+
     vm.shouldUpdateOnSave = false;
 
     $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
@@ -20,22 +22,13 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDi
         $location.url('/rides');
     });
 
-//    TODO driver delete?
-
     var activate = function() {
-        vm.showDriverSaveDialog = showDriverSaveDialog;
-        vm.showDriverDeleteDialog = showDriverDeleteDialog;
-        initRideDetails();
-    };
-
-    var initRideDetails = function()
-    {
         vm.driver = getDriver();
         fetchPassengers();
         initSave();
     };
 
-    var getDriver = function() {
+    function getDriver() {
         if (!('direction' in $routeParams))
         {
             throw new Error('Direction not specified');
@@ -44,7 +37,7 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDi
         return getDriverByDirection($routeParams.direction);
     };
 
-    var getDriverByDirection = function(direction) {
+    function getDriverByDirection(direction) {
         var driver;
         if (direction === 'there')
         {
@@ -57,7 +50,7 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDi
         return initDriverDirection(driver, direction)
     };
 
-    var initDriverDirection = function(driver, direction) {
+    function initDriverDirection(driver, direction) {
         if (driver.model == null)
         {
             driver.model = {is_return: direction === 'there' ? false : true};
@@ -65,7 +58,7 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDi
         return driver;
     };
 
-    var fetchPassengers = function() {
+    function fetchPassengers() {
         if (!isExistingDriver(vm.driver.model))
         {
             return;
@@ -76,61 +69,97 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, $mdDi
         });
     };
 
-    var isExistingDriver = function(driver) {
+    function isExistingDriver(driver) {
         return driver.pk != null;
     };
 
-    var initSave = function() {
+    function initSave() {
         if (isExistingDriver(vm.driver.model))
         {
             vm.shouldUpdateOnSave = true;
         }
     };
 
-    var showDriverSaveDialog = function(event) {
+    function showDriverSaveDialog(event) {
         if (vm.shouldUpdateOnSave)
         {
-            var confirm = $mdDialog.confirm()
-                .title('Biztos vagy benne, hogy frissiteni akarod a jarmu tulajdonsagait?')
-                .targetEvent(event)
-                .ok('Igen')
-                .cancel('Megse');
-
-            $mdDialog.show(confirm).then(updateDriver);
+            Dialog.showConfirm(
+                event,
+                'Biztos vagy benne, hogy frissiteni akarod a jarmu tulajdonsagait?',
+                updateDriver);
         }
         else
         {
-            var confirm = $mdDialog.confirm()
-                .title('Biztos vagy benne, hogy letre akarod hozni a jarmuvet?')
-                .targetEvent(event)
-                .ok('Igen')
-                .cancel('Megse');
-
-            $mdDialog.show(confirm).then(createDriver);
+            Dialog.showConfirm(
+                event,
+                'Biztos vagy benne, hogy letre akarod hozni a jarmuvet?',
+                createDriver);
         }
     };
 
-    var updateDriver = function() {
+    function updateDriver() {
        vm.driver.modify();
     };
 
-    var createDriver = function() {
+    function createDriver() {
         vm.driver.add();
     };
 
-    var showDriverDeleteDialog = function(event) {
-        var confirm = $mdDialog.confirm()
-            .title('Biztos vagy benne, hogy torolni akarod a jarmuvet?')
-            .targetEvent(event)
-            .ok('Igen')
-            .cancel('Megse');
-
-        $mdDialog.show(confirm).then(deleteDriver);
+    function showDriverDeleteDialog(event) {
+        Dialog.showConfirm(
+            event,
+            'Biztos vagy benne, hogy torolni akarod a jarmuvet?',
+            deleteDriver);
     };
 
-    var deleteDriver = function() {
+    function deleteDriver() {
         vm.driver.remove();
     };
+
+    function showPassengerDeleteDialog(event) {
+        Dialog.showConfirm(
+            event,
+            'Biztos vagy benne, hogy torolni szeretned ezt az utast?',
+            removeSelectedPassengers
+        );
+    };
+
+    function removeSelectedPassengers() {
+        var selectedPassengers = getSelectedPassengers();
+        for (var i = 0; i < selectedPassengers.length; i++)
+        {
+            var passenger = selectedPassengers[i];
+            Passenger.remove({pk: passenger.pk}, function() {
+                removeFromPassengers(passenger);
+            });
+        }
+    }
+
+    function getSelectedPassengers() {
+        var selectedPassengers = [];
+        for(var i = 0; i < vm.passengers.length; i++)
+        {
+            if(vm.passengers[i].selected)
+            {
+                selectedPassengers.push(vm.passengers[i]);
+            }
+        }
+        return selectedPassengers;
+    }
+
+    function removeFromPassengers(passenger) {
+        vm.passengers.splice(getIndexOfPassenger(passenger), 1);
+     }
+
+    function getIndexOfPassenger(passenger) {
+        for(var i = 0; i < vm.passengers.length; i++)
+        {
+            if (vm.passengers[i].pk === passenger.pk)
+            {
+                return i;
+            }
+        }
+    }
 
     activate();
 }

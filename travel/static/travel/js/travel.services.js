@@ -25,6 +25,13 @@ angular.module('travelServices').factory('Dialog',
     ['$mdDialog',
     function($mdDialog) {
 
+        return {
+            showPassengerJoin: showPassengerJoin,
+            showSuccess: showSuccess,
+            showError: showError,
+            showConfirm: showConfirm
+        };
+
         function showPassengerJoin(event, passengerModel) {
             $mdDialog.show({
                   controller: 'passengerJoinController',
@@ -60,11 +67,15 @@ angular.module('travelServices').factory('Dialog',
              );
         }
 
-        return {
-            showPassengerJoin: showPassengerJoin,
-            showSuccess: showSuccess,
-            showError: showError
-        };
+        function showConfirm(event, title, callback) {
+            var confirm = $mdDialog.confirm()
+            .title(title)
+            .targetEvent(event)
+            .ok('Igen')
+            .cancel('Megse');
+
+            $mdDialog.show(confirm).then(callback);
+        }
 
     }]
 );
