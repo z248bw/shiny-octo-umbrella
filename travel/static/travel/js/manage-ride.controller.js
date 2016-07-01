@@ -13,14 +13,14 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, Dialo
     vm.showPassengerDeleteDialog = showPassengerDeleteDialog;
     vm.isDriverExists = isDriverExists;
 
-    vm.shouldUpdateOnSave = false;
 
     $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
         vm.driver.model.start_time = timepicker.datetime;
     });
-
     $rootScope.$on('DRIVER_ADDED', navigateToRides);
     $rootScope.$on('DRIVER_DELETED', navigateToRides);
+
+    var shouldUpdateOnSave = false;
 
     function navigateToRides() {
         $location.url('/rides');
@@ -80,12 +80,12 @@ function ManageRideController($scope, $rootScope, $location, $routeParams, Dialo
     function initSave() {
         if (isDriverExists())
         {
-            vm.shouldUpdateOnSave = true;
+            shouldUpdateOnSave = true;
         }
     };
 
     function showDriverSaveDialog(event) {
-        if (vm.shouldUpdateOnSave)
+        if (shouldUpdateOnSave)
         {
             Dialog.showConfirm(
                 event,

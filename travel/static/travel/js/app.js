@@ -4,6 +4,8 @@ angular
     .module('travelApp', ['ngResource', 'ngRoute', 'ngMaterial', 'travelServices'])
     .config(TravelAppConfig);
 
+angular.module('travelServices', ['ngResource']);
+
 function TravelAppConfig($resourceProvider, $httpProvider, $routeProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
