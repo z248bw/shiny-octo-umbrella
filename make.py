@@ -46,7 +46,7 @@ def parse_args():
                         nargs='?',
                         type=str,
                         dest='flavor',
-                        help='specifies the build flavor')
+                        help='specifies the build flavor [dev/prod]')
 
     return parser.parse_args()
 
@@ -71,6 +71,7 @@ def default():
     print_green('run all')
     build()
     test()
+    print_green('successfully finished all')
 
 
 def print_green(t):
