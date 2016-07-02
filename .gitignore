@@ -6,3 +6,5 @@ staticfiles
 .idea/
 README.md
 node_modules/
+all.js
+all.min.js
