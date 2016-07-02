@@ -3,7 +3,7 @@
 //"2016-05-31T22:00:00.000Z"
 describe('Given a datetimepicker element', function() {
 
-    beforeEach(module('travelApp'));
+    beforeEach(module('TravelApp'));
 
     var $controller,
         $rootScope;
@@ -19,7 +19,7 @@ describe('Given a datetimepicker element', function() {
         function() {
             var $scope = $rootScope.$new();
 
-            var ctrl = $controller('timepickerElementController', {$scope: $scope});
+            var ctrl = $controller('TimepickerElementController', {$scope: $scope});
 
             expect(ctrl.date.getTime()).not.toBe(new Date('invalid'));
             expect(ctrl.time.hour).toBe('00');
@@ -32,7 +32,7 @@ describe('Given a datetimepicker element', function() {
             var $scope = $rootScope.$new();
             $scope.datetime = ''
 
-            var ctrl = $controller('timepickerElementController', {$scope: $scope});
+            var ctrl = $controller('TimepickerElementController', {$scope: $scope});
 
             expect(ctrl.date.getTime()).not.toBe(new Date('invalid'));
             expect(ctrl.time.hour).toBe('00');
@@ -44,7 +44,7 @@ describe('Given a datetimepicker element', function() {
         function() {
             var $scope = $rootScope.$new();
             $scope.datetime = '2016-05-16T18:39:02.947273Z';
-            var ctrl = $controller('timepickerElementController', {$scope: $scope});
+            var ctrl = $controller('TimepickerElementController', {$scope: $scope});
 
             // month is zero based in js Date implementation...
             expect(ctrl.date.getTime()).toBe(new Date(Date.UTC(2016, 4, 16)).getTime());
@@ -57,7 +57,7 @@ describe('Given a datetimepicker element', function() {
             var $scope = $rootScope.$new();
             $scope.datetime = '2016-05-16T18:39:02.947273Z';
 
-            var ctrl = $controller('timepickerElementController', {$scope: $scope});
+            var ctrl = $controller('TimepickerElementController', {$scope: $scope});
 
             expect(ctrl.getDateTime()).toBe('2016-05-16T18:39');
         }
@@ -69,7 +69,7 @@ describe('Given a datetimepicker element', function() {
             $scope.id = 1;
             $scope.datetime = '2016-05-16T18:39:02.947273Z';
 
-            var ctrl = $controller('timepickerElementController', {$scope: $scope});
+            var ctrl = $controller('TimepickerElementController', {$scope: $scope});
 
             spyOn($scope, "$emit");
             ctrl.date = new Date(Date.UTC(2020, 4, 17));
@@ -85,7 +85,7 @@ describe('Given a datetimepicker element', function() {
             $scope.id = 1;
             $scope.datetime = '2016-05-16T18:39:02.947273Z';
 
-            var ctrl = $controller('timepickerElementController', {$scope: $scope});
+            var ctrl = $controller('TimepickerElementController', {$scope: $scope});
             $scope.$digest();
 
             spyOn($scope, "$emit");

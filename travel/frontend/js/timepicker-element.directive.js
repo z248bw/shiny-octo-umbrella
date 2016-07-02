@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('travelApp').directive('timepickerElement', function() {
+    angular.module('TravelApp').directive('timepickerElement', function() {
         return {
             restrict: 'E',
             templateUrl: '/static/travel/templates/timepicker_element.html',
@@ -14,8 +14,8 @@
         };
     });
 
-    angular.module('travelApp')
-        .controller('timepickerElementController', TimePickerElementController);
+    angular.module('TravelApp')
+        .controller('TimepickerElementController', TimePickerElementController);
 
     TimePickerElementController.$inject = ['$scope'];
 

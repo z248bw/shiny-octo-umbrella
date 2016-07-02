@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('testUtils', []);
+angular.module('TestUtils', []);
 
-angular.module('testUtils').config(TestUtilsConfig);
+angular.module('TestUtils').config(TestUtilsConfig);
 
 function TestUtilsConfig($resourceProvider, $httpProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
@@ -10,7 +10,7 @@ function TestUtilsConfig($resourceProvider, $httpProvider) {
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 }
 
-angular.module('testUtils').factory('TestUtils',
+angular.module('TestUtils').factory('TestUtils',
     ['$q', '$httpBackend', 'TravelManager', '$mdDialog', TestUtils]);
 
 //TODO investigate the splitting of this service

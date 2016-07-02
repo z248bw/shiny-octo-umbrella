@@ -8,12 +8,12 @@ describe('Given a TravelManager element', function() {
         }
     };
 
-    beforeEach(module("travelServices", function ($provide) {
+    beforeEach(module("TravelServices", function ($provide) {
         $provide.value("Ride", mockRide);
     }));
 
-    beforeEach(module('travelApp'));
-    beforeEach(module('testUtils'));
+    beforeEach(module('TravelApp'));
+    beforeEach(module('TestUtils'));
 
     var $controller,
         $httpBackend,
@@ -33,7 +33,7 @@ describe('Given a TravelManager element', function() {
         function() {
             var scope = {direction: 'there'};
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
 
             expect(ctrl.object.model).toBe(null);
         }
@@ -44,7 +44,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'there'};
             TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
 
             expect(ctrl.object.model.ride.num_of_free_seats).toBe(1);
         }
@@ -55,7 +55,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'there'};
             TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
 
             expect(ctrl.ride.pk).toBe('1');
         }
@@ -66,7 +66,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'back'};
             TravelManager.addPassenger(TestUtils.createPassengerBack('1'));
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
 
             expect(ctrl.object.model.pk).toBe('1');
         }
@@ -77,7 +77,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'there'};
             TravelManager.addPassenger(TestUtils.createPassengerBack('1'));
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
 
             expect(ctrl.object.model).toBe(null);
             expect(ctrl.ride).toBe(null);
@@ -89,7 +89,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'there'};
             TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
             TestUtils.removePassengerThere();
 
             expect(ctrl.object.model).toBe(null);
@@ -101,7 +101,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'there'};
             TravelManager.addDriver(TestUtils.createRideThere('1'));
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
             TravelManager.getDriverThere().remove();
 
             expect(ctrl.object.model).toBe(null);
@@ -115,7 +115,7 @@ describe('Given a TravelManager element', function() {
             TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
             var deferred = TestUtils.getMdDialogShowResponseDeferred();
 
-            var ctrl = $controller('travelElementController', {$scope: $scope});
+            var ctrl = $controller('TravelElementController', {$scope: $scope});
             ctrl.remove();
 
            $httpBackend.expectDELETE('/rest/1/passengers/1/').respond({});
@@ -132,7 +132,7 @@ describe('Given a TravelManager element', function() {
             TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
             TravelManager.addPassenger(TestUtils.createPassengerBack('2'));
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
             TestUtils.removePassengerThere();
 
             expect(ctrl.object.model.pk).toBe('2');
@@ -144,7 +144,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'there'};
             TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
             TestUtils.removePassengerThere();
 
             expect(ctrl.ride).toBe(null);
@@ -156,7 +156,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'there'};
             var passenger = TestUtils.createPassengerThere('1');
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
             TestUtils.addPassengerThere('1');
 
             expect(ctrl.object.model.pk).toBe('1');
@@ -169,7 +169,7 @@ describe('Given a TravelManager element', function() {
             var scope = {direction: 'there'};
             var passenger = TestUtils.createPassengerBack('1');
 
-            var ctrl = $controller('travelElementController', {$scope: scope});
+            var ctrl = $controller('TravelElementController', {$scope: scope});
             TravelManager.addPassenger(passenger);
 
             expect(ctrl.object.model).toBe(null);

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('travelApp').directive('rideElement', function() {
+    angular.module('TravelApp').directive('rideElement', function() {
         return {
             restrict: 'E',
             templateUrl: '/static/travel/templates/ride_element.html',
@@ -13,8 +13,8 @@
         };
     });
 
-     angular.module('travelApp')
-        .controller('rideElementController', RideElementController);
+     angular.module('TravelApp')
+        .controller('RideElementController', RideElementController);
 
     RideElementController.$inject = ['$rootScope', '$scope', 'TravelManager'];
 

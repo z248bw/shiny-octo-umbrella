@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    angular.module('travelApp')
-        .controller('travelController', TravelController);
+    angular.module('TravelApp')
+        .controller('TravelController', TravelController);
 
     TravelController.$inject = ['TravelUser', 'TravelManager'];
 

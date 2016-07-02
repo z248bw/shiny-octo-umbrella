@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    angular.module('travelApp')
-        .controller('passengerJoinController',PassengerJoinController);
+    angular.module('TravelApp')
+        .controller('PassengerJoinController',PassengerJoinController);
 
     PassengerJoinController.$inject = ['$scope', '$mdDialog', 'TravelManager', 'passengerModel'];
 

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('travelServices').factory('Ride', Ride);
+    angular.module('TravelServices').factory('Ride', Ride);
 
     Ride.$inject = ['$resource'];
 

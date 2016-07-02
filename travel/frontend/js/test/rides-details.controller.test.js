@@ -2,9 +2,9 @@
 
 describe('Given a RideDetailsController', function() {
 
-    beforeEach(module('travelApp'));
-    beforeEach(module('travelServices'));
-    beforeEach(module('testUtils'));
+    beforeEach(module('TravelApp'));
+    beforeEach(module('TravelServices'));
+    beforeEach(module('TestUtils'));
 
     var $httpBackend,
         $controller,
@@ -26,7 +26,7 @@ describe('Given a RideDetailsController', function() {
             $httpBackend.expectGET('/rest/1/rides/1/').respond(currentRide);
             $httpBackend.expectGET('/rest/1/rides/1/passengers/').respond(passengers);
 
-            var ctrl = $controller('rideDetailsController', {$scope: scope, $routeParams: routeParams});
+            var ctrl = $controller('RideDetailsController', {$scope: scope, $routeParams: routeParams});
             $httpBackend.flush();
 
             expect(ctrl.ride.pk).toBe('1');

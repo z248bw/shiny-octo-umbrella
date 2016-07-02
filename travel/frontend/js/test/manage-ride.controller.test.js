@@ -2,9 +2,9 @@
 
 describe('Given a ManageRideController', function() {
 
-    beforeEach(module('travelApp'));
-    beforeEach(module('travelServices'));
-    beforeEach(module('testUtils'));
+    beforeEach(module('TravelApp'));
+    beforeEach(module('TravelServices'));
+    beforeEach(module('TestUtils'));
 
     var $controller,
         $scope,
@@ -35,7 +35,7 @@ describe('Given a ManageRideController', function() {
     var createManageRideControllerThere = function(ride, passengers) {
         TravelManager.addDriver(ride);
         $httpBackend.expectGET('/rest/1/rides/' + ride.pk +'/passengers/').respond(passengers);
-        var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
+        var ctrl = $controller('ManageRideController', {$scope: $scope, $routeParams: routeParams});
         $httpBackend.flush();
         return ctrl;
     }
@@ -55,7 +55,7 @@ describe('Given a ManageRideController', function() {
         inject(function(Ride) {
             spyOn(Ride, 'getPassengers');
 
-            var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
+            var ctrl = $controller('ManageRideController', {$scope: $scope, $routeParams: routeParams});
 
             expect(Ride.getPassengers).not.toHaveBeenCalled();
         })
@@ -63,7 +63,7 @@ describe('Given a ManageRideController', function() {
 
      it('if the ride is null the direction should be set according to the routeParams',
         function() {
-            var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
+            var ctrl = $controller('ManageRideController', {$scope: $scope, $routeParams: routeParams});
 
             expect(TravelManager.getDriverThere().model.is_return).toBe(false);
         }
@@ -71,14 +71,14 @@ describe('Given a ManageRideController', function() {
 
     it('if the direction is not provided init should throw an error',
         function() {
-            expect(function(){$controller('manageRideController', {$scope: $scope})})
+            expect(function(){$controller('ManageRideController', {$scope: $scope})})
                 .toThrow(new Error('Direction not specified'));
         }
     );
 
     it('if the ride was null it should create a new one on the backend on save',
         function() {
-            var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
+            var ctrl = $controller('ManageRideController', {$scope: $scope, $routeParams: routeParams});
 
             $httpBackend.expectPOST('/rest/1/rides/').respond({});
 
@@ -117,7 +117,7 @@ describe('Given a ManageRideController', function() {
 
    it('when the DATETIME_CHANGED event fires it should update the model accordingly',
         function() {
-            var ctrl = $controller('manageRideController', {$scope: $scope, $routeParams: routeParams});
+            var ctrl = $controller('ManageRideController', {$scope: $scope, $routeParams: routeParams});
 
             $rootScope.$broadcast("DATETIME_CHANGED", {id: 1, datetime: '2016-05-16T20:00'});
 

@@ -2,10 +2,10 @@
     'use strict';
 
     angular
-        .module('travelApp', ['ngResource', 'ngRoute', 'ngMaterial', 'travelServices'])
+        .module('TravelApp', ['ngResource', 'ngRoute', 'ngMaterial', 'TravelServices'])
         .config(TravelAppConfig);
 
-    angular.module('travelServices', ['ngResource']);
+    angular.module('TravelServices', ['ngResource']);
 
     function TravelAppConfig($resourceProvider, $httpProvider, $routeProvider) {
         $resourceProvider.defaults.stripTrailingSlashes = false;
@@ -15,11 +15,11 @@
          $routeProvider.
           when('/rides/:pk', {
             templateUrl: '/static/travel/templates/ride_details.html',
-            controller: 'rideDetailsController'
+            controller: 'RideDetailsController'
           }).
-          when('/create/ride/:direction', {     //TODO rename to manage/ride/:direction
+          when('/manage/ride/:direction', {
             templateUrl: '/static/travel/templates/manage_ride.html',
-            controller: 'rideDetailsController'
+            controller: 'ManageRideController'
           }).
           otherwise({
             redirectTo: '/rides',

@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    angular.module('travelApp')
-        .controller('rideDetailsController', RidesDetailController);
+    angular.module('TravelApp')
+        .controller('RideDetailsController', RidesDetailController);
 
     RidesDetailController.$inject = ['$routeParams', 'Ride'];
 

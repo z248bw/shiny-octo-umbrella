@@ -2,9 +2,9 @@
 
 describe('Given a ManageRideController', function() {
 
-    beforeEach(module('travelApp'));
-    beforeEach(module('travelServices'));
-    beforeEach(module('testUtils'));
+    beforeEach(module('TravelApp'));
+    beforeEach(module('TravelServices'));
+    beforeEach(module('TestUtils'));
 
     var $controller,
         $scope,
@@ -27,7 +27,7 @@ describe('Given a ManageRideController', function() {
             var passengerModel = TravelManager.getModelThere();
 //            TODO baaaaaaad
             passengerModel = {ride: TestUtils.createRideThere('1')};
-            var ctrl = $controller('passengerJoinController', {$scope: $scope, passengerModel: passengerModel});
+            var ctrl = $controller('PassengerJoinController', {$scope: $scope, passengerModel: passengerModel});
 
             expect(TravelManager.getModelThere()).toBe(null);
         }

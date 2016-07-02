@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    angular.module('travelApp')
-        .controller('manageRideController', ManageRideController);
+    angular.module('TravelApp')
+        .controller('ManageRideController', ManageRideController);
 
     ManageRideController.$inject = [
         '$scope',
@@ -14,7 +14,6 @@
         'Passenger',
         'TravelManager'
     ];
-
 
     function ManageRideController($scope, $rootScope, $location, $routeParams, Dialog, Ride, Passenger, TravelManager) {
 

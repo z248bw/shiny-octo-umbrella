@@ -9,12 +9,12 @@ describe('Given a TravelManager instance', function() {
         }
     };
 
-    beforeEach(module("travelServices", function ($provide) {
+    beforeEach(module("TravelServices", function ($provide) {
         $provide.value("$mdDialog", mockDialog);
         $provide.value("Ride", mockRide);
     }));
 
-    beforeEach(module('testUtils'));
+    beforeEach(module('TestUtils'));
 
     var $httpBackend,
         $rootScope,

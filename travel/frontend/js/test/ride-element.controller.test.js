@@ -2,9 +2,9 @@
 
 describe('Given a RideElementController', function() {
 
-    beforeEach(module('travelApp'));
-    beforeEach(module('travelServices'));
-    beforeEach(module('testUtils'));
+    beforeEach(module('TravelApp'));
+    beforeEach(module('TravelServices'));
+    beforeEach(module('TestUtils'));
 
     var $controller,
         $rootScope,
@@ -23,7 +23,7 @@ describe('Given a RideElementController', function() {
 
     it('on init ride will be set',
         function() {
-            var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
 
             expect(ctrl.ride.pk).toBe('1');
         }
@@ -31,7 +31,7 @@ describe('Given a RideElementController', function() {
 
     it('if there is no travel in the current rides direction then joinable will be true',
         function() {
-            var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
 
             expect(ctrl.isJoinable).toBe(true);
         }
@@ -41,7 +41,7 @@ describe('Given a RideElementController', function() {
         function() {
             TravelManager.addDriver(TestUtils.createRideBack('2'));
 
-            var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
 
             expect(ctrl.isJoinable).toBe(true);
         }
@@ -51,7 +51,7 @@ describe('Given a RideElementController', function() {
         function() {
             var ride = TestUtils.createRideThere('1');
             ride.num_of_free_seats = 0;
-            var ctrl = $controller('rideElementController', {$scope: {ride: ride}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: ride}});
 
             expect(ctrl.isJoinable).toBe(false);
         }
@@ -61,7 +61,7 @@ describe('Given a RideElementController', function() {
         function() {
             TravelManager.addDriver(TestUtils.createRideThere('2'));
 
-            var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
 
             expect(ctrl.isJoinable).toBe(false);
         }
@@ -69,7 +69,7 @@ describe('Given a RideElementController', function() {
 
     it('if a passenger is added in the current rides direction then joinable will be false',
         function() {
-            var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
             TestUtils.addPassengerThere('1');
 
             expect(ctrl.isJoinable).toBe(false);
@@ -80,7 +80,7 @@ describe('Given a RideElementController', function() {
         function() {
             TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
 
-            var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
             TestUtils.removePassengerThere();
 
             expect(ctrl.isJoinable).toBe(true);
@@ -89,7 +89,7 @@ describe('Given a RideElementController', function() {
 
     it('if a driver is added in the current rides direction then joinable will be false',
         function() {
-            var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
             TestUtils.addDriverThere('1');
 
             expect(ctrl.isJoinable).toBe(false);
@@ -100,7 +100,7 @@ describe('Given a RideElementController', function() {
         function() {
             TravelManager.addDriver(TestUtils.createRideThere('1'));
 
-            var ctrl = $controller('rideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
+            var ctrl = $controller('RideElementController', {$scope: {ride: TestUtils.createRideThere('1')}});
             TestUtils.removeDriverThere();
 
             expect(ctrl.isJoinable).toBe(true);

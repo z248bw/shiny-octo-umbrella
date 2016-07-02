@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('travelServices').factory('PassengerObject', PassengerObject);
+    angular.module('TravelServices').factory('PassengerObject', PassengerObject);
 
     PassengerObject.$inject = ['$rootScope', 'Dialog', 'Passenger'];
 

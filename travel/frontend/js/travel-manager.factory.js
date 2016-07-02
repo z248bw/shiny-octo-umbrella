@@ -1,8 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('travelServices').factory('TravelManager',
-        ['$mdDialog', 'Travel', TravelManager]);
+    angular.module('TravelServices').factory('TravelManager', TravelManager);
 
     TravelManager.$inject = ['$mdDialog', 'Travel'];
 

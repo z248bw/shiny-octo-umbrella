@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('travelServices').factory('DriverObject', DriverObject);
+    angular.module('TravelServices').factory('DriverObject', DriverObject);
 
     DriverObject.$inject = ['$rootScope', '$location', 'Dialog', 'Ride'];
 
@@ -18,7 +18,7 @@
                 });
             },
             showModify : function(){
-                $location.url('/create/ride/' + (this.model.is_return? 'back' : 'there'));
+                $location.url('/manage/ride/' + (this.model.is_return? 'back' : 'there'));
             },
             modify: function() {
                 Ride.update({pk: this.model.pk}, this.model, function(response) {

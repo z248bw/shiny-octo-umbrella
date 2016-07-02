@@ -2,8 +2,8 @@
 
 describe('Given a TravelController', function() {
 
-    beforeEach(module('travelApp'));
-    beforeEach(module('testUtils'));
+    beforeEach(module('TravelApp'));
+    beforeEach(module('TestUtils'));
 
     var createMockTravelUser = function() {
         return {
@@ -32,7 +32,7 @@ describe('Given a TravelController', function() {
         function() {
             $httpBackend.expectGET('/rest/1/travel_users/me/').respond(mockTravelUser.response);
 
-            var ctrl = $controller('travelController');
+            var ctrl = $controller('TravelController');
 
             $httpBackend.flush();
             expect(ctrl.there.passenger.model).toBe(null);
@@ -47,7 +47,7 @@ describe('Given a TravelController', function() {
             mockTravelUser.response.passenger_of_rides.push(TestUtils.createPassengerThere('1'));
             $httpBackend.expectGET('/rest/1/travel_users/me/').respond(mockTravelUser.response);
 
-            var ctrl = $controller('travelController');
+            var ctrl = $controller('TravelController');
 
             $httpBackend.flush();
             expect(ctrl.there.passenger.model.pk).toBe('1');
@@ -62,7 +62,7 @@ describe('Given a TravelController', function() {
             mockTravelUser.response.passenger_of_rides.push(TestUtils.createPassengerBack('1'));
             $httpBackend.expectGET('/rest/1/travel_users/me/').respond(mockTravelUser.response);
 
-            var ctrl = $controller('travelController');
+            var ctrl = $controller('TravelController');
 
             $httpBackend.flush();
             expect(ctrl.there.passenger.model).toBe(null);
@@ -78,7 +78,7 @@ describe('Given a TravelController', function() {
             mockTravelUser.response.passenger_of_rides.push(TestUtils.createPassengerBack('2'));
             $httpBackend.expectGET('/rest/1/travel_users/me/').respond(mockTravelUser.response);
 
-            var ctrl = $controller('travelController');
+            var ctrl = $controller('TravelController');
 
             $httpBackend.flush();
             expect(ctrl.there.passenger.model.pk).toBe('1');

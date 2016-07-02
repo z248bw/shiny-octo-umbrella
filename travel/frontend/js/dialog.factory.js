@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('travelServices').factory('Dialog', Dialog);
+    angular.module('TravelServices').factory('Dialog', Dialog);
 
     Dialog.$inject = ['$mdDialog'];
 
@@ -15,9 +15,9 @@
 
         function showPassengerJoin(event, passengerModel) {
             $mdDialog.show({
-                  controller: 'passengerJoinController',
+                  controller: 'PassengerJoinController',
                   templateUrl: '/static/travel/templates/passenger_join.html',
-                  parent: angular.element(document.body),   //TODO do i really need this?
+                  parent: angular.element(document.body),
                   targetEvent: event,
                   locals: {
                     passengerModel: passengerModel,

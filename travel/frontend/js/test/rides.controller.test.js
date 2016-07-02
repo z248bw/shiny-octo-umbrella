@@ -2,9 +2,9 @@
 
 describe('Given a RidesController', function() {
 
-    beforeEach(module('travelApp'));
-    beforeEach(module('travelServices'));
-    beforeEach(module('testUtils'));
+    beforeEach(module('TravelApp'));
+    beforeEach(module('TravelServices'));
+    beforeEach(module('TestUtils'));
 
     var $httpBackend,
         $controller,
@@ -24,7 +24,7 @@ describe('Given a RidesController', function() {
             var scope = {};
             $httpBackend.expectGET('/rest/1/rides/').respond([]);
 
-            var ctrl = $controller('ridesController', {$scope: scope});
+            var ctrl = $controller('RidesController', {$scope: scope});
             $httpBackend.flush();
 
             expect(ctrl.there.length).toBe(0);
@@ -37,7 +37,7 @@ describe('Given a RidesController', function() {
             var scope = {};
             $httpBackend.expectGET('/rest/1/rides/').respond([TestUtils.createRideThere('1')]);
 
-            var ctrl = $controller('ridesController', {$scope: scope});
+            var ctrl = $controller('RidesController', {$scope: scope});
             $httpBackend.flush();
 
             expect(ctrl.there[0].pk).toBe('1');
@@ -51,7 +51,7 @@ describe('Given a RidesController', function() {
                 [TestUtils.createRideThere('1'), TestUtils.createRideThere('2')]
             );
 
-            var ctrl = $controller('ridesController', {$scope: scope});
+            var ctrl = $controller('RidesController', {$scope: scope});
             $httpBackend.flush();
 
             expect(ctrl.there[0].pk).toBe('1');
@@ -66,7 +66,7 @@ describe('Given a RidesController', function() {
                 [TestUtils.createRideThere('1'), TestUtils.createRideBack('2')]
             );
 
-            var ctrl = $controller('ridesController', {$scope: scope});
+            var ctrl = $controller('RidesController', {$scope: scope});
             $httpBackend.flush();
 
             expect(ctrl.there[0].pk).toBe('1');
@@ -79,7 +79,7 @@ describe('Given a RidesController', function() {
             var scope = {},
                 ride = TestUtils.createRideThere('1');
             $httpBackend.expectGET('/rest/1/rides/').respond([ride]);
-            var ctrl = $controller('ridesController', {$scope: scope});
+            var ctrl = $controller('RidesController', {$scope: scope});
             $httpBackend.flush();
             expect(ctrl.there[0].num_of_free_seats).toBe(1);
 
@@ -99,7 +99,7 @@ describe('Given a RidesController', function() {
             $httpBackend.expectGET('/rest/1/rides/').respond(
                 [TestUtils.createRideThere('1')]
             );
-            var ctrl = $controller('ridesController', {$scope: scope});
+            var ctrl = $controller('RidesController', {$scope: scope});
             $httpBackend.flush();
             TravelManager.getPassengerThere().model = TestUtils.createPassengerThere('1');
 
