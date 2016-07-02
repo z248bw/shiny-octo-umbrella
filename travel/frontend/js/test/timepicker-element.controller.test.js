@@ -27,6 +27,19 @@ describe('Given a datetimepicker element', function() {
         }
     );
 
+    it('instantiating the element with datetime as empty string returns the current datetime as the current date and time',
+        function() {
+            var $scope = $rootScope.$new();
+            $scope.datetime = ''
+
+            var ctrl = $controller('timepickerElementController', {$scope: $scope});
+
+            expect(ctrl.date.getTime()).not.toBe(new Date('invalid'));
+            expect(ctrl.time.hour).toBe('00');
+            expect(ctrl.time.min).toBe('00');
+        }
+    );
+
     it('instantiating the element with a valid datetime sets the date and time',
         function() {
             var $scope = $rootScope.$new();

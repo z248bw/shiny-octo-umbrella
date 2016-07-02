@@ -1,43 +1,45 @@
-'use strict';
+(function () {
+    'use strict';
 
-angular.module('travelApp')
-    .controller('rideDetailsController', RidesDetailController);
+    angular.module('travelApp')
+        .controller('rideDetailsController', RidesDetailController);
 
-RidesDetailController.$inject = ['$routeParams', 'Ride'];
+    RidesDetailController.$inject = ['$routeParams', 'Ride'];
 
-function RidesDetailController($routeParams, Ride) {
+    function RidesDetailController($routeParams, Ride) {
 
-    var vm = this;
-    vm.ride = null;
-    vm.passengers = [];
+        var vm = this;
+        vm.ride = null;
+        vm.passengers = [];
 
-    var activate = function() {
-        initRideDetails();
-    };
+        var activate = function() {
+            initRideDetails();
+        };
 
-    var initRideDetails = function()
-    {
-        if (!('pk' in $routeParams))
+        var initRideDetails = function()
         {
-            return;
-        }
-        var pk = $routeParams.pk;
-        getRide(pk);
-        listPassengersOfRide(pk);
-    };
+            if (!('pk' in $routeParams))
+            {
+                return;
+            }
+            var pk = $routeParams.pk;
+            getRide(pk);
+            listPassengersOfRide(pk);
+        };
 
-    var getRide = function(pk) {
-        Ride.get({pk: pk}, function(response) {
-            vm.ride = response;
-            vm.shouldUpdateOnSave = true;
-        });
-    };
+        var getRide = function(pk) {
+            Ride.get({pk: pk}, function(response) {
+                vm.ride = response;
+                vm.shouldUpdateOnSave = true;
+            });
+        };
 
-    var listPassengersOfRide = function(pk) {
-        Ride.getPassengers({pk: pk}, function(response) {
-            vm.passengers = response;
-        });
-    };
+        var listPassengersOfRide = function(pk) {
+            Ride.getPassengers({pk: pk}, function(response) {
+                vm.passengers = response;
+            });
+        };
 
-    activate();
-}
+        activate();
+    }
+}());

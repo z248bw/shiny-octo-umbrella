@@ -1,181 +1,182 @@
-'use strict';
+(function () {
+    'use strict';
 
-angular.module('travelApp')
-    .controller('manageRideController', ManageRideController);
+    angular.module('travelApp')
+        .controller('manageRideController', ManageRideController);
 
-ManageRideController.$inject = [
-    '$scope',
-    '$rootScope',
-    '$location',
-    '$routeParams',
-    'Dialog',
-    'Ride',
-    'Passenger',
-    'TravelManager'
-];
-
-
-function ManageRideController($scope, $rootScope, $location, $routeParams, Dialog, Ride, Passenger, TravelManager) {
-
-    var vm = this;
-    vm.driver = null;
-    vm.passengers = [];
-    vm.showDriverSaveDialog = showDriverSaveDialog;
-    vm.showDriverDeleteDialog = showDriverDeleteDialog;
-    vm.showPassengerDeleteDialog = showPassengerDeleteDialog;
-    vm.isDriverExists = isDriverExists;
+    ManageRideController.$inject = [
+        '$scope',
+        '$rootScope',
+        '$location',
+        '$routeParams',
+        'Dialog',
+        'Ride',
+        'Passenger',
+        'TravelManager'
+    ];
 
 
-    $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
-        vm.driver.model.start_time = timepicker.datetime;
-    });
-    $rootScope.$on('DRIVER_ADDED', navigateToRides);
-    $rootScope.$on('DRIVER_DELETED', navigateToRides);
+    function ManageRideController($scope, $rootScope, $location, $routeParams, Dialog, Ride, Passenger, TravelManager) {
 
-    var shouldUpdateOnSave = false;
+        var vm = this;
+        vm.driver = null;
+        vm.passengers = [];
+        vm.showDriverSaveDialog = showDriverSaveDialog;
+        vm.showDriverDeleteDialog = showDriverDeleteDialog;
+        vm.showPassengerDeleteDialog = showPassengerDeleteDialog;
+        vm.isDriverExists = isDriverExists;
 
-    function navigateToRides() {
-        $location.url('/rides');
-    }
 
-    var activate = function() {
-        vm.driver = getDriver();
-        fetchPassengers();
-        initSave();
-    };
-
-    function getDriver() {
-        if (!('direction' in $routeParams))
-        {
-            throw new Error('Direction not specified');
-        }
-
-        return getDriverByDirection($routeParams.direction);
-    };
-
-    function getDriverByDirection(direction) {
-        var driver;
-        if (direction === 'there')
-        {
-            driver = TravelManager.getDriverThere();
-        }
-        else
-        {
-            driver = TravelManager.getDriverBack();
-        }
-        return initDriverDirection(driver, direction)
-    };
-
-    function initDriverDirection(driver, direction) {
-        if (driver.model == null)
-        {
-            driver.model = {is_return: direction === 'there' ? false : true};
-        }
-        return driver;
-    };
-
-    function fetchPassengers() {
-        if (!isDriverExists())
-        {
-            return;
-        }
-
-        Ride.getPassengers({pk: vm.driver.model.pk}, function(response) {
-            vm.passengers = response;
+        $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
+            vm.driver.model.start_time = timepicker.datetime;
         });
-    };
+        $rootScope.$on('DRIVER_ADDED', navigateToRides);
+        $rootScope.$on('DRIVER_DELETED', navigateToRides);
 
-    function isDriverExists() {
-        return vm.driver.model.pk != null;
-    };
+        var shouldUpdateOnSave = false;
 
-    function initSave() {
-        if (isDriverExists())
-        {
-            shouldUpdateOnSave = true;
+        function navigateToRides() {
+            $location.url('/rides');
         }
-    };
 
-    function showDriverSaveDialog(event) {
-        if (shouldUpdateOnSave)
-        {
-            Dialog.showConfirm(
-                event,
-                'Biztos vagy benne, hogy frissiteni akarod a jarmu tulajdonsagait?',
-                updateDriver);
+        var activate = function() {
+            vm.driver = getDriver();
+            fetchPassengers();
+            initSave();
+        };
+
+        function getDriver() {
+            if (!('direction' in $routeParams))
+            {
+                throw new Error('Direction not specified');
+            }
+
+            return getDriverByDirection($routeParams.direction);
         }
-        else
-        {
-            Dialog.showConfirm(
-                event,
-                'Biztos vagy benne, hogy letre akarod hozni a jarmuvet?',
-                createDriver);
+
+        function getDriverByDirection(direction) {
+            var driver;
+            if (direction === 'there')
+            {
+                driver = TravelManager.getDriverThere();
+            }
+            else
+            {
+                driver = TravelManager.getDriverBack();
+            }
+            return initDriverDirection(driver, direction);
         }
-    };
 
-    function updateDriver() {
-       vm.driver.modify();
-    };
+        function initDriverDirection(driver, direction) {
+            if (driver.model === null)
+            {
+                driver.model = {is_return: direction === 'there' ? false : true};
+            }
+            return driver;
+        }
 
-    function createDriver() {
-        vm.driver.add();
-    };
+        function fetchPassengers() {
+            if (!isDriverExists())
+            {
+                return;
+            }
 
-    function showDriverDeleteDialog(event) {
-        Dialog.showConfirm(
-            event,
-            'Biztos vagy benne, hogy torolni akarod a jarmuvet?',
-            deleteDriver);
-    };
-
-    function deleteDriver() {
-        vm.driver.remove();
-    };
-
-    function showPassengerDeleteDialog(event) {
-        Dialog.showConfirm(
-            event,
-            'Biztos vagy benne, hogy torolni szeretned ezt az utast?',
-            removeSelectedPassengers
-        );
-    };
-
-    function removeSelectedPassengers() {
-        var selectedPassengers = getSelectedPassengers();
-        for (var i = 0; i < selectedPassengers.length; i++)
-        {
-            var passenger = selectedPassengers[i];
-            Passenger.remove({pk: passenger.pk}, function() {
-                removeFromPassengers(passenger);
+            Ride.getPassengers({pk: vm.driver.model.pk}, function(response) {
+                vm.passengers = response;
             });
         }
-    }
 
-    function getSelectedPassengers() {
-        var selectedPassengers = [];
-        for(var i = 0; i < vm.passengers.length; i++)
-        {
-            if(vm.passengers[i].selected)
+        function isDriverExists() {
+            return (vm.driver.model.pk !== null && ('pk' in vm.driver.model));
+        }
+
+        function initSave() {
+            if (isDriverExists())
             {
-                selectedPassengers.push(vm.passengers[i]);
+                shouldUpdateOnSave = true;
             }
         }
-        return selectedPassengers;
-    }
 
-    function removeFromPassengers(passenger) {
-        vm.passengers.splice(getIndexOfPassenger(passenger), 1);
-     }
-
-    function getIndexOfPassenger(passenger) {
-        for(var i = 0; i < vm.passengers.length; i++)
-        {
-            if (vm.passengers[i].pk === passenger.pk)
+        function showDriverSaveDialog(event) {
+            if (shouldUpdateOnSave)
             {
-                return i;
+                Dialog.showConfirm(
+                    event,
+                    'Biztos vagy benne, hogy frissiteni akarod a jarmu tulajdonsagait?',
+                    updateDriver);
+            }
+            else
+            {
+                Dialog.showConfirm(
+                    event,
+                    'Biztos vagy benne, hogy letre akarod hozni a jarmuvet?',
+                    createDriver);
             }
         }
-    }
 
-    activate();
-}
+        function updateDriver() {
+           vm.driver.modify();
+        }
+
+        function createDriver() {
+            vm.driver.add();
+        }
+
+        function showDriverDeleteDialog(event) {
+            Dialog.showConfirm(
+                event,
+                'Biztos vagy benne, hogy torolni akarod a jarmuvet?',
+                deleteDriver);
+        }
+
+        function deleteDriver() {
+            vm.driver.remove();
+        }
+
+        function showPassengerDeleteDialog(event) {
+            Dialog.showConfirm(
+                event,
+                'Biztos vagy benne, hogy torolni szeretned ezt az utast?',
+                removeSelectedPassengers
+            );
+        }
+
+        function removeSelectedPassengers() {
+            var selectedPassengers = getSelectedPassengers();
+            for (var i = 0; i < selectedPassengers.length; i++)
+            {
+                var passenger = selectedPassengers[i];
+                removeFromPassengers(passenger);
+                Passenger.remove({pk: passenger.pk});
+            }
+        }
+
+        function getSelectedPassengers() {
+            var selectedPassengers = [];
+            for(var i = 0; i < vm.passengers.length; i++)
+            {
+                if(vm.passengers[i].selected)
+                {
+                    selectedPassengers.push(vm.passengers[i]);
+                }
+            }
+            return selectedPassengers;
+        }
+
+        function removeFromPassengers(passenger) {
+            vm.passengers.splice(getIndexOfPassenger(passenger), 1);
+         }
+
+        function getIndexOfPassenger(passenger) {
+            for(var i = 0; i < vm.passengers.length; i++)
+            {
+                if (vm.passengers[i].pk === passenger.pk)
+                {
+                    return i;
+                }
+            }
+        }
+
+        activate();
+    }
+}());

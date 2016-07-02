@@ -1,11 +1,13 @@
-'use strict'
+(function () {
+    'use strict';
 
-angular.module('travelServices').factory('Passenger', Passenger);
+    angular.module('travelServices').factory('Passenger', Passenger);
 
-Passenger.$inject = ['$resource'];
+    Passenger.$inject = ['$resource'];
 
-function Passenger($resource) {
-    return $resource('/rest/1/passengers/:pk/', null, {
-        'update': {method: 'PUT', url: '/rest/1/passengers/:pk/', isArray: false}
-    });
-}
+    function Passenger($resource) {
+        return $resource('/rest/1/passengers/:pk/', null, {
+            'update': {method: 'PUT', url: '/rest/1/passengers/:pk/', isArray: false}
+        });
+    }
+}());
