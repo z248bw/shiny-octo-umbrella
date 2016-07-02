@@ -33,8 +33,9 @@ module.exports = function(config) {
       'node_modules/angular-material/angular-material.js',
       'node_modules/angular-material/angular-material-mocks.js',
 
-      'travel/frontend/js/*.js',
+//      'travel/frontend/js/*.js',
 //      'travel/static/travel/js/all.js',
+      'travel/static/travel/js/all.min.js',
       'travel/frontend/js/test/*.js'
     ],
 

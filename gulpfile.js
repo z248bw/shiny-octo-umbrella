@@ -16,7 +16,7 @@ gulp.task('scripts', function() {
         .pipe(concat('all.js'))
         .pipe(gulp.dest('travel/static/travel/js'))
         .pipe(rename('all.min.js'))
-        .pipe(uglify())
+        .pipe(uglify({mangle: false}))
         .pipe(gulp.dest('travel/static/travel/js'));
 });
 
