@@ -19,7 +19,12 @@
           }).
           when('/manage/ride/:direction', {
             templateUrl: '/static/travel/templates/manage_ride.html',
-            controller: 'ManageRideController'
+            controller: 'RideDetailsController'
+          }).
+          when('/manage/userprofile', {
+            templateUrl: '/static/travel/templates/manage_userprofile.html',
+            controller: 'ManageUserProfileController',
+            controllerAs: 'vm'
           }).
           otherwise({
             redirectTo: '/rides',

@@ -4,25 +4,22 @@
     angular.module('TravelApp')
         .controller('TravelController', TravelController);
 
-    TravelController.$inject = ['TravelUser', 'TravelManager'];
+    TravelController.$inject = ['$location', 'TravelManager', 'UserProfile'];
 
-    function TravelController(TravelUser, TravelManager) {
+    function TravelController($location, TravelManager, UserProfile) {
 
         var vm = this;
         vm.me = null;
         vm.there = TravelManager.getTravelThere();
         vm.back = TravelManager.getTravelBack();
+        vm.showManageUserProfile = showManageUserProfile;
 
         var action = function() {
-            TravelUser.getMe(onGetMe);
+            vm.me = UserProfile.getUserProfile();
+            vm.me.$promise.then(initTravels);
         };
 
-
-        function onGetMe(me) {
-            vm.me = me;
-            initTravels();
-        }
-
+//        TODO: does it really belong here?
         function initTravels() {
             var i;
             for (i = 0; i < vm.me.driven_rides.length; i++)
@@ -37,6 +34,9 @@
             }
         }
 
+        function showManageUserProfile() {
+            $location.url('/manage/userprofile');
+        }
 
         action();
     }

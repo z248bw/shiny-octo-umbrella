@@ -86,6 +86,19 @@ function TestUtils($q, $httpBackend, TravelManager, $mdDialog) {
         $httpBackend.flush();
     };
 
+    var getMeResponse = function(pk) {
+        return {
+            travel_user: {
+                pk: pk,
+                user: {
+                    pk: pk
+                }
+            },
+            driven_rides: [],
+            passenger_of_rides: []
+        };
+    };
+
     return {
         createPassengerThere: createPassengerThere,
         createPassengerBack: createPassengerBack,
@@ -96,6 +109,7 @@ function TestUtils($q, $httpBackend, TravelManager, $mdDialog) {
         addPassengerThere: addPassengerThere,
         removePassengerThere: removePassengerThere,
         addDriverThere: addDriverThere,
-        removeDriverThere: removeDriverThere
+        removeDriverThere: removeDriverThere,
+        getMeResponse: getMeResponse
     };
 }
