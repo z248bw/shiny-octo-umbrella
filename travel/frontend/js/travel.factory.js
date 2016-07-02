@@ -3,6 +3,8 @@
 angular.module('travelServices').factory('Travel',
     ['$rootScope', 'PassengerObject', 'DriverObject', Travel]);
 
+Travel.$inject = ['$rootScope', 'PassengerObject', 'DriverObject'];
+
 function Travel($rootScope, PassengerObject, DriverObject) {
 
     var travel = {

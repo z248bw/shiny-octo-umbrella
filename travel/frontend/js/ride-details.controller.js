@@ -3,6 +3,8 @@
 angular.module('travelApp')
     .controller('rideDetailsController', RidesDetailController);
 
+RidesDetailController.$inject = ['$routeParams', 'Ride'];
+
 function RidesDetailController($routeParams, Ride) {
 
     var vm = this;

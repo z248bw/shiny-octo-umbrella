@@ -3,6 +3,8 @@
 angular.module('travelApp')
     .controller('travelController', TravelController);
 
+TravelController.$inject = ['TravelUser', 'TravelManager'];
+
 function TravelController(TravelUser, TravelManager) {
 
     var vm = this;

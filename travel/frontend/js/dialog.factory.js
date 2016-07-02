@@ -1,6 +1,8 @@
 'use strict'
 
-angular.module('travelServices').factory('Dialog', ['$mdDialog', Dialog]);
+angular.module('travelServices').factory('Dialog', Dialog);
+
+Dialog.$inject = ['$mdDialog'];
 
 function Dialog($mdDialog) {
     return {

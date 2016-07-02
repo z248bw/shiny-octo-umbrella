@@ -1,7 +1,9 @@
 angular.module('travelServices').factory('TravelManager',
-    ['$mdDialog', 'Travel', Travel]);
+    ['$mdDialog', 'Travel', TravelManager]);
 
-function Travel($mdDialog, Travel) {
+TravelManager.$inject = ['$mdDialog', 'Travel'];
+
+function TravelManager($mdDialog, Travel) {
 
     var there = angular.copy(Travel.travel);
     var back = angular.copy(Travel.travel);

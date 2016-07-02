@@ -3,6 +3,8 @@
 angular.module('travelApp')
     .controller('passengerJoinController',PassengerJoinController);
 
+PassengerJoinController.$inject = ['$scope', '$mdDialog', 'TravelManager', 'passengerModel'];
+
 function PassengerJoinController($scope, $mdDialog, TravelManager, passengerModel) {
 
     $scope.passenger = passengerModel;

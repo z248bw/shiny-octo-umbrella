@@ -1,6 +1,8 @@
 'use strict'
 
-angular.module('travelServices').factory('Ride', ['$resource', Ride]);
+angular.module('travelServices').factory('Ride', Ride);
+
+Ride.$inject = ['$resource'];
 
 function Ride($resource) {
     return $resource('/rest/1/rides/:pk/', null, {

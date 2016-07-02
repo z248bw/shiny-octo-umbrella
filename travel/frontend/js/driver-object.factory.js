@@ -1,7 +1,8 @@
 'use strict'
 
-angular.module('travelServices').factory('DriverObject',
-    ['$rootScope', '$location', 'Dialog', 'Ride', DriverObject]);
+angular.module('travelServices').factory('DriverObject', DriverObject);
+
+DriverObject.$inject = ['$rootScope', '$location', 'Dialog', 'Ride'];
 
 function DriverObject($rootScope, $location, Dialog, Ride) {
     var driver = {

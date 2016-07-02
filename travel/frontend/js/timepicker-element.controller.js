@@ -3,6 +3,8 @@
 angular.module('travelApp')
     .controller('timepickerElementController', TimePickerElementController);
 
+TimePickerElementController.$inject = ['$scope'];
+
 function TimePickerElementController($scope) {
 
     var vm = this;

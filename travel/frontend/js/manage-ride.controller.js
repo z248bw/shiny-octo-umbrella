@@ -3,6 +3,18 @@
 angular.module('travelApp')
     .controller('manageRideController', ManageRideController);
 
+ManageRideController.$inject = [
+    '$scope',
+    '$rootScope',
+    '$location',
+    '$routeParams',
+    'Dialog',
+    'Ride',
+    'Passenger',
+    'TravelManager'
+];
+
+
 function ManageRideController($scope, $rootScope, $location, $routeParams, Dialog, Ride, Passenger, TravelManager) {
 
     var vm = this;

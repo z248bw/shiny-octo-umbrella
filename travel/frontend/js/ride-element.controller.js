@@ -3,6 +3,8 @@
 angular.module('travelApp')
     .controller('rideElementController', RideElementController);
 
+RideElementController.$inject = ['$rootScope', '$scope', 'TravelManager'];
+
 function RideElementController($rootScope, $scope, TravelManager) {
 
     var vm = this;
