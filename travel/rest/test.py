@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from travel.models import  Passenger
+from travel.models import Passenger
 from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user, get_passenger, \
     get_travel_user
 
@@ -126,6 +126,15 @@ class UserRestTest(RestTestBase, UserUtils):
         self.assert_has_no_create_permission(url=self.get_url_for_users(),
                                              user=create_user(),
                                              body_dict={'username': 'john', 'password': 'doe'})
+
+    def test_after_logout_user_cannot_use_the_rest_api(self):
+        user = create_user()
+        user.password = 'a'
+        user.save()
+        client = APIClient()
+        client.login(username=user.username, password=user.password)
+        client.post(path=self.get_url_for_user(user)+'logout/')
+        self.assertEqual(client.get(path=self.get_url_for_user(user)).status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TravelUserUtils(UserUtils):

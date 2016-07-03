@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework import viewsets
@@ -58,6 +59,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [UserPermissions]
+
+    @detail_route(methods=['post'])
+    def logout(self, request, pk):
+        logout(request)
+        return Response()
 
 
 class TravelUserPermissions(permissions.BasePermission):
