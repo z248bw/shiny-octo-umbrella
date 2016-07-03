@@ -43,23 +43,46 @@ describe('Given a UserProfile', function() {
         }
     );
 
+    var requestSaveProfile = function(travel_user) {
+        var travelUserRequest = angular.copy(travel_user);
+        travelUserRequest.user = travel_user.user.pk;
+        $httpBackend.expectPUT('/rest/1/travel_users/1/', travelUserRequest)
+            .respond(travel_user);
+
+        var userRequest = travel_user.user;
+        $httpBackend.expectPUT('/rest/1/users/1/', userRequest)
+            .respond(travel_user.user);
+
+        return UserProfile.save(travel_user);
+    };
+
     it('it saves the profile details to the user and traveluser',
         function() {
             var profile = initUserProfile();
-            profile.phone = '123';
-
-            var travelUserRequest = angular.copy(profile.travel_user);
-            travelUserRequest.user = profile.travel_user.user.pk;
-            $httpBackend.expectPUT('/rest/1/travel_users/1/', travelUserRequest)
-                .respond(profile.travel_user);
-
-            var userRequest = profile.travel_user.user;
-            $httpBackend.expectPUT('/rest/1/users/1/', userRequest)
-                .respond(profile.travel_user.user);
-
-            UserProfile.save(profile);
-
+            requestSaveProfile(profile.travel_user);
             $httpBackend.flush();
+        }
+    );
+
+    it('after saving the userprofile will hold the new data',
+        function() {
+            var profile = initUserProfile();
+            profile.travel_user.phone = '123';
+            requestSaveProfile(profile.travel_user);
+            $httpBackend.flush();
+            profile = UserProfile.getUserProfile();
+            expect(profile.travel_user.phone).toBe('123');
+        }
+    );
+
+    it('after saving the promise returned will be resolved if all requests has been resolved',
+        function() {
+            var profile = initUserProfile();
+            profile.travel_user.phone = '123';
+            var result =requestSaveProfile(profile.travel_user);
+            expect(result.$$state.status).toBe(0);
+            $httpBackend.flush();
+            expect(result.$$state.status).toBe(1);
         }
     );
 
