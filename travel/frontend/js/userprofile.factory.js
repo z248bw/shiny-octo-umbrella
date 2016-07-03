@@ -10,7 +10,8 @@
 
         return {
             getUserProfile: getUserProfile,
-            save: save
+            save: save,
+            remove: remove
         };
 
         function getUserProfile() {
@@ -36,6 +37,10 @@
             });
 
             return $q.all([travel_user, user]);
+        }
+
+        function remove() {
+            return User.remove({pk: me.travel_user.user.pk});
         }
     }
 }());

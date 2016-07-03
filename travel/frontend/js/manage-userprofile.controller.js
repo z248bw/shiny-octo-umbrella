@@ -4,13 +4,14 @@
     angular.module('TravelApp')
         .controller('ManageUserProfileController', ManageUserProfileController);
 
-    ManageUserProfileController.$inject = ['UserProfile', 'Dialog'];
+    ManageUserProfileController.$inject = ['$window', 'UserProfile', 'Dialog'];
 
-    function ManageUserProfileController(UserProfile, Dialog) {
+    function ManageUserProfileController($window, UserProfile, Dialog) {
 
         var vm = this;
         vm.travel_user = null;
         vm.showUserProfileSaveDialog = showUserProfileSaveDialog;
+        vm.showUserProfileDeleteDialog = showUserProfileDeleteDialog;
 
         function activate() {
             UserProfile.getUserProfile().$promise.then(function(response){
@@ -29,6 +30,20 @@
             var userProfile = UserProfile.save(vm.travel_user);
             userProfile.then(function() {
                 Dialog.showSuccess('Felhasznaloi profile sikeresen frissitve!');
+            });
+        }
+
+        function showUserProfileDeleteDialog() {
+             Dialog.showConfirm(
+                event,
+                'Biztos vagy benne, hogy torolni akarod felhasznaloi profilodat?',
+                removeUserProfile);
+        }
+
+        function removeUserProfile() {
+            var result = UserProfile.remove();
+            result.$promise.then(function(){
+                $window.location.href = '/login';
             });
         }
 

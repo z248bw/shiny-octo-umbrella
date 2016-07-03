@@ -16,12 +16,18 @@ describe('Given a ManageUserProfileController', function() {
         });
     });
 
+    var createManageUserProfileController = function() {
+        $httpBackend.expectGET('/rest/1/travel_users/me/')
+            .respond(TestUtils.getMeResponse('1'));
+        var ctrl = $controller('ManageUserProfileController');
+        $httpBackend.flush();
+
+        return ctrl;
+    };
+
     it('upon instatiation it sets the profile',
         function() {
-            $httpBackend.expectGET('/rest/1/travel_users/me/')
-                .respond(TestUtils.getMeResponse('1'));
-            var ctrl = $controller('ManageUserProfileController');
-            $httpBackend.flush();
+           var ctrl = createManageUserProfileController();
 
             expect(ctrl.travel_user.pk).toBe('1');
             expect(ctrl.travel_user.user.pk).toBe('1');

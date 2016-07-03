@@ -86,4 +86,20 @@ describe('Given a UserProfile', function() {
         }
     );
 
+    var requestRemoveProfile = function() {
+         var profile = initUserProfile();
+        requestSaveProfile(profile.travel_user);
+        $httpBackend.flush();
+        $httpBackend.expectDELETE('/rest/1/users/1/').respond({});
+        return UserProfile.remove();
+    };
+
+    it('it deletes the user on backend when remove is called',
+        function() {
+            var result = requestRemoveProfile();
+            expect(result.$promise.$$state.status).toBe(0);
+            $httpBackend.flush();
+            expect(result.$promise.$$state.status).toBe(1);
+        }
+    );
 });
