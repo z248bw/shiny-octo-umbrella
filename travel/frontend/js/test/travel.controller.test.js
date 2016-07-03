@@ -7,6 +7,11 @@ describe('Given a TravelController', function() {
 
     var createMockTravelUser = function(passenger_of_rides, driven_rides) {
         return {
+                travel_user: {
+                    user: {
+                        pk: '1'
+                    }
+                },
                 driven_rides: driven_rides,
                 passenger_of_rides: passenger_of_rides
         };
@@ -88,4 +93,15 @@ describe('Given a TravelController', function() {
         })
     );
 
+    it('when clicking the logout button the user will be redirected to the login page',
+        inject(function($location) {
+            var ctrl = createTravelControllerWithUser([], []);
+
+            spyOn($location, 'path')
+            $httpBackend.expectPOST('/rest/1/users/1/logout/').respond({});
+            ctrl.logout();
+            $httpBackend.flush();
+            expect($location.path).toHaveBeenCalledWith('/login');
+        })
+    );
 });

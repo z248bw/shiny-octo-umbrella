@@ -13,6 +13,8 @@
         vm.there = TravelManager.getTravelThere();
         vm.back = TravelManager.getTravelBack();
         vm.showManageUserProfile = showManageUserProfile;
+        vm.logout = logout;
+        vm.isLoggedIn = isLoggedIn;
 
         var action = function() {
             vm.me = UserProfile.getUserProfile();
@@ -36,6 +38,16 @@
 
         function showManageUserProfile() {
             $location.url('/manage/userprofile');
+        }
+
+        function logout() {
+            UserProfile.logout().$promise.then(function() {
+                $location.url('/login');
+            });
+        }
+
+        function isLoggedIn() {
+            return UserProfile.isLoggedIn();
         }
 
         action();

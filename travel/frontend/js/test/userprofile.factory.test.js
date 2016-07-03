@@ -102,4 +102,32 @@ describe('Given a UserProfile', function() {
             expect(result.$promise.$$state.status).toBe(1);
         }
     );
+
+    var logout = function() {
+        $httpBackend.expectPOST('/rest/1/users/1/logout/').respond({});
+        UserProfile.logout();
+        $httpBackend.flush();
+    };
+
+    it('it sends a logout request to the backend when the logout is called',
+        function() {
+            initUserProfile();
+            logout();
+        }
+    );
+
+    it('after fetching mine data isLoggedIn should be true',
+        function() {
+            initUserProfile();
+            expect(UserProfile.isLoggedIn()).toBe(true);
+        }
+    );
+
+    it('after logout isLoggedIn should be false',
+        function() {
+            initUserProfile();
+            logout();
+            expect(UserProfile.isLoggedIn()).toBe(false);
+        }
+    );
 });

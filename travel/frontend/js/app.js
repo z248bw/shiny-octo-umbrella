@@ -26,6 +26,9 @@
             controller: 'ManageUserProfileController',
             controllerAs: 'vm'
           }).
+          when('/login', {
+            templateUrl: '/static/travel/templates/login.html',
+          }).
           otherwise({
             redirectTo: '/rides',
             templateUrl: '/static/travel/templates/rides.html'

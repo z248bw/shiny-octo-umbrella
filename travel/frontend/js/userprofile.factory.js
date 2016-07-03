@@ -11,7 +11,9 @@
         return {
             getUserProfile: getUserProfile,
             save: save,
-            remove: remove
+            remove: remove,
+            logout: logout,
+            isLoggedIn: isLoggedIn
         };
 
         function getUserProfile() {
@@ -41,6 +43,16 @@
 
         function remove() {
             return User.remove({pk: me.travel_user.user.pk});
+        }
+
+        function logout() {
+            return User.logout({pk: me.travel_user.user.pk}, null, function(response) {
+                me = null;
+            });
+        }
+
+        function isLoggedIn() {
+            return me !== null;
         }
     }
 }());
