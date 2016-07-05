@@ -92,16 +92,4 @@ describe('Given a TravelController', function() {
             expect($location.path).toHaveBeenCalledWith('/manage/userprofile');
         })
     );
-
-    it('when clicking the logout button the user will be redirected to the login page',
-        inject(function($location) {
-            var ctrl = createTravelControllerWithUser([], []);
-
-            spyOn($location, 'path')
-            $httpBackend.expectPOST('/rest/1/users/1/logout/').respond({});
-            ctrl.logout();
-            $httpBackend.flush();
-            expect($location.path).toHaveBeenCalledWith('/login');
-        })
-    );
 });

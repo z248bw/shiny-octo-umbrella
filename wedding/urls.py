@@ -15,6 +15,6 @@ urlpatterns = [
     url(r'^' + prefix, include(router.urls)),
     url(r'^' + prefix + 'login/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$', django.contrib.auth.views.login, name='login'),
+    url(r'^accounts/login/$', django.contrib.auth.views.login, name='login'),
     url(r'^travel/index/$', views.index, name='index'),
 ]

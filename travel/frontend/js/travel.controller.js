@@ -4,9 +4,9 @@
     angular.module('TravelApp')
         .controller('TravelController', TravelController);
 
-    TravelController.$inject = ['$location', 'TravelManager', 'UserProfile'];
+    TravelController.$inject = ['$location', '$window', 'TravelManager', 'UserProfile'];
 
-    function TravelController($location, TravelManager, UserProfile) {
+    function TravelController($location, $window, TravelManager, UserProfile) {
 
         var vm = this;
         vm.me = null;
@@ -42,7 +42,7 @@
 
         function logout() {
             UserProfile.logout().$promise.then(function() {
-                $location.url('/login');
+                $window.location.href = '/accounts/login/';
             });
         }
 
