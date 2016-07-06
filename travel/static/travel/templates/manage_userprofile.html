@@ -1,20 +1,23 @@
 <div class="padded">
-    <h4>
-        <span>Felhasznaloi profil menedzsment</span>
-        <md-button class="md-accent md-raised"
-                   hide-xs flex
-                   flex-offset="50"
-                   ng-click="vm.showUserProfileSaveDialog($event)">
-            Modositas
-        </md-button>
-        <md-button class="md-accent md-raised"
-                   hide-xs flex
-                   ng-click="vm.showUserProfileDeleteDialog($event)">
-            Torles
-        </md-button>
-    </h4>
     <md-content layout-padding layout-gt-xs="row">
         <form name="userForm">
+
+            <h4>
+                <span>Felhasznaloi profil menedzsment</span>
+                <md-button class="md-accent md-raised"
+                           hide-xs flex
+                           flex-offset="50"
+                           ng-disabled="userForm.$invalid"
+                           ng-click="vm.showUserProfileSaveDialog($event)">
+                    Modositas
+                </md-button>
+                <md-button class="md-accent md-raised"
+                           hide-xs flex
+                           ng-click="vm.showUserProfileDeleteDialog($event)">
+                    Torles
+                </md-button>
+            </h4>
+
             <md-input-container class="md-block" flex-gt-xs>
                 <label>Felhasznalo nev</label>
                 <input required name="username"
@@ -31,7 +34,7 @@
 
             <md-input-container class="md-block" flex-gt-xs>
                 <label>Jelszo</label>
-                <input required name="password"
+                <input name="password"
                        type="password"
                        ng-model="vm.travel_user.user.password"
                        pattern="^\S{1,20}$">
@@ -100,16 +103,17 @@
                     </div>
                 </div>
             </md-input-container>
+            <md-button class="md-accent md-raised"
+                       hide-gt-xs flex
+                       ng-disabled="userForm.$invalid"
+                       ng-click="vm.showUserProfileSaveDialog($event)">
+                Modositas
+            </md-button>
+            <md-button class="md-accent md-raised"
+                       hide-gt-xs flex
+                       ng-click="vm.showUserProfileDeleteDialog($event)">
+                Torles
+            </md-button>
         </form>
-        <md-button class="md-accent md-raised"
-                   hide-gt-xs flex
-                   ng-click="vm.showUserProfileSaveDialog($event)">
-            Modositas
-        </md-button>
-        <md-button class="md-accent md-raised"
-                   hide-gt-xs flex
-                   ng-click="vm.showUserProfileDeleteDialog($event)">
-            Torles
-        </md-button>
     </md-content>
 </div>
