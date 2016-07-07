@@ -1,6 +1,7 @@
 import json
 from copy import deepcopy
 
+from django.contrib.auth import models
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
@@ -8,6 +9,7 @@ from rest_framework.test import APITestCase, APIClient
 from travel.models import Passenger
 from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user, get_passenger, \
     get_travel_user
+from wedding import settings
 
 
 class RestUtils:
@@ -55,6 +57,63 @@ class RestTestBase(APITestCase):
         response.pop('pk')
         expected.pop('pk')
         self.assertEqual(response, expected)
+
+
+class RegistrationUtils:
+    def get_registration_request_for_user(self, phrase, user=None):
+        user = user if user is not None else User(username='a',
+                                                  password='a',
+                                                  first_name='a',
+                                                  last_name='a',
+                                                  email='test@test.com')
+        return {'passphrase': phrase,
+                'username': user.username,
+                'password': user.password,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email}
+
+    def get_url_for_registration(self):
+        return '/rest/1/register/user/'
+
+
+class RegistrationTest(RestTestBase, RegistrationUtils):
+    def test_without_passphrase_the_request_fails(self):
+        client = APIClient()
+        self.assertEqual(client.post(self.get_url_for_registration()).status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_with_invalid_passphrase_the_request_fails(self):
+        client = APIClient()
+        request_data = self.get_registration_request_for_user('invalidphrase')
+        self.assertEqual(client.post(self.get_url_for_registration(), request_data).status_code,
+                         status.HTTP_403_FORBIDDEN)
+
+    def test_with_missing_first_name_the_request_fails(self):
+        client = APIClient()
+        request_data = self.get_registration_request_for_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        request_data.pop('first_name')
+        client.post(self.get_url_for_registration(), request_data)
+        self.assertEqual(User.objects.count(), 0)
+
+    def test_with_valid_passphrase_the_user_gets_created(self):
+        client = APIClient()
+        request_data = self.get_registration_request_for_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        response = client.post(self.get_url_for_registration(), request_data)
+        request_data.pop('passphrase')
+        expected = request_data
+        response.data.pop('pk')
+        self.assertEqual(response.data, expected)
+
+    def test_with_valid_passphrase_and_extra_fields_provided_the_user_gets_created(self):
+        client = APIClient()
+        request_data = self.get_registration_request_for_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        request_data['some_extra_field'] = 'something'
+        response = client.post(self.get_url_for_registration(), request_data)
+        request_data.pop('passphrase')
+        request_data.pop('some_extra_field')
+        expected = request_data
+        response.data.pop('pk')
+        self.assertEqual(response.data, expected)
 
 
 class UserUtils:
@@ -133,7 +192,7 @@ class UserRestTest(RestTestBase, UserUtils):
         user.save()
         client = APIClient()
         client.login(username=user.username, password=user.password)
-        client.post(path=self.get_url_for_user(user)+'logout/')
+        client.post(path=self.get_url_for_user(user) + 'logout/')
         self.assertEqual(client.get(path=self.get_url_for_user(user)).status_code, status.HTTP_403_FORBIDDEN)
 
 

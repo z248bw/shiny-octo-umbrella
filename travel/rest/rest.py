@@ -6,9 +6,12 @@ from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import detail_route, list_route
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework.views import exception_handler
+from rest_framework.views import exception_handler, APIView
 from rest_framework import status
+from rest_framework.viewsets import ViewSet
 
 from travel.models import Ride, TravelUser, Passenger, TravelException
 from wedding import settings
@@ -116,6 +119,41 @@ class TravelUserViewSet(viewsets.ModelViewSet):
         return RideSerializer(Ride.objects.filter(driver=me), many=True).data
 
 
+class RegistrationUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(max_length=20)
+    password = serializers.CharField(max_length=20)
+    first_name = serializers.CharField(max_length=20)
+    last_name = serializers.CharField(max_length=20)
+    email = serializers.EmailField()
+
+    class Meta:
+        model = User
+        fields = ['pk', 'username', 'password', 'first_name', 'last_name', 'email']
+
+
+class RegistrationPermissions(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if 'passphrase' in request.data and request.data['passphrase'] == settings.REGISTRATION_PASSPHRASE:
+            return True
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        return False
+
+
+class RegistrationViewSet(ViewSet):
+    base_path = 'register'
+    permission_classes = [RegistrationPermissions]
+
+    @list_route(methods=['post'])
+    def user(self, request):
+        deserializer = RegistrationUserSerializer(data=request.data)
+        deserializer.is_valid(raise_exception=True)
+        user = deserializer.save()
+        serializer = RegistrationUserSerializer(user)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+
 class RidePermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         return True
@@ -190,6 +228,7 @@ class PassengerViewSet(viewsets.ModelViewSet):
 
 
 def register(router):
+    router.register(RegistrationViewSet.base_path, RegistrationViewSet, base_name='register')
     router.register(UserViewSet.base_path, UserViewSet)
     router.register(TravelUserViewSet.base_path, TravelUserViewSet)
     router.register(RideViewSet.base_path, RideViewSet)

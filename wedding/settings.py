@@ -23,6 +23,9 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "fca3c01743db9231abbab10973e0fdea13115a6bfa9aeb6a3ff1873127d2dc4f"
 
+# TODO
+REGISTRATION_PASSPHRASE = 'judit'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
