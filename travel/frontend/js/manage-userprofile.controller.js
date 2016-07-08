@@ -10,7 +10,7 @@
 
         var vm = this;
         vm.travel_user = null;
-        vm.showUserProfileSaveDialog = showUserProfileSaveDialog;
+        vm.showUserProfileUpdateDialog = showUserProfileUpdateDialog;
         vm.showUserProfileDeleteDialog = showUserProfileDeleteDialog;
 
         function activate() {
@@ -19,15 +19,15 @@
             });
         }
 
-        function showUserProfileSaveDialog(event) {
+        function showUserProfileUpdateDialog(event) {
             Dialog.showConfirm(
                 event,
                 'Biztos vagy benne, hogy frissiteni akarod a felhasznaloi profilodat?',
                 saveUserProfile);
         }
 
-        function saveUserProfile() {
-            var userProfile = UserProfile.save(vm.travel_user);
+        function updateUserProfile() {
+            var userProfile = UserProfile.update(vm.travel_user);
             userProfile.then(function() {
                 Dialog.showSuccess('Felhasznaloi profile sikeresen frissitve!');
             });

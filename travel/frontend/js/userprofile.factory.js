@@ -10,7 +10,8 @@
 
         return {
             getUserProfile: getUserProfile,
-            save: save,
+            register: register,
+            update: update,
             remove: remove,
             logout: logout,
             isLoggedIn: isLoggedIn
@@ -27,7 +28,13 @@
             return me;
         }
 
-        function save(profile) {
+        function register(profile) {
+            return TravelUser.register(profile, function(response){
+                me = {travel_user: response};
+            });
+        }
+
+        function update(profile) {
             var profileRequest = angular.copy(profile);
             profileRequest.user = profileRequest.user.pk;
             var travel_user = TravelUser.update({pk: profileRequest.pk}, profileRequest, function(response) {

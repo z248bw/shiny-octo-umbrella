@@ -53,7 +53,7 @@ describe('Given a UserProfile', function() {
         $httpBackend.expectPUT('/rest/1/users/1/', userRequest)
             .respond(travel_user.user);
 
-        return UserProfile.save(travel_user);
+        return UserProfile.update(travel_user);
     };
 
     it('it saves the profile details to the user and traveluser',
