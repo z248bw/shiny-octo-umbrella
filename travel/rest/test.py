@@ -13,17 +13,20 @@ from wedding import settings
 
 
 class RestUtils:
-    def __init__(self, url, user):
+    def __init__(self, url, user=None):
         self.api_client = APIClient()
         self.url = url
-        self.user = user
-        self.login()
+        self.user = user if user is not None else User(username='a', password='a')
 
     def login(self):
         self.api_client = APIClient()
         self.api_client.force_authenticate(user=self.user)
 
+    def get_without_authentication(self):
+        return self.api_client.get(path=self.url, user=self.user)
+
     def get(self):
+        self.login()
         return self.api_client.get(path=self.url, user=self.user)
 
     def get_and_return_response_body(self):
@@ -33,15 +36,18 @@ class RestUtils:
         return json.loads(response.content.decode('utf-8'))
 
     def post(self, body_dict):
+        self.login()
         return self.api_client.post(self.url, body_dict, format='json')
 
     def post_and_return_reponse_body(self, body_dict):
         return self.get_response_body_as_dict(self.post(body_dict))
 
     def put(self, body_dict):
+        self.login()
         return self.api_client.put(self.url, body_dict, format='json')
 
     def delete(self):
+        self.login()
         return self.api_client.delete(self.url, format='json')
 
 
@@ -152,6 +158,11 @@ class UserRestTest(RestTestBase, UserUtils):
 
     def assert_has_no_create_permission(self, url, user, body_dict):
         self.assert_create_permission(url=url, user=user, body_dict=body_dict, expected=status.HTTP_403_FORBIDDEN)
+
+    def test_not_authenticated_user_has_no_permission(self):
+        self.assertEqual(
+            RestUtils(self.get_url_for_user(create_user())).get_without_authentication().status_code,
+            status.HTTP_403_FORBIDDEN)
 
     def test_get_users_with_admin(self):
         user2 = create_user()
@@ -273,6 +284,11 @@ class MeUtils(RideUtils, PassengerUtils):
 
 
 class TravelUserRestTest(RestTestBase, MeUtils):
+    def test_not_authenticated_user_has_no_permission(self):
+        self.assertEqual(
+            RestUtils(self.get_url_for_travel_user(create_travel_user())).get_without_authentication().status_code,
+            status.HTTP_403_FORBIDDEN)
+
     def test_can_get_travel_user(self):
         travel_user = create_travel_user()
         self.assert_get(url=self.get_url_for_travel_user(travel_user),
@@ -365,6 +381,11 @@ class TravelUserRestTest(RestTestBase, MeUtils):
 
 
 class RideRestTest(RestTestBase, RideUtils):
+    def test_not_authenticated_user_has_no_permission(self):
+        self.assertEqual(
+            RestUtils(self.get_url_for_rides()).get_without_authentication().status_code,
+            status.HTTP_403_FORBIDDEN)
+
     def test_user_can_list_rides(self):
         user = create_user()
         ride1 = create_ride()
@@ -436,6 +457,11 @@ class RideRestTest(RestTestBase, RideUtils):
 
 
 class PassengerRestTest(RestTestBase, PassengerUtils):
+    def test_not_authenticated_user_has_no_permission(self):
+        self.assertEqual(
+            RestUtils(self.get_url_for_passengers()).get_without_authentication().status_code,
+            status.HTTP_403_FORBIDDEN)
+
     def test_user_can_list_passengers_of_ride(self):
         user = create_user()
         ride = create_ride()

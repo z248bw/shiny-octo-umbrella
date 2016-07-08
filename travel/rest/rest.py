@@ -42,13 +42,16 @@ def is_object_level_request(viewset_base_path, request_path):
                     '/[0-9]+/', request_path) is not None
 
 
-class UserPermissions(permissions.BasePermission):
+class UserPermissions(permissions.IsAuthenticated):
     def has_permission(self, request, view):
-        return is_object_level_request(viewset_base_path=UserViewSet.base_path,
-                                       request_path=request.path) or request.user.is_superuser
+        super(UserPermissions, self).has_permission(request, view)
+        return super(UserPermissions, self).has_permission(request, view) and \
+               is_object_level_request(viewset_base_path=UserViewSet.base_path, request_path=request.path) or \
+               request.user.is_superuser
 
     def has_object_permission(self, request, view, obj):
-        return request.user == obj or request.user.is_superuser
+        return super(UserPermissions, self).has_object_permission(request, view, obj) and \
+        request.user == obj or request.user.is_superuser
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -69,11 +72,10 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response()
 
 
-class TravelUserPermissions(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return True
-
+class TravelUserPermissions(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
+        if not super(TravelUserPermissions, self).has_object_permission(request, view, obj):
+            return False
         if request.method == 'PUT':
             return request.user == obj.user or request.user.is_superuser
         if request.method in permissions.SAFE_METHODS:
@@ -154,14 +156,12 @@ class RegistrationViewSet(ViewSet):
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
-class RidePermissions(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return True
-
+class RidePermissions(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
-        return request.method in permissions.SAFE_METHODS \
-               or request.user == obj.driver.user \
-               or request.user.is_superuser
+        return super(RidePermissions, self).has_object_permission(request, view, obj) and \
+               request.method in permissions.SAFE_METHODS or \
+               request.user == obj.driver.user or \
+               request.user.is_superuser
 
 
 class RideSerializer(serializers.ModelSerializer):
@@ -193,11 +193,11 @@ class RideViewSet(viewsets.ModelViewSet):
         return Response(PassengerSerializer(passengers, many=True).data)
 
 
-class PassengerPermissions(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return True
-
+class PassengerPermissions(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
+        if not super(PassengerPermissions, self).has_object_permission(request, view, obj):
+            return False
+
         if request.method == 'DELETE' and request.user == obj.ride.driver.user:
             return True
         return request.user == obj.travel_user.user or request.user.is_superuser
