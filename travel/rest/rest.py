@@ -158,7 +158,12 @@ class RegistrationViewSet(ViewSet):
     def __create_user(self, data):
         user_deserializer = RegistrationUserSerializer(data=data)
         user_deserializer.is_valid(raise_exception=True)
-        return user_deserializer.save()
+        return User.objects.create_user(username=user_deserializer.validated_data['username'],
+                                        password=user_deserializer.validated_data['password'],
+                                        email=user_deserializer.validated_data['email'],
+                                        first_name=user_deserializer.validated_data['first_name'],
+                                        last_name=user_deserializer.validated_data['last_name'])
+        # return user_deserializer.save()
 
     def __create_travel_user(self, data, user):
         travel_user_deserializer = TravelUserSerializer(data=data)
