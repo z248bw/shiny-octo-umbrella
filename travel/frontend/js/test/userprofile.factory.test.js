@@ -130,4 +130,18 @@ describe('Given a UserProfile', function() {
             expect(UserProfile.isLoggedIn()).toBe(false);
         }
     );
+
+    it('calling register should fire a user register then a traveluser create request',
+        function() {
+            var travel_user = {pk: '1', user: {pk: '2'}};
+            $httpBackend.expectPOST('/rest/1/register/travel_user/').respond(travel_user);
+
+            UserProfile.register(travel_user);
+            $httpBackend.flush();
+
+            var profile = UserProfile.getUserProfile();
+            profile = JSON.stringify(profile.travel_user);
+            expect(profile).toBe(JSON.stringify(travel_user));
+        }
+    );
 });

@@ -1,0 +1,150 @@
+<html>
+<head>
+    {% load staticfiles %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet"
+          href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+    <!--Plain angular-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-loader.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.min.js"></script>
+
+    <!--Angular dependencies of material-->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+
+    <!--material-->
+    <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
+    <!--travel-->
+    <link rel="stylesheet" href='{% static "travel/css/travel.css" %}'>
+    <script type="text/javascript" src='{% static "travel/js/all.min.js" %}'></script>
+
+</head>
+{% verbatim %}
+<body ng-app="TravelApp">
+
+<div ng-controller="RegisterUserController as vm" class="padded">
+    <md-content layout-padding layout-gt-xs="row">
+        <form name="userForm">
+
+            <h4>
+                <span>Regisztracio</span>
+                <md-button class="md-accent md-raised"
+                           hide-xs flex
+                           flex-offset="50"
+                           ng-disabled="userForm.$invalid"
+                           ng-click="vm.showRegisterUserDialog($event)">
+                    Regisztralas
+                </md-button>
+            </h4>
+
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Kozos titok</label>
+                <input required name="passphrase"
+                       ng-model="vm.travel_user.passphrase"
+                       pattern="^\S{5,20}$">
+                <div class="hint">kozos titok</div>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Felhasznalo nev</label>
+                <input required name="username"
+                       ng-model="vm.travel_user.user.username"
+                       pattern="^\S{5,20}$">
+                <div class="hint">Ezt a nevet hasznalod bejelentkezeshez</div>
+                <div ng-messages="userForm.username.$error">
+                    <div ng-message="pattern">
+                        A felhasznalo neved legalabb 5 es maximum 20 karakter hosszu lehet
+                        es nem tartalmazhat specialis karaktereket!
+                    </div>
+                </div>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Jelszo</label>
+                <input required name="password"
+                       type="password"
+                       ng-model="vm.travel_user.user.password"
+                       pattern="^\S{1,20}$">
+                <div ng-messages="userForm.password.$error">
+                    <div ng-message="pattern">
+                        A jelszavad legalabb 8 es maximum 20 karakter hosszu lehet
+                        es tartalmaznia kell kis es nagybetuket, illetve szamot!
+                    </div>
+                </div>
+            </md-input-container>
+
+            <div layout-gt-sm="row">
+
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Vezeteknev</label>
+                    <input required name="lastname"
+                           ng-model="vm.travel_user.user.last_name"
+                           pattern="^\S{1,20}$">
+                    <div ng-messages="userForm.lastname.$error">
+                        <div ng-message="pattern">
+                            A vezetekneved legalabb 1 es maximum 20 karakter hosszu lehet
+                            es nem tartalmazhat specialis karaktereket!
+                        </div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Keresztnev</label>
+                    <input required name="surname"
+                           ng-model="vm.travel_user.user.first_name"
+                           pattern="^\S{1,20}$">
+                    <div ng-messages="userForm.surname.$error">
+                        <div ng-message="pattern">
+                            A keresztneved legalabb 1 es maximum 20 karakter hosszu lehet
+                            es nem tartalmazhat specialis karaktereket!
+                        </div>
+                    </div>
+                </md-input-container>
+
+            </div>
+
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Email</label>
+                <input required name="email"
+                       ng-model="vm.travel_user.user.email"
+                       pattern="^\S{1,20}$">
+                <div ng-messages="userForm.email.$error">
+                    <div ng-message="pattern">
+                        A keresztneved legalabb 1 es maximum 20 karakter hosszu lehet
+                        es nem tartalmazhat specialis karaktereket!
+                    </div>
+                </div>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Telefonszam</label>
+                <input required name="userPhone"
+                       ng-model="vm.travel_user.phone"
+                       pattern="^[0-9]{2} [0-9]{3}-[0-9]{4}$">
+                <div class="hint">90 123-4567</div>
+                <div ng-messages="userForm.userPhone.$error">
+                    <div ng-message="required">A mezo kitoltese kotelezo!</div>
+                    <div ng-message="pattern">
+                        A telefonszam NN NNN-NNNN formatumu kell hogy legyen!
+                        (pl: 90 123-4567)
+                    </div>
+                </div>
+            </md-input-container>
+            <md-button class="md-accent md-raised"
+                       hide-gt-xs flex
+                       ng-disabled="userForm.$invalid"
+                       ng-click="vm.showRegisterUserDialog($event)">
+                Regisztralas
+            </md-button>
+        </form>
+    </md-content>
+</div>
+
+</body>
+{% endverbatim %}
+</html>
