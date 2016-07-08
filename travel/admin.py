@@ -5,7 +5,7 @@ from travel.models import Passenger, Ride, TravelUser
 
 class TravelUserAdmin(admin.ModelAdmin):
     list_display = ('pk', 'get_user_name', 'get_user_last_name')
-    search_fields = ['user__name', 'user__first_name', 'user_last_name']
+    search_fields = ['user__username', 'user__first_name', 'user__last_name']
 
     def get_user_name(self, obj):
         return obj.user.username
