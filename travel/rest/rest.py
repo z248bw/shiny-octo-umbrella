@@ -1,6 +1,6 @@
 import re
 
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework import viewsets
@@ -85,6 +85,7 @@ class TravelUserPermissions(permissions.IsAuthenticated):
 
 class TravelUserSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    phone = serializers.CharField(max_length=20)
 
     class Meta:
         model = TravelUser
@@ -148,12 +149,21 @@ class RegistrationViewSet(ViewSet):
     permission_classes = [RegistrationPermissions]
 
     @list_route(methods=['post'])
-    def user(self, request):
-        deserializer = RegistrationUserSerializer(data=request.data)
-        deserializer.is_valid(raise_exception=True)
-        user = deserializer.save()
-        serializer = RegistrationUserSerializer(user)
+    def travel_user(self, request):
+        user = self.__create_user(request.data['user'])
+        travel_user = self.__create_travel_user(request.data, user)
+        serializer = TravelUserSerializer(travel_user)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+    def __create_user(self, data):
+        user_deserializer = RegistrationUserSerializer(data=data)
+        user_deserializer.is_valid(raise_exception=True)
+        return user_deserializer.save()
+
+    def __create_travel_user(self, data, user):
+        travel_user_deserializer = TravelUserSerializer(data=data)
+        travel_user_deserializer.is_valid(raise_exception=True)
+        return travel_user_deserializer.save(user=user)
 
 
 class RidePermissions(permissions.IsAuthenticated):

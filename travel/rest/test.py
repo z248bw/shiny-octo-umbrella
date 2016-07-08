@@ -66,21 +66,21 @@ class RestTestBase(APITestCase):
 
 
 class RegistrationUtils:
-    def get_registration_request_for_user(self, phrase, user=None):
-        user = user if user is not None else User(username='a',
-                                                  password='a',
-                                                  first_name='a',
-                                                  last_name='a',
-                                                  email='test@test.com')
-        return {'passphrase': phrase,
-                'username': user.username,
-                'password': user.password,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email}
+    def get_registration_request_for_travel_user(self, phrase):
+        return {
+            'passphrase': phrase,
+            'phone': '1234567',
+            'user': {
+                'username': 'name',
+                'password': 'password',
+                'first_name': 'first_name',
+                'last_name': 'last_name',
+                'email': 'test@test.com'
+            }
+        }
 
     def get_url_for_registration(self):
-        return '/rest/1/register/user/'
+        return '/rest/1/register/travel_user/'
 
 
 class RegistrationTest(RestTestBase, RegistrationUtils):
@@ -90,37 +90,41 @@ class RegistrationTest(RestTestBase, RegistrationUtils):
 
     def test_with_invalid_passphrase_the_request_fails(self):
         client = APIClient()
-        request_data = self.get_registration_request_for_user('invalidphrase')
-        self.assertEqual(client.post(self.get_url_for_registration(), request_data).status_code,
+        request_data = self.get_registration_request_for_travel_user('invalidphrase')
+        self.assertEqual(client.post(self.get_url_for_registration(), request_data, format='json').status_code,
                          status.HTTP_403_FORBIDDEN)
 
     def test_with_missing_first_name_the_request_fails(self):
         client = APIClient()
-        request_data = self.get_registration_request_for_user(phrase=settings.REGISTRATION_PASSPHRASE)
-        request_data.pop('first_name')
-        client.post(self.get_url_for_registration(), request_data)
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        request_data['user'].pop('first_name')
+        client.post(self.get_url_for_registration(), request_data, format='json')
         self.assertEqual(User.objects.count(), 0)
 
     def test_with_valid_passphrase_the_user_gets_created(self):
         client = APIClient()
-        request_data = self.get_registration_request_for_user(phrase=settings.REGISTRATION_PASSPHRASE)
-        response = client.post(self.get_url_for_registration(), request_data)
-        request_data.pop('passphrase')
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        response = client.post(self.get_url_for_registration(), request_data, format='json')
         expected = request_data
-        response.data.pop('pk')
-        self.assertEqual(response.data, expected)
+        self.assert_registration_response(response, expected)
+
+    def assert_registration_response(self, response, expected):
+        expected.pop('passphrase')
+        expected['user'].pop('password')
+        response_data = json.loads(response.content.decode('utf-8'))
+        response_data.pop('pk')
+        response_data['user'].pop('pk')
+        response_data.pop('accepted_eula')
+        self.assertEqual(response_data, expected)
 
     def test_with_valid_passphrase_and_extra_fields_provided_the_user_gets_created(self):
         client = APIClient()
-        request_data = self.get_registration_request_for_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
         request_data['some_extra_field'] = 'something'
-        response = client.post(self.get_url_for_registration(), request_data)
-        request_data.pop('passphrase')
+        response = client.post(self.get_url_for_registration(), request_data, format='json')
         request_data.pop('some_extra_field')
         expected = request_data
-        response.data.pop('pk')
-        self.assertEqual(response.data, expected)
-
+        self.assert_registration_response(response, expected)
 
 class UserUtils:
     def user_to_response_dict(self, user):
