@@ -56,7 +56,7 @@ def build():
     execute('pip install -r requirements.txt')
     execute('npm install')
     execute('./node_modules/gulp/bin/gulp.js')
-    execute('python manage.py collectstatic --no-input')
+    dev_execute('python manage.py collectstatic --no-input')
     print_green('successfully finished build')
 
 
