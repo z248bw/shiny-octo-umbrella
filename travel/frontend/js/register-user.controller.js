@@ -23,6 +23,8 @@
             var result = UserProfile.register(vm.travel_user);
             result.$promise.then(function(){
                 $window.location.href = '/travel/index/';
+            }, function(response){
+                Dialog.showError(response.data.detail);
             });
         }
     }
