@@ -38,12 +38,13 @@
              );
         }
 
-        function showSuccess(title) {
+        function showSuccess(title, content) {
              $mdDialog.show(
                $mdDialog.alert()
                  .parent(angular.element(document.body))
                  .clickOutsideToClose(true)
                  .title(title)
+                 .textContent(content)
                  .ok('OK')
              );
         }

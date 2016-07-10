@@ -4,15 +4,16 @@
     angular.module('TravelApp')
         .controller('TravelController', TravelController);
 
-    TravelController.$inject = ['$location', '$window', 'TravelManager', 'UserProfile'];
+    TravelController.$inject = ['$location', '$window', 'TravelManager', 'UserProfile', 'App', 'Dialog'];
 
-    function TravelController($location, $window, TravelManager, UserProfile) {
+    function TravelController($location, $window, TravelManager, UserProfile, App, Dialog) {
 
         var vm = this;
         vm.me = null;
         vm.there = TravelManager.getTravelThere();
         vm.back = TravelManager.getTravelBack();
         vm.showManageUserProfile = showManageUserProfile;
+        vm.showAbout = showAbout;
         vm.logout = logout;
         vm.isLoggedIn = isLoggedIn;
 
@@ -38,6 +39,16 @@
 
         function showManageUserProfile() {
             $location.url('/manage/userprofile');
+        }
+
+        function showAbout() {
+            App.about(function(response){
+                Dialog.showSuccess(
+                    'Nevjegy',
+                    'Verzio: ' + response.version + ' ' +
+                    'Github: majd lesz'
+                );
+            });
         }
 
         function logout() {

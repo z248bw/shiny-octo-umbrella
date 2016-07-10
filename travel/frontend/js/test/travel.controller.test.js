@@ -92,4 +92,26 @@ describe('Given a TravelController', function() {
             expect($location.path).toHaveBeenCalledWith('/manage/userprofile');
         })
     );
+
+    function createTravelControllerWithUser(passenger_of_rides, driven_rides) {
+        $httpBackend.expectGET('/rest/1/travel_users/me/')
+            .respond(createMockTravelUser(passenger_of_rides, driven_rides));
+        var ctrl = $controller('TravelController');
+        $httpBackend.flush();
+
+        return ctrl;
+    }
+     it('when clicking the manage profile button the user will be redirected to the manage profile page',
+        inject(function(Dialog) {
+            var ctrl = createTravelControllerWithUser([], []);
+            $httpBackend.expectGET('/rest/1/app/about/')
+            .respond({version: '0.1'});
+            spyOn(Dialog, 'showSuccess')
+
+            ctrl.showAbout();
+
+            $httpBackend.flush();
+            expect(Dialog.showSuccess).toHaveBeenCalledWith('Nevjegy', 'Verzio: ' + '0.1 Github: majd lesz');
+        })
+    );
 });
