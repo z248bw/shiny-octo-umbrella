@@ -43,7 +43,7 @@
         function removeUserProfile() {
             var result = UserProfile.remove();
             result.$promise.then(function(){
-                $window.location.href = '/login';
+                $window.location.href = '/accounts/login';
             });
         }
 
