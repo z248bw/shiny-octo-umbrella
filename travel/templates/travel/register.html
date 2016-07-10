@@ -28,6 +28,7 @@
 <body ng-app="TravelApp">
 
 <div ng-controller="RegisterUserController as vm" class="padded">
+    <div>Az alkalmazas hasznalatabol eredo karokert a szerzo semmilyen felelosseget nem vallal!</div>
     <md-content layout-padding layout-gt-xs="row">
         <form name="userForm">
 
@@ -44,21 +45,22 @@
 
             <md-input-container class="md-block" flex-gt-xs>
                 <label>Kozos titok</label>
-                <input required name="passphrase"
-                       ng-model="vm.travel_user.passphrase"
-                       pattern="^\S{5,20}$">
-                <div class="hint">kozos titok</div>
+                <input required name="passphrase" ng-model="vm.travel_user.passphrase" type="password">
+                <div class="hint">
+                    Ide ird le kerlek a meghivo elso oldalan a kep felett levo nevet.
+                    Erre azert van szukseg, hogy csak a vendegek tudjanak regisztralni.
+                </div>
             </md-input-container>
 
             <md-input-container class="md-block" flex-gt-xs>
                 <label>Felhasznalo nev</label>
                 <input required name="username"
                        ng-model="vm.travel_user.user.username"
-                       pattern="^\S{5,20}$">
+                       pattern="^\S{5,30}$">
                 <div class="hint">Ezt a nevet hasznalod bejelentkezeshez</div>
                 <div ng-messages="userForm.username.$error">
                     <div ng-message="pattern">
-                        A felhasznalo neved legalabb 5 es maximum 20 karakter hosszu lehet
+                        A felhasznalo neved legalabb 5 es maximum 30 karakter hosszu lehet
                         es nem tartalmazhat specialis karaktereket!
                     </div>
                 </div>
@@ -69,7 +71,7 @@
                 <input required name="password"
                        type="password"
                        ng-model="vm.travel_user.user.password"
-                       pattern="^\S{1,20}$">
+                       pattern="^\S{8,20}$">
                 <div ng-messages="userForm.password.$error">
                     <div ng-message="pattern">
                         A jelszavad legalabb 8 es maximum 20 karakter hosszu lehet
@@ -84,10 +86,10 @@
                     <label>Vezeteknev</label>
                     <input required name="lastname"
                            ng-model="vm.travel_user.user.last_name"
-                           pattern="^\S{1,20}$">
+                           pattern="^\S{1,30}$">
                     <div ng-messages="userForm.lastname.$error">
                         <div ng-message="pattern">
-                            A vezetekneved legalabb 1 es maximum 20 karakter hosszu lehet
+                            A vezetekneved legalabb 1 es maximum 30 karakter hosszu lehet
                             es nem tartalmazhat specialis karaktereket!
                         </div>
                     </div>
@@ -97,10 +99,10 @@
                     <label>Keresztnev</label>
                     <input required name="surname"
                            ng-model="vm.travel_user.user.first_name"
-                           pattern="^\S{1,20}$">
+                           pattern="^\S{1,30}$">
                     <div ng-messages="userForm.surname.$error">
                         <div ng-message="pattern">
-                            A keresztneved legalabb 1 es maximum 20 karakter hosszu lehet
+                            A keresztneved legalabb 1 es maximum 30 karakter hosszu lehet
                             es nem tartalmazhat specialis karaktereket!
                         </div>
                     </div>
@@ -112,10 +114,10 @@
                 <label>Email</label>
                 <input required name="email"
                        ng-model="vm.travel_user.user.email"
-                       pattern="^\S{1,20}$">
+                       pattern="^\S{1,40}$">
                 <div ng-messages="userForm.email.$error">
                     <div ng-message="pattern">
-                        A keresztneved legalabb 1 es maximum 20 karakter hosszu lehet
+                        A keresztneved legalabb 1 es maximum 40 karakter hosszu lehet
                         es nem tartalmazhat specialis karaktereket!
                     </div>
                 </div>
