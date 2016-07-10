@@ -8,7 +8,7 @@
                            hide-xs flex
                            flex-offset="50"
                            ng-disabled="userForm.$invalid"
-                           ng-click="vm.showUserProfileSaveDialog($event)">
+                           ng-click="vm.showUserProfileUpdateDialog($event)">
                     Modositas
                 </md-button>
                 <md-button class="md-accent md-raised"
@@ -22,11 +22,11 @@
                 <label>Felhasznalo nev</label>
                 <input required name="username"
                        ng-model="vm.travel_user.user.username"
-                       pattern="^\S{5,20}$">
+                       pattern="^\S{5,30}$">
                 <div class="hint">Ezt a nevet hasznalod bejelentkezeshez</div>
                 <div ng-messages="userForm.username.$error">
                     <div ng-message="pattern">
-                        A felhasznalo neved legalabb 5 es maximum 20 karakter hosszu lehet
+                        A felhasznalo neved legalabb 5 es maximum 30 karakter hosszu lehet
                         es nem tartalmazhat specialis karaktereket!
                     </div>
                 </div>
@@ -37,10 +37,10 @@
                 <input name="password"
                        type="password"
                        ng-model="vm.travel_user.user.password"
-                       pattern="^\S{1,20}$">
+                       pattern="^\S{1,30}$">
                 <div ng-messages="userForm.password.$error">
                     <div ng-message="pattern">
-                        A jelszavad legalabb 8 es maximum 20 karakter hosszu lehet
+                        A jelszavad legalabb 8 es maximum 30 karakter hosszu lehet
                         es tartalmaznia kell kis es nagybetuket, illetve szamot!
                     </div>
                 </div>
@@ -52,10 +52,10 @@
                     <label>Vezeteknev</label>
                     <input required name="lastname"
                            ng-model="vm.travel_user.user.last_name"
-                           pattern="^\S{1,20}$">
+                           pattern="^\S{1,30}$">
                     <div ng-messages="userForm.lastname.$error">
                         <div ng-message="pattern">
-                            A vezetekneved legalabb 1 es maximum 20 karakter hosszu lehet
+                            A vezetekneved legalabb 1 es maximum 30 karakter hosszu lehet
                             es nem tartalmazhat specialis karaktereket!
                         </div>
                     </div>
@@ -65,10 +65,10 @@
                     <label>Keresztnev</label>
                     <input required name="surname"
                            ng-model="vm.travel_user.user.first_name"
-                           pattern="^\S{1,20}$">
+                           pattern="^\S{1,30}$">
                     <div ng-messages="userForm.surname.$error">
                         <div ng-message="pattern">
-                            A keresztneved legalabb 1 es maximum 20 karakter hosszu lehet
+                            A keresztneved legalabb 1 es maximum 30 karakter hosszu lehet
                             es nem tartalmazhat specialis karaktereket!
                         </div>
                     </div>
@@ -80,10 +80,10 @@
                 <label>Email</label>
                 <input required name="email"
                        ng-model="vm.travel_user.user.email"
-                       pattern="^\S{1,20}$">
+                       pattern="^\S{1,40}$">
                 <div ng-messages="userForm.email.$error">
                     <div ng-message="pattern">
-                        A keresztneved legalabb 1 es maximum 20 karakter hosszu lehet
+                        A keresztneved legalabb 1 es maximum 40 karakter hosszu lehet
                         es nem tartalmazhat specialis karaktereket!
                     </div>
                 </div>
@@ -106,7 +106,7 @@
             <md-button class="md-accent md-raised"
                        hide-gt-xs flex
                        ng-disabled="userForm.$invalid"
-                       ng-click="vm.showUserProfileSaveDialog($event)">
+                       ng-click="vm.showUserProfileUpdateDialog($event)">
                 Modositas
             </md-button>
             <md-button class="md-accent md-raised"

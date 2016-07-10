@@ -23,7 +23,7 @@
             Dialog.showConfirm(
                 event,
                 'Biztos vagy benne, hogy frissiteni akarod a felhasznaloi profilodat?',
-                saveUserProfile);
+                updateUserProfile);
         }
 
         function updateUserProfile() {
