@@ -251,7 +251,8 @@ class RideUtils(TravelUserUtils):
                 'start_location': ride.start_location,
                 'is_return': ride.is_return,
                 'car_name': ride.car_name,
-                'description': ride.description}
+                'description': ride.description,
+                'notify_when_passenger_joins': ride.notify_when_passenger_joins}
 
     def get_ride_request_json(self, ride):
         ride_json = self.ride_to_response_dict(ride)
