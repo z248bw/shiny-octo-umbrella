@@ -19,3 +19,51 @@
 .travel-element {
     background-color: '#9FA8DA';
 }
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    border-radius:5px;
+    border-style: solid;
+    border-width: 1px;
+    padding: 2%;
+    text-align: center;
+    background-color:#ffffff
+}
+
+.login-dialog {
+    width: 30%;
+    height: 30%;
+}
+
+.login-row {
+    float: left;
+    width: 100%;
+}
+
+.login-button {
+	background-color:#79aec8;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	border-radius:4px;
+	border:none;
+	margin-top: 5%;
+}
+.login-button:hover {
+	background-color: #609ab6
+}
+.login-button:active {
+	position:relative;
+}
+.login-body {
+    background-color: #f1f1f1
+}
+
+.errorlist li {
+    color:#ba2121;
+    display: block;
+}

@@ -1,77 +1,70 @@
-{% extends "admin/base_site.html" %}
-{% load i18n admin_static %}
+<html>
+<head>
+    {% load i18n %}
+    {% load staticfiles %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href='{% static "travel/css/travel.css" %}'>
+</head>
+<body class="login-body">
+<div class="centered">
+    <h3>Udv!</h3>
+    <p>Kerlek jelentkezz be, vagy regisztralj!</p>
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}" />
-{{ form.media }}
-{% endblock %}
+    {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    <p class="login-error">
+        {{ error }}
+    </p>
+    {% endfor %}
+    {% endif %}
 
-{% block bodyclass %}{{ block.super }} login{% endblock %}
+    <div id="content-main">
 
-{% block usertools %}{% endblock %}
+        {% if user.is_authenticated %}
+        <p class="login-error">
+            {% blocktrans with username=request.user.username trimmed %}
+            You are authenticated as {{ username }}, but are not authorized to
+            access this page. Would you like to login to a different account?
+            {% endblocktrans %}
+        </p>
+        {% endif %}
 
-{% block nav-global %}{% endblock %}
+        <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+            <div class="login-row">
+                <div class="login-error">{{ form.username.errors }}</div>
+                <div class="login-row">{{ form.username.label_tag }}</div>
+                <div class="login-row">{{ form.username }}</div>
+            </div>
+            <div>
+                <div class="login-error">{{ form.password.errors }}</div>
+                <div class="login-row">{{ form.password.label_tag }}</div>
+                <div class="login-row">{{ form.password }}</div>
+                <input type="hidden" name="next" value="{{ next }}"/>
+            </div>
+            {% url 'admin_password_reset' as password_reset_url %}
+            {% if password_reset_url %}
+            <div class="password-reset-link">
+                <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
+            </div>
+            {% endif %}
+            <div class="submit-row">
+                <label>&nbsp;</label><input class="login-button" type="submit" value="{% trans 'Log in' %}"/>
+            </div>
+        </form>
 
-{% block content_title %}{% endblock %}
-
-{% block breadcrumbs %}{% endblock %}
-
-{% block content %}
-{% if form.errors and not form.non_field_errors %}
-<p class="errornote">
-{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
-</p>
-{% endif %}
-
-{% if form.non_field_errors %}
-{% for error in form.non_field_errors %}
-<p class="errornote">
-    {{ error }}
-</p>
-{% endfor %}
-{% endif %}
-
-<div id="content-main">
-
-{% if user.is_authenticated %}
-<p class="errornote">
-{% blocktrans with username=request.user.username trimmed %}
-    You are authenticated as {{ username }}, but are not authorized to
-    access this page. Would you like to login to a different account?
-{% endblocktrans %}
-</p>
-{% endif %}
-
-<form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
-  <div class="form-row">
-    {{ form.username.errors }}
-    {{ form.username.label_tag }} {{ form.username }}
-  </div>
-  <div class="form-row">
-    {{ form.password.errors }}
-    {{ form.password.label_tag }} {{ form.password }}
-    <input type="hidden" name="next" value="{{ next }}" />
-  </div>
-  {% url 'admin_password_reset' as password_reset_url %}
-  {% if password_reset_url %}
-  <div class="password-reset-link">
-    <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
-  </div>
-  {% endif %}
-  <div class="submit-row">
-    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}" />
-  </div>
-    <div>
         <div>
-            <a href="/travel/register/">Regisztracio</a>
+            <div>
+                <a href="/travel/register/">Regisztracio</a>
+            </div>
+            <div>
+                <a href="/">Vissza az informaciok oldalra</a>
+            </div>
         </div>
-        <div>
-            <a href="/">Vissza az informaciok oldalra</a>
-        </div>
+
     </div>
-</form>
-
+</div>
+</body>
 <script type="text/javascript">
 document.getElementById('id_username').focus()
 </script>
-</div>
-{% endblock %}
+</html>
