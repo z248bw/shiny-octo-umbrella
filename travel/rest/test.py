@@ -126,6 +126,7 @@ class RegistrationTest(RestTestBase, RegistrationUtils):
         expected = request_data
         self.assert_registration_response(response, expected)
 
+
 class UserUtils:
     def user_to_response_dict(self, user):
         return {'pk': user.pk,
@@ -558,3 +559,15 @@ class PassengerRestTest(RestTestBase, PassengerUtils):
         passenger = create_passenger_user(create_ride())
         response = RestUtils(url=self.get_url_for_passenger(passenger), user=ride.driver.user).delete()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AppRestTest(APITestCase):
+    about_url = '/rest/1/app/about/'
+
+    def test_not_authenticated_user_has_no_permission(self):
+        self.assertEqual(
+            RestUtils(self.about_url).get_without_authentication().status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_authenticated_user_can_ask_for_the_version(self):
+        self.assertEqual(
+            RestUtils(self.about_url).get_and_return_response_body(), {'version': '0.1'})

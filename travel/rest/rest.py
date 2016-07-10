@@ -13,6 +13,7 @@ from rest_framework.views import exception_handler, APIView
 from rest_framework import status
 from rest_framework.viewsets import ViewSet
 
+import travel
 from travel.models import Ride, TravelUser, Passenger, TravelException
 from wedding import settings
 
@@ -242,9 +243,18 @@ class PassengerViewSet(viewsets.ModelViewSet):
         serializer.save(travel_user=user)
 
 
+class AppViewSet(ViewSet):
+    base_path = 'app'
+
+    @list_route(methods=['get'])
+    def about(self, request):
+        return Response(data={'version': str(travel.__version__)}, status=status.HTTP_200_OK)
+
+
 def register(router):
     router.register(RegistrationViewSet.base_path, RegistrationViewSet, base_name='register')
     router.register(UserViewSet.base_path, UserViewSet)
     router.register(TravelUserViewSet.base_path, TravelUserViewSet)
     router.register(RideViewSet.base_path, RideViewSet)
     router.register(PassengerViewSet.base_path, PassengerViewSet)
+    router.register(AppViewSet.base_path, AppViewSet, base_name='app')
