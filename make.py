@@ -54,16 +54,17 @@ def parse_args():
 def build():
     print_green('run build')
     execute('pip install -r requirements.txt')
-    dev_execute('npm install')
-    dev_execute('./node_modules/gulp/bin/gulp.js')
+    execute('npm install')
+    execute('./node_modules/gulp/bin/gulp.js')
+    execute('python manage.py collectstatic --no-input')
     print_green('successfully finished build')
 
 
 def test():
     print_green('run test')
     execute('python manage.py test')
-    prod_execute('python manage.py check --deploy')
-    dev_execute('./node_modules/karma/bin/karma start --single-run')
+    execute('python manage.py check --deploy')
+    execute('./node_modules/karma/bin/karma start --single-run')
     print_green('successfully finished test')
 
 
