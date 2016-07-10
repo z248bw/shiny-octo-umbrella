@@ -21,13 +21,12 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "fca3c01743db9231abbab10973e0fdea13115a6bfa9aeb6a3ff1873127d2dc4f"
+SECRET_KEY = os.environ['SECRET_KEY']
 
-# TODO
-REGISTRATION_PASSPHRASE = 'judit'
+REGISTRATION_PASSPHRASE = os.environ['REGISTRATION_PASSPHRASE']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Application definition
 
@@ -115,6 +114,11 @@ DATABASES['default'].update(db_from_env)
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+#Applied according to check deploy
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']

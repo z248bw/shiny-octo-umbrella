@@ -29,7 +29,8 @@
         </p>
         {% endif %}
 
-        <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <form action="{{ app_path }}" method="post" id="login-form">
+            {% csrf_token %}
             <div class="login-row">
                 <div class="login-error">{{ form.username.errors }}</div>
                 <div class="login-row">{{ form.username.label_tag }}</div>
