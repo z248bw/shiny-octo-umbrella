@@ -138,12 +138,17 @@ class RegistrationUserSerializer(serializers.ModelSerializer):
 
 class RegistrationPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        if 'passphrase' in request.data and request.data['passphrase'] == settings.REGISTRATION_PASSPHRASE:
-            RegexValidator(regex='^([a-z]|[A-Z]| |(á|Á|í|Í|ű|Ű|ő|Ő|ü|Ü|ö|Ö|ú|Ú|ó|Ó|é|É)){1,40}$')\
-                .__call__(request.data['passphrase'])
-            if request.data['passphrase'] == settings.REGISTRATION_PASSPHRASE:
-                return True
+        if 'passphrase' not in request.data:
+            return False
+        passphrase = request.data['passphrase']
+        self.validate_input(passphrase)
+        if passphrase == settings.REGISTRATION_PASSPHRASE:
+            return True
         return False
+
+    def validate_input(self, input):
+        RegexValidator(regex='^([a-z]|[A-Z]| |(á|Á|í|Í|ű|Ű|ő|Ő|ü|Ü|ö|Ö|ú|Ú|ó|Ó|é|É)){1,40}$') \
+            .__call__(input)
 
     def has_object_permission(self, request, view, obj):
         return False
