@@ -2,6 +2,7 @@ import re
 
 from django.contrib.auth import logout, login
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -138,7 +139,10 @@ class RegistrationUserSerializer(serializers.ModelSerializer):
 class RegistrationPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         if 'passphrase' in request.data and request.data['passphrase'] == settings.REGISTRATION_PASSPHRASE:
-            return True
+            RegexValidator(regex='^([a-z]|[A-Z]| |(á|Á|í|Í|ű|Ű|ő|Ő|ü|Ü|ö|Ö|ú|Ú|ó|Ó|é|É)){1,40}$')\
+                .__call__(request.data['passphrase'])
+            if request.data['passphrase'] == settings.REGISTRATION_PASSPHRASE:
+                return True
         return False
 
     def has_object_permission(self, request, view, obj):

@@ -3,6 +3,7 @@ from copy import deepcopy
 
 from django.contrib.auth import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
@@ -84,6 +85,10 @@ class RegistrationUtils:
 
 
 class RegistrationTest(RestTestBase, RegistrationUtils):
+    def setUp(self):
+        super(RegistrationTest, self).setUp()
+        settings.REGISTRATION_PASSPHRASE = 'judit'
+
     def test_without_passphrase_the_request_fails(self):
         client = APIClient()
         self.assertEqual(client.post(self.get_url_for_registration()).status_code, status.HTTP_403_FORBIDDEN)
@@ -125,6 +130,21 @@ class RegistrationTest(RestTestBase, RegistrationUtils):
         request_data.pop('some_extra_field')
         expected = request_data
         self.assert_registration_response(response, expected)
+
+    def test_passphrase_with_hun_characters(self):
+        client = APIClient()
+        settings.REGISTRATION_PASSPHRASE = 'áÁrvíÍztűrő tükörfúrógéÉp'
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        response = client.post(self.get_url_for_registration(), request_data, format='json')
+        expected = request_data
+        self.assert_registration_response(response, expected)
+
+    def test_passphrase_with_invalid_characters(self):
+        client = APIClient()
+        settings.REGISTRATION_PASSPHRASE = '&'
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        with self.assertRaises(ValidationError):
+            client.post(self.get_url_for_registration(), request_data, format='json')
 
 
 class UserUtils:
