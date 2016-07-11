@@ -26,7 +26,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 REGISTRATION_PASSPHRASE = os.environ['REGISTRATION_PASSPHRASE']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Application definition
 
