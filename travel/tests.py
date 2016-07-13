@@ -248,11 +248,10 @@ class RideChangeUnitTest(TestCase):
         old_time = ride.start_time
         ride.start_time = datetime.now()
         ride.save()
-        self.assertEqual(RideChangeNotifier(ride).get_model_changes(), [RideChangeNotifier.get_diff_dict('start_time',
-                                                                                                         date_to_naive_str(
-                                                                                                             old_time),
-                                                                                                         date_to_naive_str(
-                                                                                                             ride.start_time))])
+        self.assertEqual(
+            RideChangeNotifier(ride).get_model_changes(),
+            [RideChangeNotifier.get_diff_dict('start_time', date_to_naive_str(old_time),
+                                              date_to_naive_str(ride.start_time))])
 
     def test_get_changes_if_multiple_field_is_changed(self):
         ride = create_ride()
@@ -261,14 +260,13 @@ class RideChangeUnitTest(TestCase):
         ride.price += 1
         ride.start_location = 'changed location'
         ride.save()
-        self.assertEqual(RideChangeNotifier(ride).get_model_changes(), [RideChangeNotifier.get_diff_dict('price',
-                                                                                                         str(old_price),
-                                                                                                         str(
-                                                                                                             ride.price)),
-                                                                        RideChangeNotifier.get_diff_dict(
-                                                                            'start_location',
-                                                                            old_location,
-                                                                            ride.start_location)])
+        self.assertEqual(
+            RideChangeNotifier(ride).get_model_changes(),
+            [
+                RideChangeNotifier.get_diff_dict('price', str(old_price), str(ride.price)),
+                RideChangeNotifier.get_diff_dict('start_location', old_location, ride.start_location)
+            ]
+        )
 
 
 class EmailTest(TestCase):
