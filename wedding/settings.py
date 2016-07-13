@@ -152,6 +152,8 @@ REST_FRAMEWORK = {
 REST_BASE_PATH = 'rest/'
 REST_VERSION = '1/'
 
+EMAILNOTIFIER_COOLDOWN = 5
+
 #TODO: do not forget to set on production!
 # heroku config:add EMAIL_HOST_USER=xxx
 EMAIL_HOST = os.environ.get('EMAIL_HOST')

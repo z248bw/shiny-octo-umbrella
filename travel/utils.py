@@ -1,4 +1,8 @@
+import time
+from django.core.cache import cache
 from django.core.mail import send_mail
+
+from wedding import settings
 
 
 def date_to_naive_str(date):
@@ -6,13 +10,25 @@ def date_to_naive_str(date):
 
 
 class EmailNotifier:
+    CACHE_TIME_ID = 'LAST_SENT_TIME'
+
     def __init__(self, to, formatter):
         self.to = to
         self.formatter = formatter
+        self.cooldown = settings.EMAILNOTIFIER_COOLDOWN
 
     def notify(self):
-        send_mail(self.formatter.get_title(), self.formatter.get_message(),
-                  'travelmanager@wedding.com', self.to, fail_silently=False)
+        if self.is_cooldown_finished():
+            send_mail(self.formatter.get_title(), self.formatter.get_message(),
+                      'travelmanager@wedding.com', self.to, fail_silently=False)
+
+    def is_cooldown_finished(self):
+        last_time = cache.get_or_set(self.CACHE_TIME_ID, time.time())
+        current_time = time.time()
+        if last_time + self.cooldown < current_time:
+            cache.set(self.CACHE_TIME_ID, current_time)
+            return True
+        return False
 
 
 class EmailFormatter:
