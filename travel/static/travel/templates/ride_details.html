@@ -1,5 +1,5 @@
 <div ng-controller="RideDetailsController as details"
-    class="padded">
+     class="padded">
     <h4>
         <span>{{details.ride.driver.user.last_name}} {{details.ride.driver.user.first_name}} autoja</span>
     </h4>
@@ -23,6 +23,10 @@
               {{passenger.travel_user.user.last_name}} {{passenger.travel_user.user.first_name}}
                  ({{passenger.travel_user.user.username}})
             </span>
+            <ul>
+                <li>Telefon: {{passenger.travel_user.phone}}</li>
+                <li>Email: {{passenger.travel_user.user.email}}</li>
+            </ul>
         </li>
     </ul>
 </div>

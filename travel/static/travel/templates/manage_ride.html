@@ -121,6 +121,10 @@
                     {{passenger.travel_user.user.last_name}} {{passenger.travel_user.user.first_name}}
                     ({{passenger.travel_user.user.username}})
                 </md-checkbox>
+                <ul>
+                    <li>Telefon: {{passenger.travel_user.phone}}</li>
+                    <li>Email: {{passenger.travel_user.user.email}}</li>
+                </ul>
             </div>
             <md-button ng-show="manager.isDriverExists()"
                        class="md-primary md-raised"
