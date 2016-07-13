@@ -39,8 +39,16 @@ class Notifier:
     def get_disable_url(self):
         raise NotImplementedError
 
+    def get_disable_url_for_ride(self, ride):
+        template = 'travel/index/#/manage/ride/{}'
+        direction = 'back' if ride.is_return else 'there'
+        return template.format(direction)
+
+    def get_disble_url_for_passenger(self):
+        return 'travel/index/#/rides'
+
     def get_disable_link(self):
-        return '<a href="' + self.HOST_URL + ' ' + self.get_disable_url() + '">Leiratkozas errol az ertesitesrol</a>'
+        return self.HOST_URL + self.get_disable_url()
 
 
 class PassengerNotifier(Notifier):
@@ -51,7 +59,7 @@ class PassengerNotifier(Notifier):
         raise NotImplementedError
 
     def get_disable_url(self):
-        return 'travel/index/#/rides'
+        raise NotImplementedError
 
 
 class PassengerJoinedNotifier(PassengerNotifier):
@@ -61,6 +69,9 @@ class PassengerJoinedNotifier(PassengerNotifier):
                           formatter=PassengerJoinedEmailFormatter(passenger=self.passenger,
                                                                   disable_url=self.get_disable_link())).notify()
 
+    def get_disable_url(self):
+        return self.get_disable_url_for_ride(self.passenger.ride)
+
 
 class PassengerDeletedNotifier(PassengerNotifier):
     def notify(self):
@@ -68,6 +79,9 @@ class PassengerDeletedNotifier(PassengerNotifier):
             EmailNotifier(to=[self.passenger.travel_user.user.email, self.passenger.ride.driver.user.email],
                           formatter=PassengerDeleteEmailFormatter(passenger=self.passenger,
                                                                   disable_url=self.get_disable_link())).notify()
+
+    def get_disable_url(self):
+        return self.get_disble_url_for_passenger()
 
 
 class RideNotifier(Notifier):
@@ -86,9 +100,7 @@ class RideNotifier(Notifier):
         raise NotImplementedError
 
     def get_disable_url(self):
-        template = 'travel/index/#/manage/ride/{}'
-        direction = 'back' if self.ride.is_return else 'there'
-        return template.format(direction)
+        return self.get_disble_url_for_passenger()
 
 
 class RideChangeNotifier(RideNotifier):
