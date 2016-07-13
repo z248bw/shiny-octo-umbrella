@@ -28,7 +28,6 @@
 <body ng-app="TravelApp">
 
 <div ng-controller="RegisterUserController as vm" class="padded">
-    <div>Az alkalmazas hasznalatabol eredo karokert a szerzo semmilyen felelosseget nem vallal!</div>
     <md-content layout-padding layout-gt-xs="row">
         <form name="userForm">
 
@@ -42,6 +41,11 @@
                     Regisztralas
                 </md-button>
             </h4>
+
+            <div class="warning">
+                <strong>Figyelem!</strong>
+                Az alkalmazas hasznalatabol eredo karokert a szerzo semmilyen felelosseget nem vallal!
+            </div>
 
             <md-input-container class="md-block" flex-gt-xs>
                 <label>Kozos titok</label>
@@ -115,6 +119,10 @@
                 <input required name="email"
                        ng-model="vm.travel_user.user.email"
                        pattern="^\S{1,40}$">
+                <div class="hint">
+                    Azert van ra szukseg, hogy a soforod/utasaid kapcsolatba tudjanak lepni veled,
+                    illetve amennyiben beallitod az alkalmazas erre a cimre fogja az ertesiteseket kuldeni.
+                </div>
                 <div ng-messages="userForm.email.$error">
                     <div ng-message="pattern">
                         A keresztneved legalabb 1 es maximum 40 karakter hosszu lehet
@@ -128,7 +136,10 @@
                 <input required name="userPhone"
                        ng-model="vm.travel_user.phone"
                        pattern="^[0-9]{2} [0-9]{3}-[0-9]{4}$">
-                <div class="hint">90 123-4567</div>
+                <div class="hint">
+                    Formatum: 90 123-4567. Azert van ra szukseg, hogy a soforod/utasaid kapcsolatba
+                    tudjanak lepni veled.
+                </div>
                 <div ng-messages="userForm.userPhone.$error">
                     <div ng-message="required">A mezo kitoltese kotelezo!</div>
                     <div ng-message="pattern">

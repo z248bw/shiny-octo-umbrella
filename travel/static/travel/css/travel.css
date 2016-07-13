@@ -67,3 +67,12 @@
     color:#ba2121;
     display: block;
 }
+
+.warning {
+    border-radius:4px;
+    border-style: solid;
+    border-width: 1px;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442
+}
