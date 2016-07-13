@@ -26,7 +26,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 REGISTRATION_PASSPHRASE = os.environ['REGISTRATION_PASSPHRASE']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Application definition
 
@@ -164,5 +164,5 @@ EMAIL_USE_TLS = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 #TODO: this is for testing!
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
