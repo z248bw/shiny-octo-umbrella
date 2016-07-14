@@ -93,6 +93,18 @@ describe('Given a TravelController', function() {
         })
     );
 
+    it('while the route changes the isPageLoading should be true',
+        inject(function($rootScope) {
+            var ctrl = createTravelControllerWithUser([], []);
+
+            expect(ctrl.isPageLoading).toBe(false);
+            $rootScope.$broadcast("$routeChangeStart");
+            expect(ctrl.isPageLoading).toBe(true);
+            $rootScope.$broadcast("$routeChangeSuccess");
+            expect(ctrl.isPageLoading).toBe(false);
+        })
+    );
+
     function createTravelControllerWithUser(passenger_of_rides, driven_rides) {
         $httpBackend.expectGET('/rest/1/travel_users/me/')
             .respond(createMockTravelUser(passenger_of_rides, driven_rides));
@@ -101,7 +113,8 @@ describe('Given a TravelController', function() {
 
         return ctrl;
     }
-     it('when clicking the manage profile button the user will be redirected to the manage profile page',
+
+    it('when clicking the manage profile button the user will be redirected to the about page',
         inject(function(Dialog) {
             var ctrl = createTravelControllerWithUser([], []);
             $httpBackend.expectGET('/rest/1/app/about/')

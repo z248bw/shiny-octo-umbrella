@@ -4,9 +4,9 @@
     angular.module('TravelApp')
         .controller('TravelController', TravelController);
 
-    TravelController.$inject = ['$location', '$window', 'TravelManager', 'UserProfile', 'App', 'Dialog'];
+    TravelController.$inject = ['$rootScope', '$location', '$window', 'TravelManager', 'UserProfile', 'App', 'Dialog'];
 
-    function TravelController($location, $window, TravelManager, UserProfile, App, Dialog) {
+    function TravelController($rootScope, $location, $window, TravelManager, UserProfile, App, Dialog) {
 
         var vm = this;
         vm.me = null;
@@ -16,6 +16,10 @@
         vm.showAbout = showAbout;
         vm.logout = logout;
         vm.isLoggedIn = isLoggedIn;
+        vm.isPageLoading = false;
+
+        $rootScope.$on('$routeChangeStart', onRouteChangeStart);
+        $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
 
         var action = function() {
             vm.me = UserProfile.getUserProfile();
@@ -59,6 +63,14 @@
 
         function isLoggedIn() {
             return UserProfile.isLoggedIn();
+        }
+
+        function onRouteChangeStart(event, toState, toParams, fromState, fromParams) {
+            vm.isPageLoading = true;
+        }
+
+        function onRouteChangeSuccess(event, toState, toParams, fromState, fromParams) {
+            vm.isPageLoading = false;
         }
 
         action();

@@ -26,9 +26,9 @@
 </head>
 {% verbatim %}
 <body ng-app="TravelApp">
-<div>
+<div ng-controller="TravelController as travel">
 
-    <md-toolbar ng-controller="TravelController as travel">
+    <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>
                 <a href="/travel/index">Utazas szervezo</a>
@@ -59,7 +59,12 @@
         </div>
     </md-toolbar>
 
-    <div ng-view></div>
+    <div ng-hide="travel.isPageLoading" ng-view></div>
+    <md-progress-circular
+            class="centered"
+            ng-show="travel.isPageLoading"
+            md-mode="indeterminate">
+    </md-progress-circular>
 
 </div>
 

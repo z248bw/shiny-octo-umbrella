@@ -20,22 +20,21 @@
     background-color: '#9FA8DA';
 }
 
-.centered {
+.centered
+{
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
+}
+
+.login-dialog {
     border-radius:5px;
     border-style: solid;
     border-width: 1px;
     padding: 2%;
     text-align: center;
     background-color:#ffffff
-}
-
-.login-dialog {
-    width: 30%;
-    height: 30%;
 }
 
 .login-row {
