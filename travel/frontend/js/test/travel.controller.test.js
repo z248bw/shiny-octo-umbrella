@@ -97,11 +97,11 @@ describe('Given a TravelController', function() {
         inject(function($rootScope) {
             var ctrl = createTravelControllerWithUser([], []);
 
-            expect(ctrl.isPageLoading).toBe(false);
+            expect(ctrl.isPageLoading()).toBe(false);
             $rootScope.$broadcast("$routeChangeStart");
-            expect(ctrl.isPageLoading).toBe(true);
+            expect(ctrl.isPageLoading()).toBe(true);
             $rootScope.$broadcast("$routeChangeSuccess");
-            expect(ctrl.isPageLoading).toBe(false);
+            expect(ctrl.isPageLoading()).toBe(false);
         })
     );
 

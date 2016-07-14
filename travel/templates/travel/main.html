@@ -31,7 +31,7 @@
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>
-                <a href="/travel/index">Utazas szervezo</a>
+                <a href="/travel/index/#rides/">Utazas szervezo</a>
             </h2>
             <md-menu ng-show="travel.isLoggedIn()">
                 <md-button aria-label="Open demo menu" ng-click="$mdOpenMenu($event)">
@@ -59,10 +59,10 @@
         </div>
     </md-toolbar>
 
-    <div ng-hide="travel.isPageLoading" ng-view></div>
+    <div ng-hide="travel.isPageLoading()" ng-view></div>
     <md-progress-circular
             class="centered"
-            ng-show="travel.isPageLoading"
+            ng-show="travel.isPageLoading()"
             md-mode="indeterminate">
     </md-progress-circular>
 

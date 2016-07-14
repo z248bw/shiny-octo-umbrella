@@ -4,9 +4,9 @@
     angular.module('TravelApp')
         .controller('ManageUserProfileController', ManageUserProfileController);
 
-    ManageUserProfileController.$inject = ['$window', 'UserProfile', 'Dialog'];
+    ManageUserProfileController.$inject = ['$window', 'UserProfile', 'Dialog', 'ProgressManager'];
 
-    function ManageUserProfileController($window, UserProfile, Dialog) {
+    function ManageUserProfileController($window, UserProfile, Dialog, ProgressManager) {
 
         var vm = this;
         vm.travel_user = null;
@@ -27,10 +27,13 @@
         }
 
         function updateUserProfile() {
-            var userProfile = UserProfile.update(vm.travel_user);
-            userProfile.then(function() {
-                Dialog.showSuccess('Felhasznaloi profile sikeresen frissitve!');
-            });
+            ProgressManager.decorate({execute:function(){
+                var userProfile = UserProfile.update(vm.travel_user);
+                userProfile.then(function() {
+                    Dialog.showSuccess('Felhasznaloi profile sikeresen frissitve!');
+                });
+                return userProfile;
+            }});
         }
 
         function showUserProfileDeleteDialog() {

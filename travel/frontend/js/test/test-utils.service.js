@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('TestUtils', []);
+angular.module('TestUtils', ['ngMaterial']);
 
 angular.module('TestUtils').config(TestUtilsConfig);
 

@@ -3,15 +3,9 @@
 describe('Given a TravelManager instance', function() {
 
     var mockDialog = {};
-    var mockRide = {
-        remove: function(pk, onSuccess) {
-            onSuccess();
-        }
-    };
 
     beforeEach(module("TravelServices", function ($provide) {
         $provide.value("$mdDialog", mockDialog);
-        $provide.value("Ride", mockRide);
     }));
 
     beforeEach(module('TestUtils'));
@@ -30,6 +24,14 @@ describe('Given a TravelManager instance', function() {
     });
 
     it('on passenger add the new passenger will be emitted on the rootscope',
+        function() {
+            spyOn($rootScope, "$emit")
+            TestUtils.addPassengerThere('1');
+            expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_ADDED", TestUtils.createPassengerThere('1'));
+        }
+    );
+
+    it('while the passenger ',
         function() {
             spyOn($rootScope, "$emit")
             TestUtils.addPassengerThere('1');
@@ -132,7 +134,9 @@ describe('Given a TravelManager instance', function() {
             TravelManager.addDriver(driver);
 
             spyOn($rootScope, "$emit")
+            $httpBackend.expectDELETE('/rest/1/rides/1/').respond({});
             TravelManager.getDriverThere().remove()
+            $httpBackend.flush();
 
             expect($rootScope.$emit).toHaveBeenCalledWith("DRIVER_DELETED", emittedDriver);
             expect(TravelManager.getDriverThere().model).toBe(null);
@@ -154,7 +158,9 @@ describe('Given a TravelManager instance', function() {
     it('a driver can be deleted and then added',
         function() {
             TravelManager.addDriver(TestUtils.createRideThere('1'));
+            $httpBackend.expectDELETE('/rest/1/rides/1/').respond({});
             TravelManager.getDriverThere().remove();
+            $httpBackend.flush();
             TravelManager.addDriver(TestUtils.createRideThere('2'));
             expect(TravelManager.getDriverThere().model.pk).toBe('2');
             expect(TravelManager.getPassengerThere().model).toBe(null);
