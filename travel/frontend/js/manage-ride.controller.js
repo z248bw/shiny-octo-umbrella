@@ -12,10 +12,12 @@
         'Dialog',
         'Ride',
         'Passenger',
-        'TravelManager'
+        'TravelManager',
+        'Utils'
     ];
 
-    function ManageRideController($scope, $rootScope, $location, $routeParams, Dialog, Ride, Passenger, TravelManager) {
+    function ManageRideController(
+        $scope, $rootScope, $location, $routeParams, Dialog, Ride, Passenger, TravelManager, Utils) {
 
         var vm = this;
         vm.driver = null;
@@ -145,7 +147,7 @@
             for (var i = 0; i < selectedPassengers.length; i++)
             {
                 var passenger = selectedPassengers[i];
-                removeFromPassengers(passenger);
+                Utils.removeElementFromArray(passenger, vm.passengers);
                 Passenger.remove({pk: passenger.pk});
             }
         }
@@ -160,20 +162,6 @@
                 }
             }
             return selectedPassengers;
-        }
-
-        function removeFromPassengers(passenger) {
-            vm.passengers.splice(getIndexOfPassenger(passenger), 1);
-         }
-
-        function getIndexOfPassenger(passenger) {
-            for(var i = 0; i < vm.passengers.length; i++)
-            {
-                if (vm.passengers[i].pk === passenger.pk)
-                {
-                    return i;
-                }
-            }
         }
 
         activate();

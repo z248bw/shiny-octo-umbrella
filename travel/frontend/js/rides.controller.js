@@ -4,9 +4,9 @@
     angular.module('TravelApp')
         .controller('RidesController', RidesController);
 
-    RidesController.$inject = ['$scope', '$rootScope', 'Ride', 'TravelManager'];
+    RidesController.$inject = ['$scope', '$rootScope', 'Ride', 'TravelManager', 'Utils'];
 
-    function RidesController($scope, $rootScope, Ride, TravelManager) {
+    function RidesController($scope, $rootScope, Ride, TravelManager, Utils) {
 
         var vm = this;
         vm.travel = TravelManager;
@@ -18,6 +18,8 @@
             $scope.showPassengerJoin = showPassengerJoin;
             $rootScope.$on('PASSENGER_DELETED', onPassengerDeleted);
             $rootScope.$on('PASSENGER_ADDED', onPassengerAdded);
+            $rootScope.$on('DRIVER_ADDED', onDriverAdded);
+            $rootScope.$on('DRIVER_DELETED', onDriverDeleted);
         };
 
         function showPassengerJoin(ev, ride) {
@@ -71,6 +73,28 @@
             return rides.filter(function(ride){
                 return ride.is_return;
             });
+        }
+
+        function onDriverAdded(event, ride) {
+            if (ride.is_return)
+            {
+                vm.back.push(ride);
+            }
+            else
+            {
+                vm.there.push(ride);
+            }
+        }
+
+        function onDriverDeleted(event, ride) {
+            if (ride.is_return)
+            {
+                Utils.removeElementFromArray(ride, vm.back);
+            }
+            else
+            {
+                Utils.removeElementFromArray(ride, vm.there);
+            }
         }
 
         activate();
