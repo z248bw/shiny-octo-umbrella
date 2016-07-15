@@ -30,12 +30,16 @@ module.exports = function(config) {
       'node_modules/angular-animate/angular-animate.js',
       'node_modules/angular-animate/angular-messages.js',
       'node_modules/angular-aria/angular-aria.js',
+
       'node_modules/angular-material/angular-material.js',
       'node_modules/angular-material/angular-material-mocks.js',
 
-//      'travel/frontend/js/*.js',
+      'node_modules/moment/moment.js',
+      'node_modules/angular-moment-picker/src/angular-moment-picker.js',
+
+      'travel/frontend/js/*.js',
 //      'travel/static/travel/js/all.js',
-      'travel/static/travel/js/all.min.js',
+//      'travel/static/travel/js/all.min.js',
       'travel/frontend/js/test/*.js'
     ],
 

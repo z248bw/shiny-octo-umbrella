@@ -88,7 +88,7 @@ describe('Given a ManageRideController', function() {
         }
     );
 
-    it('if the ride was not null it should update the existing one on save',
+    xit('if the ride was not null it should update the existing one on save',
         function() {
             var passengers = [],
                 ride = TestUtils.createRideThere('1'),

@@ -27,7 +27,6 @@
         vm.showPassengerDeleteDialog = showPassengerDeleteDialog;
         vm.isDriverExists = isDriverExists;
 
-
         $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
             vm.driver.model.start_time = timepicker.datetime;
         });
@@ -41,6 +40,7 @@
         }
 
         var activate = function() {
+            vm.driver = {model: {start_time: new Date()}};
             vm.driver = getDriver();
             fetchPassengers();
             initSave();
@@ -68,11 +68,16 @@
             return initDriverDirection(driver, direction);
         }
 
+        //TODO test, think it over etc
         function initDriverDirection(driver, direction) {
             if (driver.model === null)
             {
-                driver.model = {is_return: direction === 'there' ? false : true};
+                driver.model = {
+                    is_return: direction === 'there' ? false : true,
+                    start_time: new Date()
+                };
             }
+            driver.model.start_time = new Date(driver.model.start_time);
             return driver;
         }
 

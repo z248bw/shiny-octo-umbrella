@@ -54,7 +54,11 @@
                 </div>
             </md-input-container>
 
-            <timepicker-element datetime="manager.driver.model.start_time"></timepicker-element>
+            <div class="hint">Indulasi ido</div>
+            <div moment-picker="manager.driver.model.start_time"
+                 format="YYYY-MM-DDThh:mm">
+                {{ manager.driver.model.start_time }}
+            </div>
 
             <md-input-container class="md-block" flex-gt-xs>
                 <label>Indulasi/Erkezesi hely</label>
