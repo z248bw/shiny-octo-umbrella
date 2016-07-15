@@ -52,6 +52,9 @@ class Ride(AbstractTravelModel):
     class NotEnoughFreeSeatsException(TravelException):
         message = 'A ride should have place for at least one passenger'
 
+    class NotEnoughSeatsException(TravelException):
+        message = 'A ride should have at least as many seats as passengers'
+
     def get_passengers(self):
         return Passenger.objects.filter(ride=self.pk)
 
@@ -59,12 +62,17 @@ class Ride(AbstractTravelModel):
         return self.num_of_seats - len(self.get_passengers())
 
     def save(self, *args, **kwargs):
-        if self.num_of_seats < 1:
-            raise Ride.NotEnoughFreeSeatsException
+        self.check_number_of_seats()
         self.check_driver_contact_info()
         self.check_available_travels_for_user(travels_of_user=Ride.objects.filter(driver=self.driver), new_travel=self)
         self.update_old_instance_reference()
         super(Ride, self).save(*args, **kwargs)
+
+    def check_number_of_seats(self):
+        if self.num_of_seats < 1:
+            raise Ride.NotEnoughFreeSeatsException
+        if self.num_of_seats < len(self.get_passengers()):
+            raise Ride.NotEnoughSeatsException
 
     def check_driver_contact_info(self):
         if self.driver.user.last_name == '' \

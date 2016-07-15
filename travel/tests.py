@@ -227,6 +227,16 @@ class RideTest(TestCase):
         passenger.save()
         self.assertEqual('1234567', passenger.travel_user.phone)
 
+    def test_ride_cannot_be_updated_to_have_less_seats_than_passengers(self):
+        ride = get_ride()
+        ride.num_of_seats = 2
+        ride.save()
+        create_passenger_user(ride)
+        create_passenger_user(ride)
+        ride.num_of_seats = 1
+        with self.assertRaises(Ride.NotEnoughSeatsException):
+            ride.save()
+
 
 class RideChangeUnitTest(TestCase):
     def test_get_changes_on_unsaved_ride(self):
