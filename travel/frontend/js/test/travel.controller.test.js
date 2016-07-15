@@ -93,18 +93,6 @@ describe('Given a TravelController', function() {
         })
     );
 
-    it('while the route changes the isPageLoading should be true',
-        inject(function($rootScope) {
-            var ctrl = createTravelControllerWithUser([], []);
-
-            expect(ctrl.isPageLoading()).toBe(false);
-            $rootScope.$broadcast("$routeChangeStart");
-            expect(ctrl.isPageLoading()).toBe(true);
-            $rootScope.$broadcast("$routeChangeSuccess");
-            expect(ctrl.isPageLoading()).toBe(false);
-        })
-    );
-
     function createTravelControllerWithUser(passenger_of_rides, driven_rides) {
         $httpBackend.expectGET('/rest/1/travel_users/me/')
             .respond(createMockTravelUser(passenger_of_rides, driven_rides));

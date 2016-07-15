@@ -10,9 +10,9 @@
         var isLoading = false,
             startCounter = 0;
 
-       $rootScope.$on('$routeChangeStart', onLoadStart);
-       $rootScope.$on('$routeChangeSuccess', onLoadFinish);
-       $rootScope.$on('$routeChangeError', onLoadFinish);
+       $rootScope.$on('$locationChangeStart', onLoadStart);
+       $rootScope.$on('$locationChangeSuccess', onLoadFinish);
+       $rootScope.$on('$locationChangeError', onLoadFinish);
 
         return {
             isLoading: getIsLoading,

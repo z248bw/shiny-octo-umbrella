@@ -109,4 +109,14 @@ describe('Given a ProgressManager instance', function() {
         }
     );
 
+    it('while the location changes the isPageLoading should be true',
+        inject(function($rootScope) {
+            expect(ProgressManager.isLoading()).toBe(false);
+            $rootScope.$broadcast("$locationChangeStart");
+            expect(ProgressManager.isLoading()).toBe(true);
+            $rootScope.$broadcast("$locationChangeSuccess");
+            expect(ProgressManager.isLoading()).toBe(false);
+        })
+    );
+
 });

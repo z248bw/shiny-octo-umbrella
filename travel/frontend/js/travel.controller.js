@@ -72,14 +72,6 @@
             return UserProfile.isLoggedIn();
         }
 
-        function onRouteChangeStart(event, toState, toParams, fromState, fromParams) {
-            vm.isPageLoading = true;
-        }
-
-        function onRouteChangeSuccess(event, toState, toParams, fromState, fromParams) {
-            vm.isPageLoading = false;
-        }
-
         function isPageLoading() {
             return ProgressManager.isLoading();
         }
