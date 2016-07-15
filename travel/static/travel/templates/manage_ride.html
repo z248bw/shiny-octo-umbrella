@@ -25,12 +25,18 @@
                 <input required name="numOfSeats"
                        ng-model="manager.driver.model.num_of_seats"
                        required type="number"
-                       min="1"
+                       min="{{manager.passengers.length}}"
                        max="9999">
                 <div ng-messages="rideForm.numOfSeats.$error">
-                    <div ng-message="required">A mezo kitoltese kotelezo!</div>
-                    <div ng-message="min">A minimalis helyek szama legalabb 1!</div>
-                    <div ng-message="max">9999 szabad hely felett at kell allitanod a jarmu tipusat hajora!</div>
+                    <div ng-message="required">
+                        A mezo kitoltese kotelezo!
+                    </div>
+                    <div ng-message="min">
+                        A minimalis helyek szama legalabb annyi kell legyen mint az utasaid szama({{manager.passengers.length}})!
+                    </div>
+                    <div ng-message="max">
+                        9999 szabad hely felett at kell allitanod a jarmu tipusat hajora!
+                    </div>
                 </div>
             </md-input-container>
 
