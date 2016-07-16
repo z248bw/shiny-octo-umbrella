@@ -71,7 +71,7 @@
                 <label>Indulasi/Erkezesi hely</label>
                 <input required name="location"
                        ng-model="manager.driver.model.start_location"
-                       pattern="^[a-zA-Z0-9 . : /]{5,20}$">
+                       pattern="^[a-zA-Z0-9 . : /]{5,100}$">
                 <div class="hint">Budapest Futrinka utca 3/a</div>
                 <div ng-messages="rideForm.location.$error">
                     <div ng-message="required">A mezo kitoltese kotelezo!</div>
