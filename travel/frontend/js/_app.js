@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('TravelApp', ['ngResource', 'ngRoute', 'ngMaterial', 'TravelServices', 'moment-picker'])
+        .module('TravelApp', ['ngResource', 'ngRoute', 'ngMessages', 'ngMaterial', 'TravelServices', 'moment-picker'])
         .config(TravelAppConfig);
 
     angular.module('TravelServices', ['ngResource']);
