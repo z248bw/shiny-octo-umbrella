@@ -25,11 +25,15 @@
                 <input required name="numOfSeats"
                        ng-model="manager.driver.model.num_of_seats"
                        required type="number"
+                       pattern="^[0-9]*$"
                        min="{{manager.getMinNumOfSeats()}}"
                        max="9999">
                 <div ng-messages="rideForm.numOfSeats.$error">
                     <div ng-message="required">
                         A mezo kitoltese kotelezo!
+                    </div>
+                    <div ng-message="pattern">
+                        A mezobe csak egesz pozitiv szamokat lehet irni!
                     </div>
                     <div ng-message="min">
                         A minimalis helyek szama legalabb annyi kell legyen mint az utasaid szama({{manager.passengers.length}})
@@ -46,10 +50,12 @@
                 <input required name="price"
                        ng-model="manager.driver.model.price"
                        required type="number"
+                       pattern="^[0-9]*$"
                        min="0"
                        max="99999">
                 <div ng-messages="rideForm.price.$error">
                     <div ng-message="required">A mezo kitoltese kotelezo!</div>
+                    <div ng-message="pattern">A mezobe csak egesz pozitiv szamokat lehet irni!</div>
                     <div ng-message="min">A minimalis benzinkoltseg 0!</div>
                     <div ng-message="max">A maximalis benzinkoltseg 99999!</div>
                 </div>
