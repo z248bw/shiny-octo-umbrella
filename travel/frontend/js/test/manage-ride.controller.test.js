@@ -51,6 +51,22 @@ describe('Given a ManageRideController', function() {
         }
     );
 
+    it('direction should be set to there if the url direction is there',
+        inject(function(Ride) {
+            var ctrl = $controller('ManageRideController', {$scope: $scope, $routeParams: {direction: 'there'}});
+
+            expect(ctrl.direction).toBe('there');
+        })
+    );
+
+    it('direction should be set to back if the url direction is back',
+        inject(function(Ride) {
+            var ctrl = $controller('ManageRideController', {$scope: $scope, $routeParams: {direction: 'back'}});
+
+            expect(ctrl.direction).toBe('back');
+        })
+    );
+
     it('if the ride is null the passengers should not be fetched',
         inject(function(Ride) {
             spyOn(Ride, 'getPassengers');

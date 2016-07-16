@@ -27,6 +27,7 @@
         vm.showPassengerDeleteDialog = showPassengerDeleteDialog;
         vm.isDriverExists = isDriverExists;
         vm.getMinNumOfSeats = getMinNumOfSeats;
+        vm.direction = 'ismeretlen';
 
         $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
             vm.driver.model.start_time = timepicker.datetime;
@@ -52,13 +53,14 @@
             {
                 throw new Error('Direction not specified');
             }
+            vm.direction = $routeParams.direction;
 
-            return getDriverByDirection($routeParams.direction);
+            return getDriverByDirection();
         }
 
-        function getDriverByDirection(direction) {
+        function getDriverByDirection() {
             var driver;
-            if (direction === 'there')
+            if (vm.direction === 'there')
             {
                 driver = TravelManager.getDriverThere();
             }
@@ -66,15 +68,15 @@
             {
                 driver = TravelManager.getDriverBack();
             }
-            return initDriverDirection(driver, direction);
+            return initDriverDirection(driver);
         }
 
         //TODO test, think it over etc
-        function initDriverDirection(driver, direction) {
+        function initDriverDirection(driver) {
             if (driver.model === null)
             {
                 driver.model = {
-                    is_return: direction === 'there' ? false : true,
+                    is_return: vm.direction === 'there' ? false : true,
                     start_time: new Date()
                 };
             }

@@ -3,6 +3,9 @@
     <md-content layout-padding layout-gt-xs="row">
         <form name="rideForm">
 
+            <h3 ng-show="manager.direction === 'there'">Odaut</h3>
+            <h3 ng-show="manager.direction === 'back'">Visszaut</h3>
+
             <h4>
                 <span>Jarmu menedzsment</span>
                 <md-button class="md-accent md-raised"
