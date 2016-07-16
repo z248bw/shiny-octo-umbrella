@@ -125,10 +125,10 @@ class TravelUserViewSet(viewsets.ModelViewSet):
 
 
 class RegistrationUserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=20)
-    password = serializers.CharField(max_length=20)
-    first_name = serializers.CharField(max_length=20)
-    last_name = serializers.CharField(max_length=20)
+    username = serializers.CharField(max_length=30)
+    password = serializers.CharField(max_length=30)
+    first_name = serializers.CharField(max_length=30)
+    last_name = serializers.CharField(max_length=30)
     email = serializers.EmailField()
 
     class Meta:
