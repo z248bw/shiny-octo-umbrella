@@ -106,6 +106,13 @@ class RideTest(TestCase):
         with self.assertRaises(Passenger.NoMoreSpaceException):
             create_passenger_user(ride_with_no_space)
 
+    def test_update_ride_there_when_you_have_a_ride_back(self):
+        driver = create_travel_user()
+        there = create_ride(driver, is_return=False)
+        create_ride(driver, is_return=True)
+        there.num_of_seats = 9
+        there.save()
+
     def test_create_ride_passenger_if_ride_has_free_seats(self):
         ride = create_ride()
         passenger = create_passenger_user(ride)
@@ -146,7 +153,7 @@ class RideTest(TestCase):
         other_ride = create_ride(is_return=True)
         Passenger(travel_user=ride.driver, ride=other_ride).save()
 
-    def test_driver_cannot_drive_multiple_rides(self):
+    def test_driver_cannot_drive_multiple_rides_in_the_same_direction(self):
         user = create_travel_user()
         ride = get_ride()
         ride.driver = user

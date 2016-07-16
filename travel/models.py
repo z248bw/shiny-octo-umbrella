@@ -18,8 +18,6 @@ class AbstractTravelModel(models.Model):
     def check_available_travels_for_user(self, travels_of_user, new_travel):
         if len(travels_of_user) == 0:
             return
-        if len(travels_of_user) > 1:
-            TravelException.raise_exception('You already have a ride there and back')
         travel = travels_of_user[0]
         if self.is_a_new_instance() and self.is_travel_for_the_same_direction(travel, new_travel):
             TravelException.raise_exception('You already have a ride in that direction')
