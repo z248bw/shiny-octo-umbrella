@@ -101,6 +101,30 @@ describe('Given a ManageRideController', function() {
         }
     );
 
+    it('if the ride has zero passengers getMinNumOfSeats should return 1',
+        function() {
+            var passengers = [],
+                ride = TestUtils.createRideThere('1'),
+                ctrl = createManageRideControllerThere(ride, passengers);
+
+            expect(ctrl.getMinNumOfSeats()).toBe(1);
+        }
+    );
+
+    it('if the ride has 3 passengers getMinNumOfSeats should return 3',
+        function() {
+            var passengers = [
+                    TestUtils.createPassengerThere('1'),
+                    TestUtils.createPassengerThere('2'),
+                    TestUtils.createPassengerThere('3'),
+                ],
+                ride = TestUtils.createRideThere('1'),
+                ctrl = createManageRideControllerThere(ride, passengers);
+
+            expect(ctrl.getMinNumOfSeats()).toBe(3);
+        }
+    );
+
     it('deleting a ride should delete it on the backend as well',
         function() {
             var passengers = [],

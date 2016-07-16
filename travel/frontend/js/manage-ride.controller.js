@@ -26,6 +26,7 @@
         vm.showDriverDeleteDialog = showDriverDeleteDialog;
         vm.showPassengerDeleteDialog = showPassengerDeleteDialog;
         vm.isDriverExists = isDriverExists;
+        vm.getMinNumOfSeats = getMinNumOfSeats;
 
         $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
             vm.driver.model.start_time = timepicker.datetime;
@@ -167,6 +168,15 @@
                 }
             }
             return selectedPassengers;
+        }
+
+        function getMinNumOfSeats() {
+            if (vm.passengers.length === 0)
+            {
+                return 1;
+            }
+
+            return vm.passengers.length;
         }
 
         activate();
