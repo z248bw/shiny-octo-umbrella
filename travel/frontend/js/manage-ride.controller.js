@@ -29,9 +29,6 @@
         vm.getMinNumOfSeats = getMinNumOfSeats;
         vm.direction = 'ismeretlen';
 
-        $scope.$on('DATETIME_CHANGED', function(event, timepicker) {
-            vm.driver.model.start_time = timepicker.datetime;
-        });
         $rootScope.$on('DRIVER_ADDED', navigateToRides);
         $rootScope.$on('DRIVER_DELETED', navigateToRides);
 
@@ -68,11 +65,12 @@
             {
                 driver = TravelManager.getDriverBack();
             }
-            return initDriverDirection(driver);
+
+            return initDriver(driver);
         }
 
         //TODO test, think it over etc
-        function initDriverDirection(driver) {
+        function initDriver(driver) {
             if (driver.model === null)
             {
                 driver.model = {
@@ -80,7 +78,6 @@
                     start_time: new Date()
                 };
             }
-            driver.model.start_time = new Date(driver.model.start_time);
             return driver;
         }
 

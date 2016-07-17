@@ -8,19 +8,20 @@
 
             <h4>
                 <span>Jarmu menedzsment</span>
-                <md-button class="md-accent md-raised"
-                           hide-xs flex
-                           ng-disabled="rideForm.$invalid"
-                           flex-offset="50"
-                           ng-click="manager.showDriverSaveDialog($event)">
-                    Letrehozas/Modositas
-                </md-button>
-                <md-button ng-show="manager.isDriverExists()"
-                           class="md-accent md-raised"
-                           hide-xs flex
-                           ng-click="manager.showDriverDeleteDialog($event)">
-                    Torles
-                </md-button>
+                <div layout-gt-sm="row">
+                    <md-button class="md-accent md-raised"
+                               hide-xs flex
+                               ng-disabled="rideForm.$invalid"
+                               ng-click="manager.showDriverSaveDialog($event)">
+                        Letrehozas/Modositas
+                    </md-button>
+                    <md-button ng-show="manager.isDriverExists()"
+                               class="md-accent md-raised"
+                               hide-xs flex
+                               ng-click="manager.showDriverDeleteDialog($event)">
+                        Torles
+                    </md-button>
+                </div>
             </h4>
 
             <md-input-container class="md-block" flex-gt-xs>
@@ -39,7 +40,8 @@
                         A mezobe csak egesz pozitiv szamokat lehet irni!
                     </div>
                     <div ng-message="min">
-                        A minimalis helyek szama legalabb annyi kell legyen mint az utasaid szama({{manager.passengers.length}})
+                        A minimalis helyek szama legalabb annyi kell legyen mint az utasaid
+                        szama({{manager.passengers.length}})
                         es tobbnek kell lennie nullanal!
                     </div>
                     <div ng-message="max">
@@ -157,6 +159,6 @@
     <div>
         <h5>Email ertesitesek</h5>
         <md-switch ng-model="manager.driver.model.notify_when_passenger_joins" aria-label="Switch 1">
-                    ha csatlakozik egy utas
+            ha csatlakozik egy utas
     </div>
 </div>

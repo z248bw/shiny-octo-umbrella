@@ -155,16 +155,6 @@ describe('Given a ManageRideController', function() {
         }
     );
 
-   it('when the DATETIME_CHANGED event fires it should update the model accordingly',
-        function() {
-            var ctrl = $controller('ManageRideController', {$scope: $scope, $routeParams: routeParams});
-
-            $rootScope.$broadcast("DATETIME_CHANGED", {id: 1, datetime: '2016-05-16T20:00'});
-
-            expect(ctrl.driver.model.start_time).toBe('2016-05-16T20:00');
-        }
-    );
-
     it('confirming the passenger delete dialog should fire a passenger delete request',
         function() {
             var passengers = [TestUtils.createPassengerThere('1')],

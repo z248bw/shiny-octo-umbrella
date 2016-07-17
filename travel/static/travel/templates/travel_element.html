@@ -1,4 +1,4 @@
-<div ng-hide="element.object.model == null">
+<div ng-hide="element.object.model.pk == null">
     <md-card class="travel-element">
         <md-card-title layout="row">
             <md-card-title-text>
@@ -28,7 +28,7 @@
     </md-card>
 </div>
 
-<div ng-show="element.object.model == null"
+<div ng-show="element.object.model.pk == null"
      layout="row" layout-align="center">
         <md-button class="md-primary"
         ng-href="/travel/index/#/manage/ride/{{direction}}">
