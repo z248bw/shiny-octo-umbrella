@@ -55,7 +55,7 @@ def build():
     print_green('run build')
     execute('pip install -r requirements.txt')
     execute('npm install')
-    dev_execute('python manage.py collectstatic --no-input')
+    execute('python manage.py collectstatic --no-input')
     print_green('successfully finished build')
 
 
@@ -63,7 +63,8 @@ def test():
     print_green('run test')
     execute('python manage.py test')
     execute('python manage.py check --deploy')
-    execute('./node_modules/karma/bin/karma start --single-run')
+    dev_execute('./node_modules/karma/bin/karma start --single-run')
+    prod_execute('./node_modules/karma/bin/karma start prod.karma.conf.js --single-run')
     print_green('successfully finished test')
 
 
