@@ -6,7 +6,7 @@
             </span>
         </md-card-title-text>
         <md-button class="md-accent md-raised ride-card-button"
-                   ng-show="element.isJoinable"
+                   ng-disabled="!element.isJoinable"
                    ng-click="element.showPassengerJoin($event, ride)">
             Csatlakozas
         </md-button>
