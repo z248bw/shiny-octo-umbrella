@@ -46,6 +46,18 @@
                 </div>
             </md-input-container>
 
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Jelszo megegyszer</label>
+                <input required name="password_again"
+                       type="password"
+                       pattern="^{{vm.travel_user.user.password}}$">
+                <div ng-messages="userForm.password_again.$error">
+                    <div ng-message="pattern">
+                        A jelszavad nem egyezik az elobb megadottal!
+                    </div>
+                </div>
+            </md-input-container>
+
             <div layout-gt-sm="row">
 
                 <md-input-container class="md-block" flex-gt-xs>
