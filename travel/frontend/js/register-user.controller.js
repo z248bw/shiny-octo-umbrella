@@ -22,10 +22,18 @@
         function register() {
             var result = UserProfile.register(vm.travel_user);
             result.$promise.then(function(){
-                $window.location.href = '/travel/index/';
+                Dialog.showSuccess(
+                    'Sikeres regisztracio',
+                    'Kerlek aktivald a profilod az email fiokodba kuldott aktivalo kulccsal',
+                    redirectToLogin
+                );
             }, function(response){
                 Dialog.showError(response.data.detail);
             });
+        }
+
+        function redirectToLogin() {
+            $window.location.href = '/travel/index/';
         }
     }
 }());
