@@ -33,6 +33,7 @@ DEBUG = False
 INSTALLED_APPS = (
     'travel',
     'rest_framework',
+    'registration',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -152,7 +153,11 @@ REST_FRAMEWORK = {
 REST_BASE_PATH = 'rest/'
 REST_VERSION = '1/'
 
+ACCOUNT_ACTIVATION_DAYS = 1
+
+DEFAULT_FROM_EMAIL = 'travelmanager@agiadam-staging.herokuapp.com'
 EMAILNOTIFIER_COOLDOWN = 5
+REGISTRATION_AUTO_LOGIN = False
 
 #TODO: do not forget to set on production!
 # heroku config:add EMAIL_HOST_USER=xxx

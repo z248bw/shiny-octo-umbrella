@@ -2,7 +2,9 @@ import re
 
 from django.contrib.auth import logout, login
 from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import RegexValidator
+from registration.models import RegistrationManager, RegistrationProfile
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -53,7 +55,7 @@ class UserPermissions(permissions.IsAuthenticated):
 
     def has_object_permission(self, request, view, obj):
         return super(UserPermissions, self).has_object_permission(request, view, obj) and \
-        request.user == obj or request.user.is_superuser
+               request.user == obj or request.user.is_superuser
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -160,20 +162,21 @@ class RegistrationViewSet(ViewSet):
 
     @list_route(methods=['post'])
     def travel_user(self, request):
-        user = self.__create_user(request.data['user'])
+        user = self.__create_user(request, request.data['user'])
         travel_user = self.__create_travel_user(request.data, user)
         serializer = TravelUserSerializer(travel_user)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-    def __create_user(self, data):
+    def __create_user(self, request, data):
         user_deserializer = RegistrationUserSerializer(data=data)
         user_deserializer.is_valid(raise_exception=True)
-        return User.objects.create_user(username=user_deserializer.validated_data['username'],
+        user = User.objects.create_user(username=user_deserializer.validated_data['username'],
                                         password=user_deserializer.validated_data['password'],
                                         email=user_deserializer.validated_data['email'],
                                         first_name=user_deserializer.validated_data['first_name'],
                                         last_name=user_deserializer.validated_data['last_name'])
-        # return user_deserializer.save()
+
+        return RegistrationProfile.objects.create_inactive_user(site=get_current_site(request), new_user=user)
 
     def __create_travel_user(self, data, user):
         travel_user_deserializer = TravelUserSerializer(data=data)

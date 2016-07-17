@@ -14,6 +14,7 @@ prefix = settings.REST_BASE_PATH + settings.REST_VERSION
 urlpatterns = [
     url(r'^' + prefix, include(router.urls)),
     url(r'^' + prefix + 'login/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/login/$', django.contrib.auth.views.login, name='login'),
     url(r'^$', views.index, name='index'),
