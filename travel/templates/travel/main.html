@@ -40,11 +40,10 @@
                 <a href="/travel/index/#rides/">Utazas szervezo</a>
             </h2>
             <md-menu ng-show="travel.isLoggedIn()">
-                <md-button aria-label="Open demo menu" ng-click="$mdOpenMenu($event)">
-                    Beallitasok
+                <md-button ng-click="$mdOpenMenu($event)">
+                    {{travel.me.travel_user.user.username}}
                 </md-button>
                 <md-menu-content width="4">
-                    <span style="text-align: center">{{travel.me.travel_user.user.username}}</span>
                     <md-menu-item>
                         <md-button ng-click="travel.showManageUserProfile()">
                             <span md-menu-align-target>Profil</span>
