@@ -26,6 +26,8 @@
                 var self = this;
                 ProgressManager.decorate({execute:function(){
                     return Ride.update({pk: self.model.pk}, self.model, function(response) {
+                        self.model = JSON.parse(angular.toJson(response));
+                        $rootScope.$emit('DRIVER_UPDATED', angular.copy(self.model));
                         Dialog.showSuccess('Jarmu reszletek sikeresen frissitve!');
                     }, function(error) {
                         Dialog.showError(error);

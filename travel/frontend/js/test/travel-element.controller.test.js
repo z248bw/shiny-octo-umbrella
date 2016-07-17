@@ -2,16 +2,7 @@
 
 describe('Given a TravelElementController', function() {
 
-    var mockRide = {
-        remove: function(pk, callback) {
-            callback();
-        }
-    };
-
-    beforeEach(module("TravelServices", function ($provide) {
-        $provide.value("Ride", mockRide);
-    }));
-
+    beforeEach(module('TravelServices'));
     beforeEach(module('TravelApp'));
     beforeEach(module('TestUtils'));
 
@@ -103,9 +94,7 @@ describe('Given a TravelElementController', function() {
             TravelManager.addDriver(TestUtils.createRideThere('1'));
 
             var ctrl = $controller('TravelElementController', {$scope: scope});
-            $httpBackend.expectDELETE('/rest/1/rides/1/').respond({});
-            TravelManager.getDriverThere().remove();
-            $httpBackend.flush();
+            TestUtils.removeDriverThere();
 
             expect(ctrl.object.model).toBe(null);
         }
@@ -178,6 +167,41 @@ describe('Given a TravelElementController', function() {
             expect(ctrl.object.model).toBe(null);
             expect(ctrl.ride).toBe(null);
         }
+    );
+
+    it('travelElementController will update the ride of a driver on DRIVER_UPDATED event',
+        inject(function($rootScope) {
+            var scope = {direction: 'there'};
+            var driver = TestUtils.createRideThere('1');
+            driver.num_of_seats = 1;
+            TravelManager.addDriver(driver);
+
+            var ctrl = $controller('TravelElementController', {$scope: scope});
+            expect(ctrl.ride.num_of_seats).toBe(1);
+
+            var updatedDriver = TestUtils.createRideThere('1');
+            updatedDriver.num_of_seats = 2;
+            $rootScope.$broadcast('DRIVER_UPDATED', updatedDriver);
+
+            expect(ctrl.ride.num_of_seats).toBe(2);
+        })
+    );
+
+    it('travelElementController will not update the ride of a passenger on DRIVER_UPDATED event',
+        inject(function($rootScope) {
+            var scope = {direction: 'there'};
+            var passenger = TestUtils.createPassengerThere('1');
+            TravelManager.addPassenger(passenger);
+
+            var ctrl = $controller('TravelElementController', {$scope: scope});
+            expect(ctrl.ride.num_of_free_seats).toBe(1);
+
+            var updatedRide = TestUtils.createRideThere('1');
+            updatedRide.num_of_free_seats = 2;
+            $rootScope.$broadcast('DRIVER_UPDATED', updatedRide);
+
+            expect(ctrl.ride.num_of_free_seats).toBe(1);
+        })
     );
 
 });

@@ -31,14 +31,6 @@ describe('Given a TravelManager instance', function() {
         }
     );
 
-    it('while the passenger ',
-        function() {
-            spyOn($rootScope, "$emit")
-            TestUtils.addPassengerThere('1');
-            expect($rootScope.$emit).toHaveBeenCalledWith("PASSENGER_ADDED", TestUtils.createPassengerThere('1'));
-        }
-    );
-
     it('a passenger there can be added and only TravelManager.there will be set',
         function() {
             TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
@@ -92,26 +84,21 @@ describe('Given a TravelManager instance', function() {
         }
     );
 
-    it('a passenger there can be updated and only the TravelManager.there will be changed',
-        function() {
-            TravelManager.addPassenger(TestUtils.createPassengerThere('1'));
-            TravelManager.addPassenger(TestUtils.createPassengerThere('2'));
-            expect(TravelManager.getDriverThere().model).toBe(null);
-            expect(TravelManager.getPassengerThere().model.pk).toBe('2');
-            expect(TravelManager.getPassengerBack().model).toBe(null);
-            expect(TravelManager.getDriverBack().model).toBe(null);
-        }
-    );
+    it('DRIVER_UPDATED event will be fired when the driver is updated',
+        inject(function($rootScope) {
+            var driver = TestUtils.createRideThere('1');
+            driver.num_of_seats = 1;
+            var emittedDriver = angular.copy(driver);
+            emittedDriver.num_of_seats = 2;
+            TravelManager.addDriver(driver);
 
-    it('a driver there can be updated and only the TravelManager.there will be changed',
-        function() {
-            TravelManager.addDriver(TestUtils.createRideThere('1'));
-            TravelManager.addDriver(TestUtils.createRideThere('2'));
-            expect(TravelManager.getDriverThere().model.pk).toBe('2');
-            expect(TravelManager.getPassengerThere().model).toBe(null);
-            expect(TravelManager.getPassengerBack().model).toBe(null);
-            expect(TravelManager.getDriverBack().model).toBe(null);
-        }
+            spyOn($rootScope, "$emit");
+            TravelManager.getDriverThere().model.num_of_seats = 2;
+            $httpBackend.expectPUT('/rest/1/rides/1/').respond(emittedDriver);
+            TravelManager.getDriverThere().modify();
+            $httpBackend.flush();
+            expect($rootScope.$emit).toHaveBeenCalledWith("DRIVER_UPDATED", emittedDriver);
+        })
     );
 
     it('when a passenger is deleted it will be emit on the rootscope and the model will be set to null',

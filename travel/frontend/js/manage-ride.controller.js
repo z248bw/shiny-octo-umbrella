@@ -39,7 +39,6 @@
         }
 
         var activate = function() {
-            vm.driver = {model: {start_time: new Date()}};
             vm.driver = getDriver();
             fetchPassengers();
             initSave();
@@ -69,7 +68,6 @@
             return initDriver(driver);
         }
 
-        //TODO test, think it over etc
         function initDriver(driver) {
             if (driver.model === null)
             {

@@ -16,29 +16,50 @@
     angular.module('TravelApp')
         .controller('TravelElementController', TravelElementController);
 
-    TravelElementController.$inject = ['$rootScope', '$scope', '$mdDialog', 'TravelManager'];
+    TravelElementController.$inject = ['$rootScope', '$scope', 'Dialog', 'TravelManager'];
 
-    function TravelElementController($rootScope, $scope, $mdDialog, TravelManager) {
+    function TravelElementController($rootScope, $scope, Dialog, TravelManager) {
 
         var vm = this;
         vm.object = null;
         vm.ride = null;
-        vm.remove = null;
-        vm.modify = null;
+        vm.remove = showElementRemove;
+        vm.modify = modifyElement;
 
-        var action = function() {
-            var traveller = getTravellerByDirection($scope.direction);
-            vm.object = getObject(traveller);
+        $rootScope.$on('PASSENGER_DELETED', onPassengerDeleted);
+        $rootScope.$on('PASSENGER_ADDED', action);
+        $rootScope.$on('DRIVER_DELETED', onDriverDeleted);
+        $rootScope.$on('DRIVER_ADDED', action);
+        $rootScope.$on('DRIVER_UPDATED', onDriverUpdated);
+
+        var traveller = null;
+
+        function action() {
+            vm.object = getObject();
             vm.ride = vm.object.getRide();
-            vm.remove = showElementRemove;
-            vm.modify = modifyElement;
-            $rootScope.$on('PASSENGER_DELETED', onPassengerDeleted);
-            $rootScope.$on('PASSENGER_ADDED', onPassengerAdded);
-            $rootScope.$on('DRIVER_DELETED', onDriverDeleted);
-        };
+        }
 
-        function onPassengerAdded() {
-            action();
+        function getObject() {
+            traveller = getTravellerByDirection($scope.direction);
+            if (traveller.isDriving())
+            {
+                return traveller.driver;
+            }
+            else
+            {
+                return traveller.passenger;
+            }
+        }
+
+         function getTravellerByDirection(direction) {
+            if (direction === 'there')
+            {
+                return TravelManager.getTravelThere();
+            }
+            else if (direction === 'back')
+            {
+                return TravelManager.getTravelBack();
+            }
         }
 
         function onPassengerDeleted(event, passenger) {
@@ -72,28 +93,29 @@
             }
         }
 
+        function onDriverUpdated(event, driver) {
+            if (driver.is_return === vm.ride.is_return && traveller.isDriving())
+            {
+                vm.ride = driver;
+            }
+        }
+
         function showElementRemove(event) {
             var confirm = null;
+            var title = '';
             if (getTravellerByDirection($scope.direction).isDriving())
             {
-                confirm = getConfirmDialogWithTitle(event,
-                    'Biztos vagy benne, hogy torolni szeretned a jarmuved?');
+                title = 'Biztos vagy benne, hogy torolni szeretned a jarmuved?';
             }
             else
             {
-                confirm = getConfirmDialogWithTitle(event,
-                    'Biztos vagy benne, hogy torolni szeretned a magad az utaslistarol?');
+                title = 'Biztos vagy benne, hogy torolni szeretned a magad az utaslistarol?';
             }
-
-            $mdDialog.show(confirm).then(removeElement);
-        }
-
-        function getConfirmDialogWithTitle(event, title) {
-             return $mdDialog.confirm()
-                .title(title)
-                .targetEvent(event)
-                .ok('Igen')
-                .cancel('Megse');
+            Dialog.showConfirm(
+                event,
+                title,
+                removeElement
+            );
         }
 
         function removeElement() {
@@ -103,28 +125,6 @@
 
         function modifyElement(event) {
             vm.object.showModify(event);
-        }
-
-        function getTravellerByDirection(direction) {
-            if (direction === 'there')
-            {
-                return TravelManager.getTravelThere();
-            }
-            else if (direction === 'back')
-            {
-                return TravelManager.getTravelBack();
-            }
-        }
-
-        function getObject(traveller) {
-            if (traveller.isDriving())
-            {
-                return traveller.driver;
-            }
-            else
-            {
-                return traveller.passenger;
-            }
         }
 
         action();
