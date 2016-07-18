@@ -1,18 +1,16 @@
 import re
 
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import RegexValidator
-from registration.models import RegistrationManager, RegistrationProfile
+from registration.models import RegistrationProfile
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import detail_route, list_route
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework.views import exception_handler, APIView
+from rest_framework.views import exception_handler
 from rest_framework import status
 from rest_framework.viewsets import ViewSet
 
@@ -139,9 +137,8 @@ class RegistrationUserSerializer(serializers.ModelSerializer):
 
 
 class RegistrationPermissions(permissions.BasePermission):
-
     class InvalidPassPhraseException(TravelException):
-       message = 'Helytelen kozos titok!'
+        message = 'Helytelen kozos titok!'
 
     def has_permission(self, request, view):
         if 'passphrase' not in request.data:

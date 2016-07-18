@@ -1,0 +1,15 @@
+[flake8]
+ignore=
+    # line too long
+    E501,
+    # continuation line over-indented for hanging indent
+    E126,
+    # continuation line over-indented for visual indent
+    E127
+exclude=
+    **/migrations,
+    node_modules,
+    wedding/settings.py,
+    travel/apps.py,
+    wedding/wsgi.py
+max-complexity=10

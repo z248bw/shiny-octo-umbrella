@@ -1,7 +1,6 @@
 import json
 from copy import deepcopy
 
-from django.contrib.auth import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from rest_framework import status

@@ -17,10 +17,7 @@ def get_user():
     return User(username=get_random_string(length=5),
                 first_name=get_random_string(length=5),
                 last_name=get_random_string(length=5),
-                email=get_random_string(length=5) +
-                      '@' +
-                      get_random_string(length=5) +
-                      'com')
+                email=get_random_string(length=5) + '@' + get_random_string(length=5) + 'com')
 
 
 def create_user():
