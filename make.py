@@ -56,12 +56,16 @@ def build():
     execute('pip install -r requirements.txt')
     execute('npm install')
     execute('python manage.py collectstatic --no-input')
+    dev_execute('pip install -r dev-requirements.txt')
+    dev_execute('flake8')
     print_green('successfully finished build')
 
 
 def test():
     print_green('run test')
-    execute('python manage.py test')
+    dev_execute('coverage run manage.py test travel')
+    dev_execute('coverage report')
+    prod_execute('python manage.py test')
     execute('python manage.py check --deploy')
     dev_execute('./node_modules/karma/bin/karma start --single-run')
     prod_execute('./node_modules/karma/bin/karma start prod.karma.conf.js --single-run')

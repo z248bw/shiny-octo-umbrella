@@ -1,0 +1,10 @@
+[run]
+branch = True
+omit =
+    travel/migrations/*,
+    **/__init__.py,
+    make.py,
+    manage.py,
+    wedding/*,
+    **/test*
+source = .
