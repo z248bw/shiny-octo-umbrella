@@ -97,7 +97,7 @@ class RegistrationTest(RestTestBase, RegistrationUtils):
         client = APIClient()
         request_data = self.get_registration_request_for_travel_user('invalidphrase')
         self.assertEqual(client.post(self.get_url_for_registration(), request_data, format='json').status_code,
-                         status.HTTP_403_FORBIDDEN)
+                         status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def test_with_missing_first_name_the_request_fails(self):
         client = APIClient()

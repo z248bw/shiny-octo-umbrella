@@ -28,7 +28,7 @@
                     redirectToLogin
                 );
             }, function(response){
-                Dialog.showError(response.data.detail);
+                Dialog.showError(response.data.message);
             });
         }
 

@@ -22,7 +22,7 @@ from wedding import settings
 
 
 def custom_exception_handler(exc, context):
-    if isinstance(exc, TravelException):
+    if isinstance(exc, (TravelException)):
         r = Response(TravelExceptionSerializer(exc).data)
         r.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return r
@@ -139,6 +139,10 @@ class RegistrationUserSerializer(serializers.ModelSerializer):
 
 
 class RegistrationPermissions(permissions.BasePermission):
+
+    class InvalidPassPhraseException(TravelException):
+       message = 'Helytelen kozos titok!'
+
     def has_permission(self, request, view):
         if 'passphrase' not in request.data:
             return False
@@ -146,7 +150,7 @@ class RegistrationPermissions(permissions.BasePermission):
         self.validate_input(passphrase)
         if passphrase == settings.REGISTRATION_PASSPHRASE:
             return True
-        return False
+        raise RegistrationPermissions.InvalidPassPhraseException()
 
     def validate_input(self, input):
         RegexValidator(regex='^([a-z]|[A-Z]| |(á|Á|í|Í|ű|Ű|ő|Ő|ü|Ü|ö|Ö|ú|Ú|ó|Ó|é|É)){1,40}$') \
