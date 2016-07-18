@@ -1,15 +1,15 @@
 from datetime import datetime
-from time import sleep
 
 from django.contrib.auth.models import User
 from django.core import mail
+from django.core.cache import cache
 from django.test import TestCase
 
 from django.utils.crypto import get_random_string
 
 from travel.models import Ride, Passenger, TravelUser
 from travel.signals.handlers import RideChangeNotifier
-from travel.utils import TravelException, date_to_naive_str, EmailNotifier
+from travel.utils import TravelException, date_to_naive_str
 from wedding import settings
 
 
@@ -291,7 +291,7 @@ class RideChangeUnitTest(TestCase):
 class EmailTest(TestCase):
     def setUp(self):
         super(EmailTest, self).setUp()
-        settings.EMAILNOTIFIER_COOLDOWN = 0
+        cache.clear()
 
     def test_email_notification_sent_on_passenger_delete_if_enabled(self):
         ride = create_ride()
@@ -391,9 +391,9 @@ class EmailTest(TestCase):
 
     def test_email_notification_not_sent_about_ride_delete_if_it_is_enabled_but_cooldown_has_not_expired(self):
         settings.EMAILNOTIFIER_COOLDOWN = 9999
-        ride = create_ride()
-        passenger = get_passenger(ride)
-        passenger.notify_when_ride_is_deleted = True
-        passenger.save()
-        ride.delete()
-        self.assertEquals(len(mail.outbox), 0)
+        ride = get_ride()
+        ride.notify_when_passenger_joins = True
+        ride.save()
+        create_passenger_user(ride)
+        create_passenger_user(ride)
+        self.assertEquals(len(mail.outbox), 1)

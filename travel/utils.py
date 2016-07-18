@@ -23,7 +23,7 @@ class EmailNotifier:
                       'travelmanager@wedding.com', self.to, fail_silently=False)
 
     def is_cooldown_finished(self):
-        last_time = cache.get_or_set(self.CACHE_TIME_ID, time.time())
+        last_time = cache.get_or_set(self.CACHE_TIME_ID, 0)
         current_time = time.time()
         if last_time + self.cooldown < current_time:
             cache.set(self.CACHE_TIME_ID, current_time)

@@ -156,7 +156,7 @@ REST_VERSION = '1/'
 ACCOUNT_ACTIVATION_DAYS = 1
 
 DEFAULT_FROM_EMAIL = 'travelmanager@agiadam-staging.herokuapp.com'
-EMAILNOTIFIER_COOLDOWN = 5
+EMAILNOTIFIER_COOLDOWN = 2
 REGISTRATION_AUTO_LOGIN = False
 
 #TODO: do not forget to set on production!
