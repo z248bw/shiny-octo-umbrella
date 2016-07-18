@@ -38,7 +38,7 @@
              );
         }
 
-        function showSuccess(title, content) {
+        function showSuccess(title, content, callback) {
              $mdDialog.show(
                $mdDialog.alert()
                  .parent(angular.element(document.body))
@@ -46,7 +46,7 @@
                  .title(title)
                  .textContent(content)
                  .ok('OK')
-             );
+             ).then(callback);
         }
 
         function showConfirm(event, title, callback) {
