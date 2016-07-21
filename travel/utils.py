@@ -114,4 +114,5 @@ class RideDeletedEmailFormatter(EmailFormatter):
         self.ride = ride
 
     def get_title(self):
-        return self.get_user_full_name(self.ride.driver.user) + _('\'s ride has been deleted')
+        return self.get_user_full_name(self.ride.driver.user) + \
+               _('\'s ride has been deleted')
