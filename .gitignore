@@ -4,7 +4,6 @@ migrations/
 *.pyc
 staticfiles
 .idea/
-README.md
 node_modules/
 travel/static/travel/js/all.js
 travel/static/travel/js/all.min.js
