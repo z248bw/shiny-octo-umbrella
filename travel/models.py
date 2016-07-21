@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.translation import ugettext as _
 
 from travel.utils import TravelException
 
@@ -19,7 +20,7 @@ class AbstractTravelModel(models.Model):
             return
         travel = travels_of_user[0]
         if self.is_a_new_instance() and self.is_travel_for_the_same_direction(travel, new_travel):
-            TravelException.raise_exception('You already have a ride in that direction')
+            TravelException.raise_exception(_('You already have a ride in that direction'))
 
     def is_travel_for_the_same_direction(self, t1, t2):
         return t1.is_return == t2.is_return
@@ -29,28 +30,28 @@ class AbstractTravelModel(models.Model):
 
 
 class Ride(AbstractTravelModel):
-    driver = models.ForeignKey(TravelUser, related_name='driver', verbose_name='Sofor')
-    price = models.IntegerField(verbose_name='Ar')
-    num_of_seats = models.IntegerField(verbose_name='Ferohelyek szama(soforules nelkul)')
-    start_time = models.DateTimeField(verbose_name='Indulasi ido')
-    start_location = models.CharField(max_length=100, verbose_name='Indulasi hely')
+    driver = models.ForeignKey(TravelUser, related_name='driver', verbose_name=_('Driver'))
+    price = models.IntegerField(verbose_name=_('Price'))
+    num_of_seats = models.IntegerField(verbose_name=_('Number of seats (without the driver)'))
+    start_time = models.DateTimeField(verbose_name=_('Start time'))
+    start_location = models.CharField(max_length=100, verbose_name=_('Start location'))
     is_return = models.BooleanField(default=False)
-    notify_when_passenger_joins = models.BooleanField(default=False, verbose_name='Ertesites utas csatlakozaskor')
-    car_name = models.CharField(max_length=20, verbose_name='Auto tipusa', null=True, blank=True)
-    description = models.TextField(max_length=200, verbose_name='Egyeb', null=True, blank=True)
+    notify_when_passenger_joins = models.BooleanField(default=False, verbose_name=_('Notify when passenger joins'))
+    car_name = models.CharField(max_length=20, verbose_name=_('Type of car'), null=True, blank=True)
+    description = models.TextField(max_length=200, verbose_name=_('Description'), null=True, blank=True)
 
     def __init__(self, *args, **kwargs):
         super(Ride, self).__init__(*args, **kwargs)
         self.old_instance = None
 
     class NoDriverContactProvidedException(TravelException):
-        message = 'Driver contact should be provided to create ride'
+        message = _('Driver contact should be provided to create ride')
 
     class NotEnoughFreeSeatsException(TravelException):
-        message = 'A ride should have place for at least one passenger'
+        message = _('A ride should have place for at least one passenger')
 
     class NotEnoughSeatsException(TravelException):
-        message = 'A ride should have at least as many seats as passengers'
+        message = _('A ride should have at least as many seats as passengers')
 
     def get_passengers(self):
         return Passenger.objects.filter(ride=self.pk)
@@ -88,17 +89,17 @@ class Ride(AbstractTravelModel):
 
 
 class Passenger(AbstractTravelModel):
-    travel_user = models.ForeignKey(TravelUser, related_name='travel_user', verbose_name='Felhasznalo')
-    ride = models.ForeignKey(Ride, related_name='ride', verbose_name='Fuvar')
-    notify_when_ride_changes = models.BooleanField(default=False, verbose_name='Ertesites fuvar valtozaskor')
-    notify_when_ride_is_deleted = models.BooleanField(default=False, verbose_name='Ertesites fuvar torlodeskor')
-    notify_when_deleted = models.BooleanField(default=False, verbose_name='Ertesites fuvarbol valo kidobaskor')
+    travel_user = models.ForeignKey(TravelUser, related_name='travel_user', verbose_name=_('Travel user'))
+    ride = models.ForeignKey(Ride, related_name='ride', verbose_name=_('Ride'))
+    notify_when_ride_changes = models.BooleanField(default=False, verbose_name=_('Notify when the ride changes'))
+    notify_when_ride_is_deleted = models.BooleanField(default=False, verbose_name=_('Notify when the ride is deleted'))
+    notify_when_deleted = models.BooleanField(default=False, verbose_name=_('Notify when the ride is deleted'))
 
     class NoMoreSpaceException(TravelException):
-        message = 'There is no more free space available in the selected ride'
+        message = _('There is no more free space available in the selected ride')
 
     class DriverCannotBePassengerException(TravelException):
-        message = 'You are already a driver'
+        message = _('You are already a driver')
 
     def save(self, *args, **kwargs):
         if self.is_already_a_driver_in_that_direction():

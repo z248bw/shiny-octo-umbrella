@@ -1,6 +1,7 @@
 import time
 from django.core.cache import cache
 from django.core.mail import send_mail
+from django.utils.translation import ugettext as _
 
 from wedding import settings
 
@@ -21,7 +22,7 @@ class EmailNotifier:
     CACHE_TIME_ID = 'LAST_SENT_TIME'
 
     class CooldownException(TravelException):
-        message = 'The service is overloaded at the moment, try again later'
+        message = _('The service is overloaded at the moment, try again later')
 
     def __init__(self, to, formatter):
         self.to = to
@@ -49,8 +50,9 @@ class EmailFormatter:
         self.disable_url = disable_url
 
     def get_message(self):
-        return 'Ez egy automatikusan kuldott uzenet kerlek ne valaszolj ra.' \
-               '\nHa nem szeretnel tobb uzenetet kapni le tudsz iratkozni a kovetkezo linken: ' + self.disable_url
+        return _('This is an automatically sent email please do not reply.') + \
+               '\n' + \
+               'If you want to unsubscribe you can do it following this link' + self.disable_url
 
     def get_user_full_name(self, user):
         return user.last_name + ' ' + user.first_name
@@ -62,10 +64,10 @@ class PassengerDeleteEmailFormatter(EmailFormatter):
         self.passenger = passenger
 
     def get_title(self):
-        return self.get_user_full_name(self.passenger.travel_user.user) \
-               + ' torlesre kerult ' \
-               + self.get_user_full_name(self.passenger.ride.driver.user) \
-               + ' fuvarjarol'
+        return self.get_user_full_name(self.passenger.travel_user.user) + \
+               _(' has been deleted from') + \
+               self.get_user_full_name(self.passenger.ride.driver.user) + \
+               _('\'s ride')
 
 
 class PassengerJoinedEmailFormatter(EmailFormatter):
@@ -74,9 +76,8 @@ class PassengerJoinedEmailFormatter(EmailFormatter):
         self.passenger = passenger
 
     def get_title(self):
-        return self.get_user_full_name(self.passenger.travel_user.user) \
-               + ' csatlakozott ' \
-               + ' a fuvarodhoz'
+        return self.get_user_full_name(self.passenger.travel_user.user) + \
+               _(' has joined to your ride.')
 
 
 class RideChangedEmailFormatter(EmailFormatter):
@@ -86,12 +87,13 @@ class RideChangedEmailFormatter(EmailFormatter):
         self.changes = changes
 
     def get_title(self):
-        return self.get_user_full_name(self.ride.driver.user) + ' fuvarja megvaltozott'
+        return self.get_user_full_name(self.ride.driver.user) + _('\'s ride has been changed')
 
     def get_message(self):
-        return 'A kovetkezo reszletek valtoztak:\n' \
-               + self.get_changes_text() \
-               + super(RideChangedEmailFormatter, self).get_message()
+        return _('The following details has been changed:') + \
+               '\n' + \
+               self.get_changes_text() + \
+               super(RideChangedEmailFormatter, self).get_message()
 
     def get_changes_text(self):
         changes_text = str()
@@ -112,4 +114,4 @@ class RideDeletedEmailFormatter(EmailFormatter):
         self.ride = ride
 
     def get_title(self):
-        return self.get_user_full_name(self.ride.driver.user) + ' fuvarja torlesre kerult'
+        return self.get_user_full_name(self.ride.driver.user) + _('\'s ride has been deleted')
