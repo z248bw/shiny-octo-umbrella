@@ -9,7 +9,7 @@ from django.utils.crypto import get_random_string
 
 from travel.models import Ride, Passenger, TravelUser
 from travel.signals.handlers import RideChangeNotifier
-from travel.utils import TravelException, date_to_naive_str
+from travel.utils import TravelException, date_to_naive_str, EmailNotifier
 from wedding import settings
 
 
@@ -392,5 +392,6 @@ class EmailTest(TestCase):
         ride.notify_when_passenger_joins = True
         ride.save()
         create_passenger_user(ride)
-        create_passenger_user(ride)
+        with self.assertRaises(EmailNotifier.CooldownException):
+            create_passenger_user(ride)
         self.assertEquals(len(mail.outbox), 1)

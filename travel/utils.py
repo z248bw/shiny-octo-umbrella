@@ -9,8 +9,19 @@ def date_to_naive_str(date):
     return date.replace(tzinfo=None).isoformat()
 
 
+class TravelException(Exception):
+    @staticmethod
+    def raise_exception(message):
+        e = TravelException()
+        e.message = message
+        raise e
+
+
 class EmailNotifier:
     CACHE_TIME_ID = 'LAST_SENT_TIME'
+
+    class CooldownException(TravelException):
+        message = 'The service is overloaded at the moment, try again later'
 
     def __init__(self, to, formatter):
         self.to = to
@@ -21,6 +32,8 @@ class EmailNotifier:
         if self.is_cooldown_finished():
             send_mail(self.formatter.get_title(), self.formatter.get_message(),
                       'travelmanager@wedding.com', self.to, fail_silently=False)
+        else:
+            raise EmailNotifier.CooldownException
 
     def is_cooldown_finished(self):
         last_time = cache.get_or_set(self.CACHE_TIME_ID, 0)
@@ -100,11 +113,3 @@ class RideDeletedEmailFormatter(EmailFormatter):
 
     def get_title(self):
         return self.get_user_full_name(self.ride.driver.user) + ' fuvarja torlesre kerult'
-
-
-class TravelException(Exception):
-    @staticmethod
-    def raise_exception(message):
-        e = TravelException()
-        e.message = message
-        raise e
