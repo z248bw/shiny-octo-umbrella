@@ -2,6 +2,7 @@
 branch = True
 omit =
     travel/migrations/*,
+    travel/fixtures/*,
     **/__init__.py,
     make.py,
     manage.py,
