@@ -1,0 +1,126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-07-21 19:06+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: travel/models.py:23
+msgid "You already have a ride in that direction"
+msgstr "Mar van egy utazasod az adott iranyba"
+
+#: travel/models.py:33
+msgid "Driver"
+msgstr "Sofor"
+
+#: travel/models.py:34
+msgid "Price"
+msgstr "Beugro"
+
+#: travel/models.py:35
+msgid "Number of seats (without the driver)"
+msgstr "Helyek szama (sofor ules nelkul)"
+
+#: travel/models.py:36
+msgid "Start time"
+msgstr "Indulasi ido"
+
+#: travel/models.py:37
+msgid "Start location"
+msgstr "Indulasi hely"
+
+#: travel/models.py:39
+msgid "Notify when passenger joins"
+msgstr "Ertesites utas csatlakozaskor"
+
+#: travel/models.py:40
+msgid "Type of car"
+msgstr "Auto tipusa"
+
+#: travel/models.py:41
+msgid "Description"
+msgstr "Leiras"
+
+#: travel/models.py:48
+msgid "Driver contact should be provided to create ride"
+msgstr "A sofor elerhetoseget meg kell adni, hogy jarmut hozhass letre"
+
+#: travel/models.py:51
+msgid "A ride should have place for at least one passenger"
+msgstr "A jarmuben legalabb egy utasnak helyet kell biztositani"
+
+#: travel/models.py:54
+msgid "A ride should have at least as many seats as passengers"
+msgstr "A jarmuben legalabb annyi szabad hely kell legyen mint ahany utas csatlakozott korabban"
+
+#: travel/models.py:92
+msgid "Travel user"
+msgstr "Utazasszervezo felhasznalo"
+
+#: travel/models.py:93
+msgid "Ride"
+msgstr "Jarmu"
+
+#: travel/models.py:94
+msgid "Notify when the ride changes"
+msgstr "Ertesites mikor a jarmu megvaltozik"
+
+#: travel/models.py:95 travel/models.py:96
+msgid "Notify when the ride is deleted"
+msgstr "Ertesites mikor a jarmut torlik"
+
+#: travel/models.py:99
+msgid "There is no more free space available in the selected ride"
+msgstr "Nincsen tobb szabad hely a kivalasztott jarmuben"
+
+#: travel/models.py:102
+msgid "You are already a driver"
+msgstr "Mar sofor vagy"
+
+#: travel/rest/rest.py:142
+msgid "Invalid passphrase!"
+msgstr "Ervenytelen kozos titok!"
+
+#: travel/utils.py:25
+msgid "The service is overloaded at the moment, try again later"
+msgstr "Az email ertesites szolgaltatas tulterhelt, kerlek probald kesobb"
+
+#: travel/utils.py:53
+msgid "This is an automatically sent email please do not reply."
+msgstr "Ez egy automatikusan kuldott uzenet kerlek ne valaszolj ra"
+
+#: travel/utils.py:68
+msgid " has been deleted from"
+msgstr " ki lett torolve"
+
+#: travel/utils.py:70
+msgid "'s ride"
+msgstr " jarmuvebol"
+
+#: travel/utils.py:80
+msgid " has joined to your ride."
+msgstr " csatlakozott a jarmuvedhez"
+
+#: travel/utils.py:90
+msgid "'s ride has been changed"
+msgstr " jarmuve megvaltozott"
+
+#: travel/utils.py:93
+msgid "The following details has been changed:"
+msgstr "A kovetkezo reszletek valtoztak meg:"
+
+#: travel/utils.py:117
+msgid "'s ride has been deleted"
+msgstr " jarmuve torlesre kerult"
