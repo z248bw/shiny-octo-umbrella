@@ -1,9 +1,4 @@
-import time
-from django.core.cache import cache
-from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
-
-from wedding import settings
 
 
 def date_to_naive_str(date):

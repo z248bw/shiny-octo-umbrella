@@ -1,5 +1,4 @@
 from datetime import datetime
-from unittest import skip
 
 from django.contrib.auth.models import User
 from django.core import mail
@@ -294,6 +293,7 @@ class NotificationTest(TestCase):
     def test_targets_are_set_on_create_and_available_after_pop(self):
         self.create_notification()
         self.assertEqual(len(Notification.objects.all()[0].targets.all()), 2)
+
 
 class EmailTest(TestCase):
     def test_email_notification_sent_on_passenger_delete_if_enabled(self):

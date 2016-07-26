@@ -58,7 +58,6 @@ def build():
     prod_execute('python manage.py compilemessages --locale=hu-HU')
     prod_execute('python manage.py collectstatic --no-input')
     dev_execute('pip install -r dev-requirements.txt')
-    dev_execute('flake8')
     print_green('successfully finished build')
 
 
@@ -66,6 +65,7 @@ def test():
     print_green('run test')
     dev_execute('coverage run manage.py test travel')
     dev_execute('coverage report')
+    dev_execute('flake8')
     prod_execute('python manage.py test')
     prod_execute('python manage.py check --deploy')
     dev_execute('./node_modules/karma/bin/karma start --single-run')
