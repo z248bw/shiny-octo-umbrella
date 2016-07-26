@@ -124,3 +124,17 @@ class Passenger(AbstractTravelModel):
         rides_of_user_in_both_direction = Passenger.objects.values_list('ride', flat=True).filter(
             travel_user=self.travel_user)
         return Ride.objects.filter(pk__in=rides_of_user_in_both_direction)
+
+
+class Notification(models.Model):
+    targets = models.ManyToManyField(User)
+    title = models.CharField(max_length=40)
+    message = models.CharField(max_length=100)
+
+    # TODO move to management class
+    @staticmethod
+    def create(targets, title, message):
+        notification = Notification(title=title, message=message)
+        notification.save()
+        notification.targets.add(*targets)
+        return notification

@@ -18,33 +18,6 @@ class TravelException(Exception):
         raise e
 
 
-class EmailNotifier:
-    CACHE_TIME_ID = 'LAST_SENT_TIME'
-
-    class CooldownException(TravelException):
-        message = _('The service is overloaded at the moment, try again later')
-
-    def __init__(self, to, formatter):
-        self.to = to
-        self.formatter = formatter
-        self.cooldown = settings.EMAILNOTIFIER_COOLDOWN
-
-    def notify(self):
-        if self.is_cooldown_finished():
-            send_mail(self.formatter.get_title(), self.formatter.get_message(),
-                      'travelmanager@wedding.com', self.to, fail_silently=False)
-        else:
-            raise EmailNotifier.CooldownException
-
-    def is_cooldown_finished(self):
-        last_time = cache.get_or_set(self.CACHE_TIME_ID, 0)
-        current_time = time.time()
-        if last_time + self.cooldown < current_time:
-            cache.set(self.CACHE_TIME_ID, current_time)
-            return True
-        return False
-
-
 class EmailFormatter:
     def __init__(self, disable_url):
         self.disable_url = disable_url

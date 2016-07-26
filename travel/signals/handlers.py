@@ -3,8 +3,8 @@ from datetime import datetime
 from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 
-from travel.models import Passenger, Ride
-from travel.utils import EmailNotifier, PassengerJoinedEmailFormatter, RideChangedEmailFormatter, date_to_naive_str, \
+from travel.models import Passenger, Ride, Notification
+from travel.utils import PassengerJoinedEmailFormatter, RideChangedEmailFormatter, date_to_naive_str, \
     PassengerDeleteEmailFormatter, RideDeletedEmailFormatter
 
 
@@ -31,10 +31,15 @@ def receive_ride_pre_delete(instance, **kwargs):
 
 
 class Notifier:
+    # TODO move to app.py
     HOST_URL = 'http://agiadam-staging.herokuapp.com/'
 
+    def __init__(self):
+        self.formatter = None
+        self.targets = None
+
     def notify(self):
-        raise NotImplementedError
+        Notification.create(self.targets, self.formatter.get_title(), self.formatter.get_message())
 
     def get_disable_url(self):
         raise NotImplementedError
@@ -56,7 +61,7 @@ class PassengerNotifier(Notifier):
         self.passenger = passenger
 
     def notify(self):
-        raise NotImplementedError
+        super(PassengerNotifier, self).notify()
 
     def get_disable_url(self):
         raise NotImplementedError
@@ -65,9 +70,10 @@ class PassengerNotifier(Notifier):
 class PassengerJoinedNotifier(PassengerNotifier):
     def notify(self):
         if self.passenger.ride.notify_when_passenger_joins:
-            EmailNotifier(to=[self.passenger.ride.driver.user.email],
-                          formatter=PassengerJoinedEmailFormatter(passenger=self.passenger,
-                                                                  disable_url=self.get_disable_link())).notify()
+            self.formatter = PassengerJoinedEmailFormatter(passenger=self.passenger,
+                                                           disable_url=self.get_disable_link())
+            self.targets = [self.passenger.ride.driver.user]
+            super(PassengerJoinedNotifier, self).notify()
 
     def get_disable_url(self):
         return self.get_disable_url_for_ride(self.passenger.ride)
@@ -76,9 +82,10 @@ class PassengerJoinedNotifier(PassengerNotifier):
 class PassengerDeletedNotifier(PassengerNotifier):
     def notify(self):
         if self.passenger.notify_when_deleted:
-            EmailNotifier(to=[self.passenger.travel_user.user.email, self.passenger.ride.driver.user.email],
-                          formatter=PassengerDeleteEmailFormatter(passenger=self.passenger,
-                                                                  disable_url=self.get_disable_link())).notify()
+            self.formatter = PassengerDeleteEmailFormatter(passenger=self.passenger,
+                                                           disable_url=self.get_disable_link())
+            self.targets = [self.passenger.travel_user.user]
+            super(PassengerDeletedNotifier, self).notify()
 
     def get_disable_url(self):
         return self.get_disble_url_for_passenger()
@@ -87,14 +94,15 @@ class PassengerDeletedNotifier(PassengerNotifier):
 class RideNotifier(Notifier):
     def __init__(self, ride):
         self.ride = ride
+        self.targets = self.get_targets()
 
     def notify(self):
-        raise NotImplementedError
+        super(RideNotifier, self).notify()
 
-    def get_passenger_emails(self):
+    def get_targets(self):
         passengers = self.ride.get_passengers()
         passengers = self.filter_passengers_by_email_flags(passengers)
-        return [passenger.travel_user.user.email for passenger in passengers]
+        return [passenger.travel_user.user for passenger in passengers]
 
     def filter_passengers_by_email_flags(self, passengers):
         raise NotImplementedError
@@ -108,12 +116,11 @@ class RideChangeNotifier(RideNotifier):
         changes = self.get_model_changes()
         if len(changes) == 0:
             return
-        passenger_emails = self.get_passenger_emails()
-        if len(passenger_emails) > 0:
-            EmailNotifier(to=passenger_emails,
-                          formatter=RideChangedEmailFormatter(ride=self.ride,
-                                                              changes=changes,
-                                                              disable_url=self.get_disable_link())).notify()
+        if len(self.targets) > 0:
+            self.formatter = RideChangedEmailFormatter(ride=self.ride,
+                                                       changes=changes,
+                                                       disable_url=self.get_disable_link())
+            super(RideChangeNotifier, self).notify()
 
     def filter_passengers_by_email_flags(self, passengers):
         return passengers.filter(notify_when_ride_changes=True)
@@ -154,11 +161,10 @@ class RideChangeNotifier(RideNotifier):
 
 class RideDeletedNotifier(RideNotifier):
     def notify(self):
-        passenger_emails = self.get_passenger_emails()
-        if len(passenger_emails) > 0:
-            EmailNotifier(to=passenger_emails,
-                          formatter=RideDeletedEmailFormatter(ride=self.ride,
-                                                              disable_url=self.get_disable_link())).notify()
+        if len(self.targets) > 0:
+            self.formatter = RideDeletedEmailFormatter(ride=self.ride,
+                                                       disable_url=self.get_disable_link())
+            super(RideDeletedNotifier, self).notify()
 
     def filter_passengers_by_email_flags(self, passengers):
         return passengers.filter(notify_when_ride_is_deleted=True)
