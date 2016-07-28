@@ -11,3 +11,4 @@ htmlcov/
 .coverage
 init_env.sh
 celerybeat-schedule.db
+.env
