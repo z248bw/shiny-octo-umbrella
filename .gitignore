@@ -12,3 +12,4 @@ htmlcov/
 init_env.sh
 celerybeat-schedule.db
 .env
+.postgres_env

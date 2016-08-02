@@ -21,8 +21,10 @@ django:
         - postgres
     env_file:
         - .env
-
+        - .postgres_env
 
 # This defines a service for the Postgres database
 postgres:
     image: postgres:9.3
+    env_file:
+        - .postgres_env
