@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import os.path
+from time import sleep
 
 FLAVOR = ''
 PROD_FLAVOR = 'prod'
@@ -15,6 +16,8 @@ def main():
         build()
     elif args.test:
         test()
+    elif args.install:
+        install()
     else:
         default()
 
@@ -31,6 +34,11 @@ def init_flavor(args):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Build and test the application')
+    parser.add_argument('-i', '--install',
+                        action='store_true',
+                        dest='install',
+                        default=False,
+                        help='bootstrap the application in a docker container')
     parser.add_argument('-b', '--build',
                         action='store_true',
                         dest='build',
@@ -49,6 +57,15 @@ def parse_args():
                         help='specifies the build flavor [dev/prod]')
 
     return parser.parse_args()
+
+
+def install():
+    print_green('run install')
+    attempt('python manage.py migrate')
+    execute('python manage.py collectstatic --no-input')
+    # TODO: compilemessages and makemessages(?)
+    execute('honcho start -f Procfile_docker')
+    print_green('successfully finished install')
 
 
 def build():
@@ -74,10 +91,7 @@ def test():
 
 
 def default():
-    print_green('run all')
-    build()
-    test()
-    print_green('successfully finished all')
+    print_red('You should provide at least one target flag! See --help for more information on available flags')
 
 
 def print_green(t):
@@ -102,6 +116,13 @@ def run_command(command):
     for line in iter(p.stdout.readline, b''):
         print(line.decode('utf-8'))
     return p
+
+
+def attempt(command):
+    print_blue('Attempting: ' + command)
+    while run_command(command).wait():
+        print_blue(command + 'failed. Retry in 5 secs.')
+        sleep(5)
 
 
 def handle_output(process, command):
