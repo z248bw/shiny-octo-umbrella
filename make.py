@@ -3,6 +3,7 @@ import subprocess
 import os.path
 from time import sleep
 
+
 FLAVOR = ''
 PROD_FLAVOR = 'prod'
 DEV_FLAVOR = 'dev'
@@ -64,6 +65,7 @@ def install():
     attempt('python manage.py migrate')
     execute('python manage.py collectstatic --no-input')
     # TODO: compilemessages and makemessages(?)
+    execute('python manage.py initsuperuser')
     execute('honcho start -f Procfile_docker')
     print_green('successfully finished install')
 
