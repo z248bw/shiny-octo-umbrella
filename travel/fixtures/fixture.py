@@ -19,7 +19,7 @@ class TestFixture:
         Ride.objects.all().delete()
         Passenger.objects.all().delete()
         TravelUser.objects.all().delete()
-        User.objects.exclude(username='keli').delete()  # TODO keli
+        User.objects.exclude(is_staff=True).delete()
 
     def create_rides(self, num=20):
         travel_users = self.create_travel_users(num)
