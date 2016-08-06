@@ -1,14 +1,16 @@
-# Docker-compose.yml file for atbaker/docker-django project
+version: "2"
 
-# Nginx
-nginx:
-    build: ./nginx
-    volumes:
-        - .:/usr/src/app
-    links:
-        - django
-    ports:
-        - "80:80"
+services:
+    # Nginx
+    nginx:
+        build: ./nginx
+        image: wedding/nginx
+        volumes:
+            - .:/usr/src/app
+        links:
+            - django
+        ports:
+            - "80:80"
 
 # This defines a service for the Django app
 django:

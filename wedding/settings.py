@@ -115,13 +115,13 @@ if os.environ.get('DATABASE_URL') is None and \
    os.environ.get('POSTGRES_USER') is not None and \
    os.environ.get('POSTGRES_PASSWORD') is not None and \
    os.environ.get('POSTGRES_DB') is not None and \
-   os.environ.get('POSTGRES_PORT_5432_TCP_ADDR') is not None:
+   os.environ.get('POSTGRES_URL') is not None:
     os.environ['DATABASE_URL'] = 'postgres://' + \
                                  os.environ['POSTGRES_USER'] + \
                                  ':' + \
                                  os.environ['POSTGRES_PASSWORD'] + \
                                  '@' + \
-                                 os.environ['POSTGRES_PORT_5432_TCP_ADDR'] + \
+                                 os.environ['POSTGRES_URL'] + \
                                  ':5432/' + \
                                  os.environ['POSTGRES_DB']
 db_from_env = dj_database_url.config(conn_max_age=500)
