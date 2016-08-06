@@ -1,12 +1,15 @@
 import argparse
+import json
 import subprocess
 import os.path
 from time import sleep
 
-
 FLAVOR = ''
 PROD_FLAVOR = 'prod'
 DEV_FLAVOR = 'dev'
+
+with open('makeconfig.json') as config_file:
+    MAKECONFIG = json.load(config_file)
 
 
 def main():
@@ -62,33 +65,36 @@ def parse_args():
 
 def install():
     print_green('run install')
-    attempt('python manage.py migrate')
-    execute('python manage.py collectstatic --no-input')
-    # TODO: compilemessages and makemessages(?)
-    execute('python manage.py initsuperuser')
-    execute('honcho start -f Procfile_docker')
+    iterate_commands('install')
     print_green('successfully finished install')
+
+
+def iterate_commands(maketype):
+    command_type_mapping = {
+        'attempt': run_command,
+        'execute': execute,
+        'dev_execute': dev_execute,
+        'prod_execute': prod_execute,
+        'must': must
+    }
+    for instruction in MAKECONFIG[maketype]:
+        command_type, command = get_key_value_pair_from_dict(instruction)
+        command_type_mapping[command_type](command)
+
+
+def get_key_value_pair_from_dict(d):
+    return list(d.keys())[0], list(d.values())[0]
 
 
 def build():
     print_green('run build')
-    execute('pip install -r requirements.txt')
-    execute('npm install')
-    prod_execute('python manage.py compilemessages --locale=hu-HU')
-    prod_execute('python manage.py collectstatic --no-input')
-    dev_execute('pip install -r dev-requirements.txt')
+    iterate_commands('build')
     print_green('successfully finished build')
 
 
 def test():
     print_green('run test')
-    dev_execute('coverage run manage.py test travel')
-    dev_execute('coverage report')
-    dev_execute('flake8')
-    prod_execute('python manage.py test')
-    prod_execute('python manage.py check --deploy')
-    dev_execute('./node_modules/karma/bin/karma start --single-run')
-    prod_execute('./node_modules/karma/bin/karma start prod.karma.conf.js --single-run')
+    iterate_commands('test')
     print_green('successfully finished test')
 
 
@@ -120,7 +126,7 @@ def run_command(command):
     return p
 
 
-def attempt(command):
+def must(command):
     print_blue('Attempting: ' + command)
     while run_command(command).wait():
         print_blue(command + 'failed. Retry in 5 secs.')

@@ -1,0 +1,25 @@
+{
+    "install": [
+        {"execute": "python manage.py makemigrations"},
+        {"must": "python manage.py migrate"},
+        {"execute": "python manage.py collectstatic --no-input"},
+        {"attempt": "python manage.py initsuperuser"},
+        {"execute": "honcho start -f Procfile_docker"}
+    ],
+    "build": [
+        {"execute": "pip install -r requirements.txt"},
+        {"execute": "npm install"},
+        {"prod_execute": "python manage.py compilemessages --locale=hu-HU"},
+        {"prod_execute": "python manage.py collectstatic --no-input"},
+        {"dev_execute": "pip install -r dev-requirements.txt"}
+    ],
+    "test": [
+        {"dev_execute": "coverage run manage.py test travel"},
+        {"dev_execute": "coverage report"},
+        {"dev_execute": "flake8"},
+        {"prod_execute": "python manage.py test"},
+        {"prod_execute": "python manage.py check --deploy"},
+        {"dev_execute": "./node_modules/karma/bin/karma start --single-run"},
+        {"prod_execute": "./node_modules/karma/bin/karma start prod.karma.conf.js --single-run"}
+    ]
+}
