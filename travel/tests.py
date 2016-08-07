@@ -10,6 +10,7 @@ from travel.models import Ride, Passenger, TravelUser, Notification
 from travel.signals.handlers import RideChangeNotifier
 from travel.tasks import send_email_notifications
 from travel.utils import TravelException, date_to_naive_str
+from wedding import settings
 
 
 def get_user():
@@ -296,6 +297,9 @@ class NotificationTest(TestCase):
 
 
 class EmailTest(TestCase):
+    def setUp(self):
+        settings.EMAIL_COOLDOWN_SECS = 9999
+
     def test_email_notification_sent_on_passenger_delete_if_enabled(self):
         ride = create_ride()
         passenger = get_passenger(ride)
@@ -412,3 +416,22 @@ class EmailTest(TestCase):
         ride.delete()
         send_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
+
+    def test_email_notification_sent_at_once_if_cooldown_period_had_expired(self):
+        settings.EMAIL_COOLDOWN_SECS = 0
+        ride = create_ride()
+        passenger = self.create_ride_change_notifiable_passenger(ride)
+        ride.price += 1
+        ride.save()
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [passenger.travel_user.user.email])
+
+    def test_email_notification_for_multiple_passengers_sent_at_once_if_cooldown_period_has_expired(self):
+        ride = create_ride()
+        passenger1 = self.create_ride_change_notifiable_passenger(ride)
+        passenger2 = self.create_ride_change_notifiable_passenger(ride)
+        ride.price += 1
+        ride.save()
+        send_email_notifications()
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [passenger1.travel_user.user.email, passenger2.travel_user.user.email])

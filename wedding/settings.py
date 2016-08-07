@@ -175,6 +175,7 @@ REGISTRATION_AUTO_LOGIN = False
 
 #TODO: do not forget to set on production!
 # heroku config:add EMAIL_HOST_USER=xxx
+EMAIL_COOLDOWN_SECS = 10
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')

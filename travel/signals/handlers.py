@@ -1,11 +1,15 @@
 from datetime import datetime
+import time
 
+from django.core.cache import cache
+from django.core.mail import send_mail
 from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 
 from travel.models import Passenger, Ride, Notification
 from travel.utils import PassengerJoinedEmailFormatter, RideChangedEmailFormatter, date_to_naive_str, \
     PassengerDeleteEmailFormatter, RideDeletedEmailFormatter
+from wedding import settings
 
 
 @receiver(post_save, sender=Passenger)
@@ -33,13 +37,29 @@ def receive_ride_pre_delete(instance, **kwargs):
 class Notifier:
     # TODO move to app.py
     HOST_URL = 'http://agiadam-staging.herokuapp.com/'
+    CACHE_TIME_ID = 'LAST_NOTIFICATION_TIME'
 
     def __init__(self):
         self.formatter = None
         self.targets = None
 
     def notify(self):
-        Notification.create(self.targets, self.formatter.get_title(), self.formatter.get_message())
+        if self._is_cooldown_finished():
+            send_mail(subject=self.formatter.get_title,
+                      message=self.formatter.get_message(),
+                      from_email='travelmanager@wedding.com',
+                      recipient_list=[target.email for target in self.targets],
+                      fail_silently=False)
+        else:
+            Notification.create(self.targets, self.formatter.get_title(), self.formatter.get_message())
+
+    def _is_cooldown_finished(self):
+        last_time = cache.get_or_set(self.CACHE_TIME_ID, 0)
+        current_time = time.time()
+        if last_time + settings.EMAIL_COOLDOWN_SECS < current_time:
+            cache.set(self.CACHE_TIME_ID, current_time)
+            return True
+        return False
 
     def get_disable_url(self):
         raise NotImplementedError
