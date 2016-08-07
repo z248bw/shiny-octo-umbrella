@@ -4,6 +4,8 @@ import subprocess
 import os.path
 from time import sleep
 
+import sys
+
 FLAVOR = ''
 PROD_FLAVOR = 'prod'
 DEV_FLAVOR = 'dev'
@@ -99,19 +101,19 @@ def test():
 
 
 def default():
-    print_red('You should provide at least one target flag! See --help for more information on available flags')
+    sys.stdout.write_red('You should provide at least one target flag! See --help for more information on available flags')
 
 
 def print_green(t):
-    print('\033[92m' + t + '\033[0m')
+    sys.stdout.write('\033[92m' + t + '\033[0m' + '\n')
 
 
 def print_blue(t):
-    print('\033[94m' + t + '\033[0m')
+    sys.stdout.write('\033[94m' + t + '\033[0m' + '\n')
 
 
 def print_red(t):
-    print('\033[91m' + t + '\033[0m')
+    sys.stdout.write('\033[91m' + t + '\033[0m' + '\n')
 
 
 def execute(command):
@@ -122,7 +124,7 @@ def execute(command):
 def run_command(command):
     p = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     for line in iter(p.stdout.readline, b''):
-        print(line.decode('utf-8'))
+        sys.stdout.write(line.decode('utf-8'))
     return p
 
 
