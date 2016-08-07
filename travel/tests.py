@@ -7,8 +7,7 @@ from django.test import TestCase
 from django.utils.crypto import get_random_string
 
 from travel.models import Ride, Passenger, TravelUser, Notification
-from travel.signals.handlers import RideChangeNotifier
-from travel.tasks import send_email_notifications
+from travel.notifiers.notifiers import EmailNotifier, RideChangeNotifier
 from travel.utils import TravelException, date_to_naive_str
 from wedding import settings
 
@@ -306,14 +305,18 @@ class EmailTest(TestCase):
         passenger.notify_when_deleted = True
         passenger.save()
         passenger.delete()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
+
+    def trigger_send_pending_email_notifications(self):
+        settings.EMAIL_COOLDOWN_SECS = 0
+        EmailNotifier().send_pending_email_notifications()
 
     def test_email_notification_not_sent_by_default_on_passenger_delete(self):
         ride = create_ride()
         passenger = create_passenger_user(ride)
         passenger.delete()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 0)
 
     def test_email_notification_not_sent_for_unchanged_ride(self):
@@ -322,7 +325,7 @@ class EmailTest(TestCase):
         passenger.notify_when_ride_changes = True
         passenger.save()
         ride.save()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 0)
 
     def test_email_notification_not_sent_for_changed_ride_if_there_are_no_passengers_to_notify(self):
@@ -330,7 +333,7 @@ class EmailTest(TestCase):
         create_passenger_user(ride)
         ride.price += 1
         ride.save()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 0)
 
     def test_email_notification_sent_for_changed_ride(self):
@@ -338,7 +341,7 @@ class EmailTest(TestCase):
         passenger = self.create_ride_change_notifiable_passenger(ride)
         ride.price += 1
         ride.save()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [passenger.travel_user.user.email])
 
@@ -355,7 +358,7 @@ class EmailTest(TestCase):
         create_passenger_user(ride)
         ride.price += 1
         ride.save()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [passenger.travel_user.user.email])
 
@@ -365,13 +368,13 @@ class EmailTest(TestCase):
         passenger2 = self.create_ride_change_notifiable_passenger(ride)
         ride.price += 1
         ride.save()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [passenger1.travel_user.user.email, passenger2.travel_user.user.email])
 
     def test_email_notification_not_sent_about_passenger_join_if_it_is_disabled(self):
         create_passenger_user(create_ride())
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 0)
 
     def test_email_notification_not_sent_about_passenger_update_if_it_is_enabled(self):
@@ -381,7 +384,7 @@ class EmailTest(TestCase):
         ride.save()
         passenger.notify_when_ride_is_deleted = True
         passenger.save()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 0)
 
     def test_email_notification_sent_about_passenger_join_if_it_is_enabled(self):
@@ -389,7 +392,7 @@ class EmailTest(TestCase):
         ride.notify_when_passenger_joins = True
         ride.save()
         create_passenger_user(ride)
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
 
     def test_email_notification_not_sent_twice_if_a_passenger_joins(self):
@@ -397,15 +400,15 @@ class EmailTest(TestCase):
         ride.notify_when_passenger_joins = True
         ride.save()
         create_passenger_user(ride)
-        send_email_notifications()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
 
     def test_email_notification_not_sent_about_ride_delete_if_it_is_not_enabled(self):
         ride = create_ride()
         create_passenger_user(ride)
         ride.delete()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 0)
 
     def test_email_notification_sent_about_ride_delete_if_it_is_enabled(self):
@@ -414,7 +417,7 @@ class EmailTest(TestCase):
         passenger.notify_when_ride_is_deleted = True
         passenger.save()
         ride.delete()
-        send_email_notifications()
+        self.trigger_send_pending_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
 
     def test_email_notification_sent_at_once_if_cooldown_period_had_expired(self):
@@ -432,6 +435,5 @@ class EmailTest(TestCase):
         passenger2 = self.create_ride_change_notifiable_passenger(ride)
         ride.price += 1
         ride.save()
-        send_email_notifications()
         self.assertEquals(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [passenger1.travel_user.user.email, passenger2.travel_user.user.email])

@@ -1,2 +1,2 @@
 web: gunicorn -c gunicorn_conf.py wedding.wsgi:application --reload
-#celery: celery -A wedding beat
+celery: celery -A wedding beat

@@ -16,6 +16,8 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+APPLICATION_URL = 'http://agiadam-staging.herokuapp.com/'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -170,11 +172,11 @@ REST_VERSION = '1/'
 ACCOUNT_ACTIVATION_DAYS = 1
 
 DEFAULT_FROM_EMAIL = 'travelmanager@agiadam-staging.herokuapp.com'
-EMAILNOTIFIER_COOLDOWN = 2
 REGISTRATION_AUTO_LOGIN = False
 
 #TODO: do not forget to set on production!
 # heroku config:add EMAIL_HOST_USER=xxx
+NUM_OF_CONCURRENT_NOTIFICATIONS = 10
 EMAIL_COOLDOWN_SECS = 10
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
