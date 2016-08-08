@@ -57,7 +57,7 @@
         <label>Keresztnev</label>
         <input required name="surname"
                ng-model="vm.travel_user.user.first_name"
-               pattern="/^.+@.+\..+$/">
+               pattern="^\S{1,30}$">
         <div ng-messages="userForm.surname.$error">
             <div ng-message="pattern">
                 A keresztneved legalabb 1 es maximum 30 karakter hosszu lehet
@@ -78,7 +78,7 @@
     <label>Email</label>
     <input required name="email"
            ng-model="vm.travel_user.user.email"
-           pattern="^\S{1,40}$">
+           pattern="^.+@.+\..+$">
     <div class="hint">
         Ide fog erekezni a regisztralas soran a megerosito email.
         Ezen kivul azert van ra szukseg, hogy a soforod/utasaid kapcsolatba tudjanak lepni veled,
