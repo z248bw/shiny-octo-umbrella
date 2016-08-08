@@ -7,7 +7,8 @@ from travel.utils import TravelException
 
 class TravelUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=15)
+    registration_secret = models.CharField(max_length=8)
+    phone = models.CharField(max_length=15, default=_('Not given yet'))
     accepted_eula = models.BooleanField(default=False, verbose_name='Elfogadta az eulat')
 
 
@@ -131,7 +132,6 @@ class Notification(models.Model):
     title = models.CharField(max_length=40)
     message = models.CharField(max_length=100)
 
-    # TODO move to management class
     @staticmethod
     def create(targets, title, message):
         notification = Notification(title=title, message=message)

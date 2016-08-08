@@ -1,3 +1,4 @@
+import hashlib
 import random
 from datetime import datetime
 
@@ -35,24 +36,30 @@ class TestFixture:
 
     def create_travel_users(self, num=20):
         users = self.create_users(num)
-        for _ in range(0, num):
-            travel_user = TravelUser(user=next(users), phone=self.generate_phone_number())
-            travel_user.save()
-            yield travel_user
+        with open('travel_users.txt', 'w') as f:
+            for _ in range(0, num):
+                user = next(users)
+                unique_id = '{}: {} {}'.format(user.pk, user.first_name, user.last_name)
+                secret = hashlib.sha1(str.encode(unique_id)).hexdigest()[0:8]
+                travel_user = TravelUser(user=user, registration_secret=secret)
+                f.write('{} secret:{}\n'.format(unique_id, secret))
+                travel_user.save()
+                yield travel_user
 
     def generate_phone_number(self):
         return ''.join([str(random.randint(0, 9)) for _ in range(0, 7)])
 
     def create_users(self, num=20):
         self.last_user_id = User.objects.all().aggregate(Max('pk'))['pk__max']
-        first_names_iterator = itertools.cycle(self.read_from_file('first_names.txt'))
-        last_names_iterator = itertools.cycle(self.read_from_file('last_names.txt'))
+        names_iterator = itertools.cycle(self.read_from_file('names.txt'))
         for _ in range(0, num):
-            first_name = next(first_names_iterator)
+            name = next(names_iterator).split()
+            first_name = name[0]
+            last_name = name[1]
             user = User.objects.create_user(username=first_name + str(self.last_user_id),
                                             password='a',
                                             first_name=first_name,
-                                            last_name=next(last_names_iterator),
+                                            last_name=last_name,
                                             email=first_name + '@' + 'test.com')
             self.last_user_id += 1
             yield user
