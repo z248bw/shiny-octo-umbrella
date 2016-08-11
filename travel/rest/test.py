@@ -1,11 +1,13 @@
 import json
 from copy import deepcopy
+from unittest import skip
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
+from travel.fixtures.fixture import TestFixture
 from travel.models import Passenger
 from travel.tests import create_user, create_ride, get_ride, create_travel_user, create_passenger_user, get_passenger, \
     get_travel_user
@@ -83,10 +85,11 @@ class RegistrationUtils:
         return '/rest/1/register/travel_user/'
 
 
-class RegistrationTest(RestTestBase, RegistrationUtils):
+class ActivationViewSetTest(RestTestBase, RegistrationUtils):
     def setUp(self):
-        super(RegistrationTest, self).setUp()
+        super(ActivationViewSetTest, self).setUp()
         settings.REGISTRATION_PASSPHRASE = 'judit'
+        settings.REGISTRATION_VIEWSET = 'travel.rest.rest.ActivationViewSet'
 
     def test_without_passphrase_the_request_fails(self):
         client = APIClient()
@@ -98,16 +101,11 @@ class RegistrationTest(RestTestBase, RegistrationUtils):
         self.assertEqual(client.post(self.get_url_for_registration(), request_data, format='json').status_code,
                          status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def test_with_missing_first_name_the_request_fails(self):
+    def test_if_travel_user_with_passphrase_exists_it_will_be_enabled(self):
         client = APIClient()
-        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
-        request_data['user'].pop('first_name')
-        client.post(self.get_url_for_registration(), request_data, format='json')
-        self.assertEqual(User.objects.count(), 0)
-
-    def test_with_valid_passphrase_the_user_gets_created(self):
-        client = APIClient()
-        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        unregistered_travel_user = next(TestFixture().create_travel_users(1))
+        request_data = self.get_registration_request_for_travel_user(
+            phrase=unregistered_travel_user.registration_secret)
         response = client.post(self.get_url_for_registration(), request_data, format='json')
         expected = request_data
         self.assert_registration_response(response, expected)
@@ -121,20 +119,13 @@ class RegistrationTest(RestTestBase, RegistrationUtils):
         response_data.pop('accepted_eula')
         self.assertEqual(response_data, expected)
 
-    def test_with_valid_passphrase_and_extra_fields_provided_the_user_gets_created(self):
+    def test_if_user_with_passphrase_exists_and_extra_fields_provided_the_user_gets_created(self):
         client = APIClient()
-        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        travel_user = next(TestFixture().create_travel_users(1))
+        request_data = self.get_registration_request_for_travel_user(phrase=travel_user.registration_secret)
         request_data['some_extra_field'] = 'something'
         response = client.post(self.get_url_for_registration(), request_data, format='json')
         request_data.pop('some_extra_field')
-        expected = request_data
-        self.assert_registration_response(response, expected)
-
-    def test_passphrase_with_hun_characters(self):
-        client = APIClient()
-        settings.REGISTRATION_PASSPHRASE = 'áÁrvíÍztűrő tükörfúrógéÉp'
-        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
-        response = client.post(self.get_url_for_registration(), request_data, format='json')
         expected = request_data
         self.assert_registration_response(response, expected)
 

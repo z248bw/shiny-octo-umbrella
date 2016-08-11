@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -146,44 +147,47 @@ class RegistrationPermissions(permissions.BasePermission):
             return False
         passphrase = request.data['passphrase']
         self.validate_input(passphrase)
-        if passphrase == settings.REGISTRATION_PASSPHRASE:
+        if TravelUser.objects.filter(registration_secret=passphrase).exists():
             return True
         raise RegistrationPermissions.InvalidPassPhraseException()
 
-    def validate_input(self, input):
-        RegexValidator(regex='^([a-z]|[A-Z]| |(á|Á|í|Í|ű|Ű|ő|Ő|ü|Ü|ö|Ö|ú|Ú|ó|Ó|é|É)){1,40}$') \
-            .__call__(input)
+    def validate_input(self, s):
+        RegexValidator(regex='^([0-9]|[a-z]|[A-Z]| |(á|Á|í|Í|ű|Ű|ő|Ő|ü|Ü|ö|Ö|ú|Ú|ó|Ó|é|É)){1,40}$') \
+            .__call__(s)
 
     def has_object_permission(self, request, view, obj):
         return False
 
 
-class RegistrationViewSet(ViewSet):
+class ActivationViewSet(ViewSet):
     base_path = 'register'
     permission_classes = [RegistrationPermissions]
 
     @list_route(methods=['post'])
     def travel_user(self, request):
-        user = self.__create_user(request, request.data['user'])
-        travel_user = self.__create_travel_user(request.data, user)
+        travel_user_queryset = TravelUser.objects.filter(registration_secret=request.data['passphrase'])
+        self.__init_user(request, travel_user_queryset)
+        travel_user = self.__init_travel_user(request, travel_user_queryset)
         serializer = TravelUserSerializer(travel_user)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-    def __create_user(self, request, data):
-        user_deserializer = RegistrationUserSerializer(data=data)
+    def __init_user(self, request, travel_user_queryset):
+        user_deserializer = RegistrationUserSerializer(data=request.data['user'])
         user_deserializer.is_valid(raise_exception=True)
-        user = User.objects.create_user(username=user_deserializer.validated_data['username'],
-                                        password=user_deserializer.validated_data['password'],
-                                        email=user_deserializer.validated_data['email'],
-                                        first_name=user_deserializer.validated_data['first_name'],
-                                        last_name=user_deserializer.validated_data['last_name'])
 
-        return RegistrationProfile.objects.create_inactive_user(site=get_current_site(request), new_user=user)
+        travel_user = travel_user_queryset.first()
+        # user.date_joined should be set here, because django-registration-redux will calculate
+        # the registration token expiration date from it
+        user = User.objects.filter(pk=travel_user.user.pk)
+        user.update(date_joined=datetime.now(), **user_deserializer.validated_data)
+        RegistrationProfile.objects.get(user=user)\
+            .send_activation_email(get_current_site(request), request)
 
-    def __create_travel_user(self, data, user):
-        travel_user_deserializer = TravelUserSerializer(data=data)
+    def __init_travel_user(self, request, travel_user_queryset):
+        travel_user_deserializer = TravelUserSerializer(data=request.data)
         travel_user_deserializer.is_valid(raise_exception=True)
-        return travel_user_deserializer.save(user=user)
+        travel_user_queryset.update(**travel_user_deserializer.validated_data)
+        return travel_user_queryset.first()
 
 
 class RidePermissions(permissions.IsAuthenticated):
@@ -266,7 +270,8 @@ class AppViewSet(ViewSet):
 
 
 def register(router):
-    router.register(RegistrationViewSet.base_path, RegistrationViewSet, base_name='register')
+    registration_class = eval(settings.REGISTRATION_VIEWSET)
+    router.register(registration_class.base_path, registration_class, base_name='register')
     router.register(UserViewSet.base_path, UserViewSet)
     router.register(TravelUserViewSet.base_path, TravelUserViewSet)
     router.register(RideViewSet.base_path, RideViewSet)

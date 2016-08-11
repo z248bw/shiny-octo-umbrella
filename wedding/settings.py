@@ -173,6 +173,7 @@ ACCOUNT_ACTIVATION_DAYS = 1
 
 DEFAULT_FROM_EMAIL = 'travelmanager@agiadam-staging.herokuapp.com'
 REGISTRATION_AUTO_LOGIN = False
+REGISTRATION_VIEWSET = 'travel.rest.rest.ActivationViewSet'
 
 #TODO: do not forget to set on production!
 # heroku config:add EMAIL_HOST_USER=xxx
