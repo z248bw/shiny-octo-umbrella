@@ -2,7 +2,7 @@
     "install": [
         {"execute": "npm install"},
         {"execute": "python manage.py makemigrations"},
-        {"must": "python manage.py migrate"},
+        {"must":    "python manage.py migrate"},
         {"execute": "python manage.py collectstatic --no-input"},
         {"attempt": "python manage.py initsuperuser"},
         {"execute": "honcho start -f Procfile_docker"}

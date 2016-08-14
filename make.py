@@ -4,17 +4,18 @@ import subprocess
 import os.path
 from time import sleep
 
-import sys
 
 FLAVOR = ''
 PROD_FLAVOR = 'prod'
 DEV_FLAVOR = 'dev'
-
-with open('makeconfig.json') as config_file:
-    MAKECONFIG = json.load(config_file)
+MAKECONFIG = ''
 
 
 def main():
+    global MAKECONFIG
+    with open('makeconfig.json') as config_file:
+        MAKECONFIG = json.load(config_file)
+
     args = parse_args()
     init_flavor(args)
 
@@ -101,19 +102,20 @@ def test():
 
 
 def default():
-    sys.stdout.write_red('You should provide at least one target flag! See --help for more information on available flags')
+    print_red('You should provide at least one target flag!'
+                         ' See --help for more information on available flags')
 
 
 def print_green(t):
-    sys.stdout.write('\033[92m' + t + '\033[0m' + '\n')
+    print('\033[92m' + t + '\033[0m', flush=True)
 
 
 def print_blue(t):
-    sys.stdout.write('\033[94m' + t + '\033[0m' + '\n')
+    print('\033[94m' + t + '\033[0m', flush=True)
 
 
 def print_red(t):
-    sys.stdout.write('\033[91m' + t + '\033[0m' + '\n')
+    print('\033[91m' + t + '\033[0m', flush=True)
 
 
 def execute(command):
@@ -124,7 +126,7 @@ def execute(command):
 def run_command(command):
     p = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     for line in iter(p.stdout.readline, b''):
-        sys.stdout.write(line.decode('utf-8'))
+        print(line.decode('utf-8'), flush=True, end='')
     return p
 
 
