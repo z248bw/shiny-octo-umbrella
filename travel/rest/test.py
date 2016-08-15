@@ -88,7 +88,6 @@ class RegistrationUtils:
 class ActivationViewSetTest(RestTestBase, RegistrationUtils):
     def setUp(self):
         super(ActivationViewSetTest, self).setUp()
-        settings.REGISTRATION_PASSPHRASE = 'judit'
         settings.REGISTRATION_VIEWSET = 'travel.rest.rest.ActivationViewSet'
 
     def test_without_passphrase_the_request_fails(self):
@@ -126,6 +125,72 @@ class ActivationViewSetTest(RestTestBase, RegistrationUtils):
         request_data['some_extra_field'] = 'something'
         response = client.post(self.get_url_for_registration(), request_data, format='json')
         request_data.pop('some_extra_field')
+        expected = request_data
+        self.assert_registration_response(response, expected)
+
+    def test_passphrase_with_invalid_characters(self):
+        client = APIClient()
+        settings.REGISTRATION_PASSPHRASE = '&'
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        with self.assertRaises(ValidationError):
+            client.post(self.get_url_for_registration(), request_data, format='json')
+
+
+@skip('because the REGISTRATION_VIEWSET cannot be set runtime')
+class RegistrationViewSetTest(RestTestBase, RegistrationUtils):
+    def setUp(self):
+        super(RegistrationViewSetTest, self).setUp()
+        settings.REGISTRATION_PASSPHRASE = 'judit'
+        settings.REGISTRATION_VIEWSET = 'travel.rest.rest.RegistrationViewSet'
+
+    def test_without_passphrase_the_request_fails(self):
+        client = APIClient()
+        self.assertEqual(client.post(self.get_url_for_registration()).status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_with_invalid_passphrase_the_request_fails(self):
+        client = APIClient()
+        request_data = self.get_registration_request_for_travel_user('invalidphrase')
+        self.assertEqual(client.post(self.get_url_for_registration(), request_data, format='json').status_code,
+                         status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def test_with_missing_first_name_the_request_fails(self):
+        client = APIClient()
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        request_data['user'].pop('first_name')
+        client.post(self.get_url_for_registration(), request_data, format='json')
+        self.assertEqual(User.objects.count(), 0)
+
+    def test_with_valid_passphrase_user_will_be_created(self):
+        client = APIClient()
+        request_data = self.get_registration_request_for_travel_user(
+            phrase=settings.REGISTRATION_PASSPHRASE)
+        response = client.post(self.get_url_for_registration(), request_data, format='json')
+        expected = request_data
+        self.assert_registration_response(response, expected)
+
+    def assert_registration_response(self, response, expected):
+        expected.pop('passphrase')
+        expected['user'].pop('password')
+        response_data = json.loads(response.content.decode('utf-8'))
+        response_data.pop('pk')
+        response_data['user'].pop('pk')
+        response_data.pop('accepted_eula')
+        self.assertEqual(response_data, expected)
+
+    def test_with_valid_passphrase_and_extra_fields_provided_the_user_gets_created(self):
+        client = APIClient()
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        request_data['some_extra_field'] = 'something'
+        response = client.post(self.get_url_for_registration(), request_data, format='json')
+        request_data.pop('some_extra_field')
+        expected = request_data
+        self.assert_registration_response(response, expected)
+
+    def test_passphrase_with_hun_characters(self):
+        client = APIClient()
+        settings.REGISTRATION_PASSPHRASE = 'áÁrvíÍztűrő tükörfúrógéÉp'
+        request_data = self.get_registration_request_for_travel_user(phrase=settings.REGISTRATION_PASSPHRASE)
+        response = client.post(self.get_url_for_registration(), request_data, format='json')
         expected = request_data
         self.assert_registration_response(response, expected)
 

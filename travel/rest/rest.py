@@ -138,7 +138,7 @@ class RegistrationUserSerializer(serializers.ModelSerializer):
         fields = ['pk', 'username', 'password', 'first_name', 'last_name', 'email']
 
 
-class RegistrationPermissions(permissions.BasePermission):
+class ActivationPermissions(permissions.BasePermission):
     class InvalidPassPhraseException(TravelException):
         message = _('Invalid passphrase!')
 
@@ -149,7 +149,7 @@ class RegistrationPermissions(permissions.BasePermission):
         self.validate_input(passphrase)
         if TravelUser.objects.filter(registration_secret=passphrase).exists():
             return True
-        raise RegistrationPermissions.InvalidPassPhraseException()
+        raise ActivationPermissions.InvalidPassPhraseException()
 
     def validate_input(self, s):
         RegexValidator(regex='^([0-9]|[a-z]|[A-Z]| |(á|Á|í|Í|ű|Ű|ő|Ő|ü|Ü|ö|Ö|ú|Ú|ó|Ó|é|É)){1,40}$') \
@@ -161,7 +161,7 @@ class RegistrationPermissions(permissions.BasePermission):
 
 class ActivationViewSet(ViewSet):
     base_path = 'register'
-    permission_classes = [RegistrationPermissions]
+    permission_classes = [ActivationPermissions]
 
     @list_route(methods=['post'])
     def travel_user(self, request):
@@ -180,7 +180,7 @@ class ActivationViewSet(ViewSet):
         # the registration token expiration date from it
         user = User.objects.filter(pk=travel_user.user.pk)
         user.update(date_joined=datetime.now(), **user_deserializer.validated_data)
-        RegistrationProfile.objects.get(user=user)\
+        RegistrationProfile.objects.get(user=user) \
             .send_activation_email(get_current_site(request), request)
 
     def __init_travel_user(self, request, travel_user_queryset):
@@ -188,6 +188,50 @@ class ActivationViewSet(ViewSet):
         travel_user_deserializer.is_valid(raise_exception=True)
         travel_user_queryset.update(**travel_user_deserializer.validated_data)
         return travel_user_queryset.first()
+
+
+class RegistrationPermissions(permissions.BasePermission):
+    class InvalidPassPhraseException(TravelException):
+        message = _('Invalid passphrase!')
+
+    def has_permission(self, request, view):
+        if 'passphrase' not in request.data:
+            return False
+        passphrase = request.data['passphrase']
+        self.validate_input(passphrase)
+        if passphrase == settings.REGISTRATION_PASSPHRASE:
+            return True
+        raise RegistrationPermissions.InvalidPassPhraseException()
+
+    def validate_input(self, input):
+        RegexValidator(regex='^([a-z]|[A-Z]| |(á|Á|í|Í|ű|Ű|ő|Ő|ü|Ü|ö|Ö|ú|Ú|ó|Ó|é|É)){1,40}$') \
+            .__call__(input)
+
+    def has_object_permission(self, request, view, obj):
+        return False
+
+
+class RegistrationViewSet(ViewSet):
+    base_path = 'register'
+    permission_classes = [RegistrationPermissions]
+
+    @list_route(methods=['post'])
+    def travel_user(self, request):
+        user = self.__create_user(request)
+        travel_user = self.__create_travel_user(request.data, user)
+        serializer = TravelUserSerializer(travel_user)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+    def __create_user(self, request):
+        user_deserializer = RegistrationUserSerializer(data=request.data['user'])
+        user_deserializer.is_valid(raise_exception=True)
+        user = User.objects.create_user(**user_deserializer.validated_data)
+        return RegistrationProfile.objects.create_inactive_user(site=get_current_site(request), new_user=user)
+
+    def __create_travel_user(self, data, user):
+        travel_user_deserializer = TravelUserSerializer(data=data)
+        travel_user_deserializer.is_valid(raise_exception=True)
+        return travel_user_deserializer.save(user=user)
 
 
 class RidePermissions(permissions.IsAuthenticated):
