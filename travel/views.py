@@ -7,7 +7,7 @@ def index(request):
 
 
 def register(request):
-    return render(request, 'travel/register.html')
+    return render(request, 'travel/register_user.html')
 
 
 @login_required

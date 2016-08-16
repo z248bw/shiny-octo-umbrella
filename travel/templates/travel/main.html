@@ -1,35 +1,5 @@
-<html>
-<head>
-    {% load staticfiles %}
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet"
-          href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
-    <!--Plain angular-->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-loader.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-resource.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.min.js"></script>
-
-    <!--Angular dependencies of material-->
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
-
-    <!--material-->
-    <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
-
-    <!--angular moment timepicker-->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.js"></script>
-    <script src="//cdn.rawgit.com/indrimuska/angular-moment-picker/master/dist/angular-moment-picker.min.js"></script>
-    <link href="//cdn.rawgit.com/indrimuska/angular-moment-picker/master/dist/angular-moment-picker.min.css"
-          rel="stylesheet">
-
-    <!--travel-->
-    <link rel="stylesheet" href='{% static "travel/css/travel.css" %}'>
-    <script type="text/javascript" src='{% static "travel/js/all.min.js" %}'></script>
-
-</head>
+{% extends "travel/base.html" %}
+{% block content %}
 {% verbatim %}
 <body ng-app="TravelApp">
 <div ng-controller="TravelController as travel">
@@ -75,4 +45,4 @@
 
 </body>
 {% endverbatim %}
-</html>
+{% endblock %}
