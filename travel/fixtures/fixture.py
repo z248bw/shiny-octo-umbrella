@@ -1,6 +1,6 @@
 import hashlib
 import random
-from datetime import datetime
+from datetime import datetime, time
 
 import itertools
 from django.contrib.auth.models import User
@@ -40,15 +40,15 @@ class TestFixture:
         with open('travel_users.txt', 'w') as f:
             for _ in range(0, num):
                 user = next(users)
-                secret, unique_id = self.generate_user_secret_and_id(user.pk, user.first_name, user.last_name)
+                secret = self.generate_user_secret_and_id(user.pk, user.first_name, user.last_name)
                 travel_user = TravelUser(user=user, registration_secret=secret)
-                f.write('{} secret:{}\n'.format(unique_id, secret))
+                f.write('{} {} {} secret:{}\n'.format(user.first_name, user.last_name, user.pk, secret))
                 travel_user.save()
                 yield travel_user
 
     def generate_user_secret_and_id(self, pk, s1, s2):
-        unique_id = '{}: {} {}'.format(pk, s1, s2)
-        return hashlib.sha1(str.encode(unique_id)).hexdigest()[0:8], unique_id
+        unique_id = '{}: {} {} {}'.format(pk, s1, s2, time())
+        return hashlib.sha1(str.encode(unique_id)).hexdigest()[0:8]
 
     def create_users(self, num=20):
         self.last_user_id = User.objects.all().aggregate(Max('pk'))['pk__max']
