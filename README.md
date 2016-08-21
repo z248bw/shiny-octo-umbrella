@@ -9,6 +9,7 @@ Created for one of my relatives wedding and to learn python, django, js, angular
 > celery worker sending the emails above that limit requires to start a seperate
 > worker process to be started on heroku. By default the application fires up only
 > one web process.
+
 1. Set the environmental variables on the management page of the app:
 - `SECRET_KEY`
 - `REGISTRATION_PASSSPHRASE`
@@ -28,7 +29,7 @@ Created for one of my relatives wedding and to learn python, django, js, angular
 docker-compose build
 docker-compose up
 ```
-4. Open `0.0.0.0` in your browser!
+4. Open `0.0.0.0/travel/index` in your browser!
 
 ##### Uninstall
 To stop the application:
