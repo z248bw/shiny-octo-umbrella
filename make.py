@@ -76,13 +76,13 @@ def iterate_commands(maketype):
     command_type_mapping = {
         'attempt': run_command,
         'execute': execute,
-        'dev_execute': dev_execute,
-        'prod_execute': prod_execute,
         'must': must
     }
     for instruction in MAKECONFIG[maketype]:
-        command_type, command = get_key_value_pair_from_dict(instruction)
-        command_type_mapping[command_type](command)
+        flavor = instruction.pop('flavor') if 'flavor' in instruction else 'all'
+        if flavor == 'all' or flavor == FLAVOR:
+            command_type, command = get_key_value_pair_from_dict(instruction)
+            command_type_mapping[command_type](command)
 
 
 def get_key_value_pair_from_dict(d):
@@ -142,17 +142,6 @@ def handle_output(process, command):
         process.stdout.close()
         print_red(command + ' FAILED')
         exit(1)
-
-
-def prod_execute(command):
-    if FLAVOR == PROD_FLAVOR:
-        execute(command)
-
-
-def dev_execute(command):
-    if FLAVOR == DEV_FLAVOR:
-        execute(command)
-
 
 if __name__ == '__main__':
     main()

@@ -10,17 +10,17 @@
     "build": [
         {"execute": "pip install -r requirements.txt"},
         {"execute": "npm install"},
-        {"prod_execute": "python manage.py compilemessages --locale=hu-HU"},
-        {"prod_execute": "python manage.py collectstatic --no-input"},
-        {"dev_execute": "pip install -r dev-requirements.txt"}
+        {"flavor": "prod", "execute": "python manage.py compilemessages --locale=hu-HU"},
+        {"flavor": "prod", "execute": "python manage.py collectstatic --no-input"},
+        {"flavor": "dev", "execute": "pip install -r dev-requirements.txt"}
     ],
     "test": [
-        {"dev_execute": "coverage run manage.py test travel"},
-        {"dev_execute": "coverage report"},
-        {"dev_execute": "flake8"},
-        {"prod_execute": "python manage.py test"},
-        {"prod_execute": "python manage.py check --deploy"},
-        {"dev_execute": "./node_modules/karma/bin/karma start --single-run"},
-        {"prod_execute": "./node_modules/karma/bin/karma start prod.karma.conf.js --single-run"}
+        {"flavor": "dev", "execute": "coverage run manage.py test travel"},
+        {"flavor": "dev", "execute": "coverage report"},
+        {"flavor": "dev", "execute": "flake8"},
+        {"flavor": "prod", "execute": "python manage.py test"},
+        {"flavor": "prod", "execute": "python manage.py check --deploy"},
+        {"flavor": "dev", "execute": "./node_modules/karma/bin/karma start --single-run"},
+        {"flavor": "prod", "execute": "./node_modules/karma/bin/karma start prod.karma.conf.js --single-run"}
     ]
 }
